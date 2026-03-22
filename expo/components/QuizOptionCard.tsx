@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet, Platform, Animated } from 'react-native';
+import { Pressable, Text, View, StyleSheet, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Check } from 'lucide-react-native';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
@@ -18,25 +18,9 @@ export default function QuizOptionCard({ title, subtitle, selected, onPress }: Q
 
   useEffect(() => {
     if (selected) {
-      // Spring bounce on selection
-      Animated.sequence([
-        Animated.spring(scaleAnim, {
-          toValue: 0.97,
-          damping: 15,
-          stiffness: 400,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          damping: 12,
-          stiffness: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-      // Check icon pop-in
       Animated.spring(checkAnim, {
         toValue: 1,
-        damping: 10,
+        damping: 100,
         stiffness: 300,
         useNativeDriver: true,
       }).start();
@@ -44,6 +28,24 @@ export default function QuizOptionCard({ title, subtitle, selected, onPress }: Q
       checkAnim.setValue(0);
     }
   }, [selected]);
+
+  const handlePressIn = useCallback(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      damping: 40,
+      stiffness: 400,
+      useNativeDriver: true,
+    }).start();
+  }, [scaleAnim]);
+
+  const handlePressOut = useCallback(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      damping: 40,
+      stiffness: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [scaleAnim]);
 
   const handlePress = useCallback(() => {
     if (Platform.OS !== 'web') {
@@ -54,10 +56,11 @@ export default function QuizOptionCard({ title, subtitle, selected, onPress }: Q
 
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <TouchableOpacity
+      <Pressable
         style={[styles.card, selected && styles.cardSelected]}
         onPress={handlePress}
-        activeOpacity={0.7}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         testID="quiz-option-card"
       >
         <View style={styles.content}>
@@ -77,7 +80,7 @@ export default function QuizOptionCard({ title, subtitle, selected, onPress }: Q
             <Check size={16} color={colors.accent} />
           </Animated.View>
         )}
-      </TouchableOpacity>
+      </Pressable>
     </Animated.View>
   );
 }

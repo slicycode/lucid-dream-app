@@ -16,7 +16,7 @@ export default function OnboardingButton({ title, onPress, variant = 'primary', 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, {
       toValue: 0.96,
-      damping: 15,
+      damping: 40,
       stiffness: 400,
       useNativeDriver: true,
     }).start();
@@ -25,7 +25,7 @@ export default function OnboardingButton({ title, onPress, variant = 'primary', 
   const handlePressOut = useCallback(() => {
     Animated.spring(scaleAnim, {
       toValue: 1,
-      damping: 10,
+      damping: 40,
       stiffness: 200,
       useNativeDriver: true,
     }).start();

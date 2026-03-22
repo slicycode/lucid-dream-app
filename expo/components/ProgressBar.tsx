@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing } from '@/constants/theme';
 
 interface ProgressBarProps {
@@ -8,41 +9,59 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ current, total }: ProgressBarProps) {
+  const widthAnim = useRef(new Animated.Value(0)).current;
+
+  const fraction = current / total;
+
+  useEffect(() => {
+    Animated.spring(widthAnim, {
+      toValue: fraction,
+      damping: 20,
+      stiffness: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [fraction]);
+
   return (
     <View style={styles.container}>
-      {Array.from({ length: total }, (_, i) => (
-        <View
-          key={i}
+      <View style={styles.track}>
+        <Animated.View
           style={[
-            styles.segment,
-            i < current ? styles.filled : styles.empty,
-            i < total - 1 && styles.gap,
+            styles.fill,
+            {
+              width: widthAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['0%', '100%'],
+              }),
+            },
           ]}
-        />
-      ))}
+        >
+          {/* Fade the right edge of the white fill to transparent */}
+          <LinearGradient
+            colors={[colors.textPrimary, 'transparent']}
+            start={{ x: 0.6, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={StyleSheet.absoluteFill}
+          />
+        </Animated.View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
   },
-  segment: {
-    flex: 1,
+  track: {
     height: 2,
     borderRadius: 1,
+    overflow: 'hidden',
   },
-  filled: {
-    backgroundColor: colors.textPrimary,
-  },
-  empty: {
-    backgroundColor: colors.surfaceCardBorder,
-  },
-  gap: {
-    marginRight: spacing.xs,
+  fill: {
+    height: '100%',
+    borderRadius: 1,
   },
 });
