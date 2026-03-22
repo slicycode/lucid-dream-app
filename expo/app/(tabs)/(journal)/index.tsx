@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,13 @@ import {
   RefreshControl,
   Platform,
   Alert,
+  Animated,
 } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Plus, Sparkles, Moon, Skull, Eye } from 'lucide-react-native';
+import { Plus, Sparkles, Moon, Skull, Eye, Trash2 } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
@@ -71,12 +73,18 @@ export default function JournalScreen() {
     setTimeout(() => setRefreshing(false), 500);
   }, []);
 
+  const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
+
   const handleDeleteDream = useCallback((id: string, title: string) => {
     Alert.alert(
       'Delete Dream',
       `Are you sure you want to delete "${title}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => swipeableRefs.current.get(id)?.close(),
+        },
         {
           text: 'Delete',
           style: 'destructive',
@@ -88,6 +96,21 @@ export default function JournalScreen() {
       ]
     );
   }, [deleteDream]);
+
+  const renderDeleteAction = useCallback(
+    (progress: Animated.AnimatedInterpolation<number>) => {
+      const translateX = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [80, 0],
+      });
+      return (
+        <Animated.View style={[styles.swipeDeleteAction, { transform: [{ translateX }] }]}>
+          <Trash2 size={20} color="#FFFFFF" />
+        </Animated.View>
+      );
+    },
+    []
+  );
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -125,8 +148,18 @@ export default function JournalScreen() {
           <>
             <Text style={styles.sectionLabel}>RECENT DREAMS</Text>
             {dreams.map((dream) => (
-              <TouchableOpacity
+              <Swipeable
                 key={dream.id}
+                ref={(ref) => { if (ref) swipeableRefs.current.set(dream.id, ref); }}
+                renderRightActions={renderDeleteAction}
+                onSwipeableOpen={() => {
+                  if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  handleDeleteDream(dream.id, dream.title);
+                }}
+                rightThreshold={80}
+                overshootRight={false}
+              >
+              <TouchableOpacity
                 style={styles.dreamCard}
                 onPress={() => router.push(`/dream/${dream.id}`)}
                 onLongPress={() => handleDeleteDream(dream.id, dream.title)}
@@ -186,6 +219,7 @@ export default function JournalScreen() {
                   )}
                 </View>
               </TouchableOpacity>
+              </Swipeable>
             ))}
           </>
         )}
@@ -406,6 +440,14 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
+  },
+  swipeDeleteAction: {
+    backgroundColor: colors.danger,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: radii.md,
+    marginBottom: spacing.sm,
   },
   fab: {
     position: 'absolute',

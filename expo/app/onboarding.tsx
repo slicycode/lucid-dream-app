@@ -22,6 +22,8 @@ import { requestPermissions, scheduleMorningReminder } from '@/services/notifica
 import OnboardingButton from '@/components/OnboardingButton';
 import QuizOptionCard from '@/components/QuizOptionCard';
 import ProgressBar from '@/components/ProgressBar';
+import { FlowingText } from '@/components/FlowingText';
+import { StaggerChildren } from '@/components/StaggerChildren';
 
 const HARDCODED_INTERPRETATION = `The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.
 
@@ -49,13 +51,20 @@ export default function OnboardingScreen() {
   const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [processingTexts, setProcessingTexts] = useState<number>(0);
+  const ctaFadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     setCurrentStepInStore(step);
   }, [step, setCurrentStepInStore]);
+
+  // Initial CTA fade-in for welcome screen
+  useEffect(() => {
+    Animated.timing(ctaFadeAnim, { toValue: 1, duration: 500, delay: 2400, useNativeDriver: true }).start();
+  }, []);
 
   useEffect(() => {
     if (step === 11) {
@@ -83,11 +92,25 @@ export default function OnboardingScreen() {
   }, [step, pulseAnim, progressAnim, fadeAnim]);
 
   const goToStep = useCallback((nextStep: number) => {
-    Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
+    const isForward = nextStep > step;
+    // Phase 1: fade out + slide away
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 0, duration: 180, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: isForward ? -20 : 20, duration: 180, useNativeDriver: true }),
+    ]).start(() => {
       setStep(nextStep);
-      Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+      // Reset CTA fade for next screen
+      ctaFadeAnim.setValue(0);
+      // Phase 2: slide in from opposite direction + fade in
+      slideAnim.setValue(isForward ? 20 : -20);
+      Animated.parallel([
+        Animated.spring(fadeAnim, { toValue: 1, damping: 22, stiffness: 280, mass: 0.8, useNativeDriver: true }),
+        Animated.spring(slideAnim, { toValue: 0, damping: 22, stiffness: 280, mass: 0.8, useNativeDriver: true }),
+      ]).start();
+      // Delayed CTA appearance
+      Animated.timing(ctaFadeAnim, { toValue: 1, duration: 400, delay: 300, useNativeDriver: true }).start();
     });
-  }, [fadeAnim]);
+  }, [fadeAnim, slideAnim, ctaFadeAnim, step]);
 
   const goBack = useCallback(() => {
     if (step > 0) {
@@ -180,13 +203,30 @@ export default function OnboardingScreen() {
     <View style={styles.centeredContent}>
       <Text style={styles.logoText}>Lucid</Text>
       <View style={styles.welcomeTextBlock}>
-        <Text style={styles.welcomeHeading}>Your dreams have meaning.</Text>
-        <Text style={[styles.welcomeHeading, { color: colors.accent }]}>Let's decode them.</Text>
+        <FlowingText
+          text="Your dreams have meaning."
+          style={styles.welcomeHeading}
+          wordDelay={70}
+          initialDelay={400}
+          haptic
+        />
+        <FlowingText
+          text="Let's decode them."
+          style={[styles.welcomeHeading, { color: colors.accent }]}
+          wordDelay={80}
+          initialDelay={1200}
+          haptic
+        />
       </View>
-      <Text style={styles.privacyText}>Private. No account needed. Your dreams stay on your device.</Text>
-      <View style={styles.bottomCta}>
+      <FlowingText
+        text="Private. No account needed. Your dreams stay on your device."
+        style={styles.privacyText}
+        wordDelay={40}
+        initialDelay={2000}
+      />
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Get Started" onPress={goNext} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -223,7 +263,7 @@ export default function OnboardingScreen() {
       <ProgressBar current={1} total={5} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.stepHeading}>How often do you remember your dreams?</Text>
-        <View style={styles.optionsContainer}>
+        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
           {[
             { key: 'every_morning', title: 'Every morning', sub: 'I usually wake up with a dream fresh in my mind' },
             { key: 'few_times_week', title: 'A few times a week', sub: "Some mornings I remember, some I don't" },
@@ -238,11 +278,11 @@ export default function OnboardingScreen() {
               onPress={() => setLocalFrequency(opt.key)}
             />
           ))}
-        </View>
+        </StaggerChildren>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} disabled={!localFrequency} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -251,7 +291,7 @@ export default function OnboardingScreen() {
       <ProgressBar current={2} total={5} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.stepHeading}>When you remember a dream, how detailed is it?</Text>
-        <View style={styles.optionsContainer}>
+        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
           {[
             { key: 'vague', title: 'Vague feelings', sub: 'More of a mood than a memory' },
             { key: 'fragments', title: 'Fragments', sub: 'Flashes of scenes, faces, places' },
@@ -266,11 +306,11 @@ export default function OnboardingScreen() {
               onPress={() => setLocalDetail(opt.key)}
             />
           ))}
-        </View>
+        </StaggerChildren>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} disabled={!localDetail} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -280,7 +320,7 @@ export default function OnboardingScreen() {
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.stepHeading}>What interests you most?</Text>
         <Text style={styles.stepSubtext}>Select all that apply</Text>
-        <View style={styles.optionsContainer}>
+        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
           {[
             { key: 'meanings', title: 'Understanding dream meanings', sub: 'Decode the symbols and messages in your dreams' },
             { key: 'lucid', title: 'Lucid dreaming', sub: 'Learn to become aware and take control inside your dreams' },
@@ -295,25 +335,48 @@ export default function OnboardingScreen() {
               onPress={() => toggleGoal(opt.key)}
             />
           ))}
-        </View>
+        </StaggerChildren>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} disabled={localGoals.length === 0} />
-      </View>
+      </Animated.View>
     </View>
   );
 
   const renderPainPoint = () => (
     <View style={styles.centeredContent}>
       <View style={styles.painPointBlock}>
-        <Text style={styles.painPointText}>Most dreams are forgotten</Text>
-        <Text style={styles.painPointAccent}>within 5 minutes</Text>
-        <Text style={styles.painPointText}>of waking up.</Text>
+        <FlowingText
+          text="Most dreams are forgotten"
+          style={styles.painPointText}
+          wordDelay={80}
+          initialDelay={300}
+          haptic
+        />
+        <FlowingText
+          text="within 5 minutes"
+          style={styles.painPointAccent}
+          wordDelay={100}
+          initialDelay={1400}
+          haptic
+        />
+        <FlowingText
+          text="of waking up."
+          style={styles.painPointText}
+          wordDelay={90}
+          initialDelay={2200}
+          haptic
+        />
       </View>
-      <Text style={styles.painPointSub}>People who journal their dreams recall 3x more within two weeks.</Text>
-      <View style={styles.bottomCta}>
+      <FlowingText
+        text="People who journal their dreams recall 3x more within two weeks."
+        style={styles.painPointSub}
+        wordDelay={45}
+        initialDelay={3200}
+      />
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -322,7 +385,7 @@ export default function OnboardingScreen() {
       <ProgressBar current={4} total={5} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.stepHeading}>Have you kept a dream journal before?</Text>
-        <View style={styles.optionsContainer}>
+        <StaggerChildren stagger={60} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
           {[
             { key: 'never', title: 'Never', sub: 'This is my first time' },
             { key: 'tried', title: "Tried but didn't stick", sub: 'Started once or twice but fell off' },
@@ -338,11 +401,11 @@ export default function OnboardingScreen() {
               onPress={() => setLocalJournalExp(opt.key)}
             />
           ))}
-        </View>
+        </StaggerChildren>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} disabled={!localJournalExp} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -351,7 +414,7 @@ export default function OnboardingScreen() {
       <ProgressBar current={5} total={5} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.stepHeading}>Do you experience recurring dreams or nightmares?</Text>
-        <View style={styles.optionsContainer}>
+        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
           {[
             { key: 'recurring', title: 'Recurring dreams', sub: 'The same dream keeps coming back' },
             { key: 'nightmares', title: 'Nightmares', sub: 'I have disturbing dreams that wake me up' },
@@ -366,11 +429,11 @@ export default function OnboardingScreen() {
               onPress={() => setLocalRecurring(opt.key)}
             />
           ))}
-        </View>
+        </StaggerChildren>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} disabled={!localRecurring} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -387,7 +450,7 @@ export default function OnboardingScreen() {
         <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <Text style={styles.stepHeading}>Here's what Lucid can do for you</Text>
           <Text style={styles.stepSubtext}>Personalized to your dream profile</Text>
-          <View style={styles.optionsContainer}>
+          <StaggerChildren stagger={100} initialDelay={200} distance={16} style={styles.optionsContainer} triggerKey={step}>
             {features.map((f, i) => (
               <View key={i} style={styles.featureCard}>
                 <View style={styles.featureIcon}>{f.icon}</View>
@@ -397,11 +460,11 @@ export default function OnboardingScreen() {
                 </View>
               </View>
             ))}
-          </View>
+          </StaggerChildren>
         </ScrollView>
-        <View style={styles.bottomCta}>
+        <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
           <OnboardingButton title="Continue" onPress={goNext} />
-        </View>
+        </Animated.View>
       </View>
     );
   };
@@ -417,19 +480,33 @@ export default function OnboardingScreen() {
 
   const renderNotificationPermission = () => (
     <View style={styles.centeredContent}>
-      <Text style={styles.stepHeading}>Never lose a dream again</Text>
+      <FlowingText
+        text="Never lose a dream again"
+        style={styles.stepHeading}
+        wordDelay={80}
+        initialDelay={200}
+        haptic
+      />
       <View style={styles.notifTextBlock}>
-        <Text style={styles.notifBody}>Journaling within 5 minutes of waking triples dream recall.</Text>
-        <Text style={[styles.notifBody, { marginTop: spacing.md }]}>
-          We'll send a gentle morning reminder to help you capture your dreams before they fade.
-        </Text>
+        <FlowingText
+          text="Journaling within 5 minutes of waking triples dream recall."
+          style={styles.notifBody}
+          wordDelay={45}
+          initialDelay={800}
+        />
+        <FlowingText
+          text="We'll send a gentle morning reminder to help you capture your dreams before they fade."
+          style={[styles.notifBody, { marginTop: spacing.md }]}
+          wordDelay={40}
+          initialDelay={1800}
+        />
       </View>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Enable Reminders" onPress={handleEnableReminders} />
         <TouchableOpacity onPress={goNext} style={styles.skipLink} testID="skip-button">
           <Text style={styles.skipText}>Maybe later</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -490,16 +567,22 @@ export default function OnboardingScreen() {
     <View style={styles.flex}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.interpretationLabel}>YOUR DREAM INTERPRETATION</Text>
-        <Text style={styles.interpretationText}>{HARDCODED_INTERPRETATION}</Text>
+        <FlowingText
+          text={HARDCODED_INTERPRETATION}
+          style={styles.interpretationText}
+          wordDelay={35}
+          initialDelay={400}
+          haptic
+        />
         <View style={styles.divider} />
         <Text style={styles.symbolsLabel}>Key symbols</Text>
-        <View style={styles.tagsRow}>
+        <StaggerChildren stagger={120} initialDelay={3000} style={styles.tagsRow} triggerKey={step}>
           {INTERPRETATION_SYMBOLS.map((s) => (
             <View key={s} style={styles.symbolTag}>
               <Text style={styles.symbolTagText}>{s}</Text>
             </View>
           ))}
-        </View>
+        </StaggerChildren>
         <View style={styles.premiumCard}>
           <Lock size={14} color={colors.accent} />
           <Text style={styles.premiumCardText}>
@@ -507,9 +590,9 @@ export default function OnboardingScreen() {
           </Text>
         </View>
       </ScrollView>
-      <View style={styles.bottomCta}>
+      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
         <OnboardingButton title="Continue" onPress={goNext} />
-      </View>
+      </Animated.View>
     </View>
   );
 
@@ -525,7 +608,7 @@ export default function OnboardingScreen() {
         <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <Text style={styles.stepHeading}>Join thousands of dreamers</Text>
           <Text style={[styles.statLine, { color: colors.accent }]}>50,000+ dreams interpreted</Text>
-          <View style={styles.optionsContainer}>
+          <StaggerChildren stagger={120} initialDelay={200} distance={16} style={styles.optionsContainer} triggerKey={step}>
             {reviews.map((r, i) => (
               <View key={i} style={styles.reviewCard}>
                 <View style={styles.starsRow}>
@@ -537,18 +620,24 @@ export default function OnboardingScreen() {
                 <Text style={styles.reviewName}>— {r.name}</Text>
               </View>
             ))}
-          </View>
+          </StaggerChildren>
         </ScrollView>
-        <View style={styles.bottomCta}>
+        <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
           <OnboardingButton title="Continue" onPress={goNext} />
-        </View>
+        </Animated.View>
       </View>
     );
   };
 
   const renderTrialReassurance = () => (
     <View style={styles.centeredContent}>
-      <Text style={styles.stepHeading}>No surprises. No pressure.</Text>
+      <FlowingText
+        text="No surprises. No pressure."
+        style={styles.stepHeading}
+        wordDelay={90}
+        initialDelay={200}
+        haptic
+      />
       <View style={styles.timeline}>
         {[
           { label: 'Today', desc: 'Full access to everything', filled: true },
@@ -669,7 +758,7 @@ export default function OnboardingScreen() {
           {renderBackButton()}
         </View>
       )}
-      <Animated.View style={[styles.flex, { opacity: fadeAnim }]}>
+      <Animated.View style={[styles.flex, { opacity: fadeAnim, transform: [{ translateX: slideAnim }] }]}>
         {renderStep()}
       </Animated.View>
     </View>

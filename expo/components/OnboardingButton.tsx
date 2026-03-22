@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import { Pressable, Text, StyleSheet, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { colors, fonts, typography, radii, sizes } from '@/constants/theme';
 
@@ -11,6 +11,26 @@ interface OnboardingButtonProps {
 }
 
 export default function OnboardingButton({ title, onPress, variant = 'primary', disabled = false }: OnboardingButtonProps) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = useCallback(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      damping: 15,
+      stiffness: 400,
+      useNativeDriver: true,
+    }).start();
+  }, [scaleAnim]);
+
+  const handlePressOut = useCallback(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      damping: 10,
+      stiffness: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [scaleAnim]);
+
   const handlePress = useCallback(() => {
     if (Platform.OS !== 'web') {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -21,27 +41,30 @@ export default function OnboardingButton({ title, onPress, variant = 'primary', 
   const isAccent = variant === 'accent';
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        isAccent ? styles.accentButton : styles.primaryButton,
-        disabled && styles.disabledButton,
-      ]}
-      onPress={handlePress}
-      disabled={disabled}
-      activeOpacity={0.8}
-      testID="onboarding-button"
-    >
-      <Text
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <Pressable
         style={[
-          styles.text,
-          isAccent ? styles.accentText : styles.primaryText,
-          disabled && styles.disabledText,
+          styles.button,
+          isAccent ? styles.accentButton : styles.primaryButton,
+          disabled && styles.disabledButton,
         ]}
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        testID="onboarding-button"
       >
-        {title}
-      </Text>
-    </TouchableOpacity>
+        <Text
+          style={[
+            styles.text,
+            isAccent ? styles.accentText : styles.primaryText,
+            disabled && styles.disabledText,
+          ]}
+        >
+          {title}
+        </Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 

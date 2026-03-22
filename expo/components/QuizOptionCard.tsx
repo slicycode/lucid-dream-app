@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet, Platform } from 'react-native';
+import React, { useCallback, useRef, useEffect } from 'react';
+import { TouchableOpacity, Text, View, StyleSheet, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Check } from 'lucide-react-native';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
@@ -13,6 +13,38 @@ interface QuizOptionCardProps {
 }
 
 export default function QuizOptionCard({ title, subtitle, selected, onPress }: QuizOptionCardProps) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const checkAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (selected) {
+      // Spring bounce on selection
+      Animated.sequence([
+        Animated.spring(scaleAnim, {
+          toValue: 0.97,
+          damping: 15,
+          stiffness: 400,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          damping: 12,
+          stiffness: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+      // Check icon pop-in
+      Animated.spring(checkAnim, {
+        toValue: 1,
+        damping: 10,
+        stiffness: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      checkAnim.setValue(0);
+    }
+  }, [selected]);
+
   const handlePress = useCallback(() => {
     if (Platform.OS !== 'web') {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -21,22 +53,32 @@ export default function QuizOptionCard({ title, subtitle, selected, onPress }: Q
   }, [onPress]);
 
   return (
-    <TouchableOpacity
-      style={[styles.card, selected && styles.cardSelected]}
-      onPress={handlePress}
-      activeOpacity={0.7}
-      testID="quiz-option-card"
-    >
-      <View style={styles.content}>
-        <Text style={[styles.title, selected && styles.titleSelected]}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-      </View>
-      {selected && (
-        <View style={styles.checkContainer}>
-          <Check size={16} color={colors.accent} />
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        style={[styles.card, selected && styles.cardSelected]}
+        onPress={handlePress}
+        activeOpacity={0.7}
+        testID="quiz-option-card"
+      >
+        <View style={styles.content}>
+          <Text style={[styles.title, selected && styles.titleSelected]}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
-      )}
-    </TouchableOpacity>
+        {selected && (
+          <Animated.View
+            style={[
+              styles.checkContainer,
+              {
+                transform: [{ scale: checkAnim }],
+                opacity: checkAnim,
+              },
+            ]}
+          >
+            <Check size={16} color={colors.accent} />
+          </Animated.View>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
