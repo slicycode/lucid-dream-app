@@ -4,19 +4,14 @@ import Constants from 'expo-constants';
 // Read from .env locally or EAS secrets in CI builds
 const ANTHROPIC_API_KEY = Constants.expoConfig?.extra?.anthropicApiKey ?? '';
 
-const SYSTEM_PROMPT = `You are a dream interpretation assistant. Analyze the dream described below and provide a thoughtful, personalized interpretation. Cover:
+const SYSTEM_PROMPT = `You are a dream interpretation assistant. Provide a concise, personalized interpretation covering key symbols, emotional themes, and one reflective insight.
 
-1. Key symbols and their common psychological meanings
-2. Emotional themes and what they might reflect about the dreamer's waking life
-3. Recurring patterns or connections to common human experiences
-4. A brief, encouraging insight the dreamer can reflect on
-
-Keep the tone warm, curious, and non-clinical. This is for self-reflection and entertainment, not therapy. Avoid definitive claims — use language like "this often represents," "this may suggest," "many dreamers find."
-
-Format: 3-4 paragraphs of flowing prose, then a "Key symbols:" line listing 3-5 extracted symbols as comma-separated items (symbol name only, no parenthetical explanations on this line).
-
-IMPORTANT: End every interpretation with this disclaimer on a new line:
-"This interpretation is for entertainment and self-reflection purposes only. It is not professional psychological advice."`;
+Rules:
+- 2 short paragraphs maximum (4-6 sentences total). Be concise — this is read on a phone screen.
+- Warm, curious tone. Not clinical. Use "this often represents," "this may suggest."
+- End with a line: Key symbols: (list 3-5 symbols, comma-separated, no explanations)
+- Do NOT include any title, header, or disclaimer. Do NOT use markdown (no #, **, *, bullets).
+- Output plain text only.`;
 
 interface InterpretParams {
   dreamText: string;
@@ -31,18 +26,18 @@ interface InterpretResult {
 }
 
 function parseSymbols(text: string): string[] {
-  const match = text.match(/Key symbols?:\s*(.+)/i);
+  const match = text.match(/\*{0,2}Key symbols?:?\*{0,2}\s*(.+)/i);
   if (!match) return [];
   return match[1]
     .split(',')
-    .map((s) => s.replace(/\(.*?\)/g, '').trim())
+    .map((s) => s.replace(/\*+/g, '').replace(/\(.*?\)/g, '').trim())
     .filter((s) => s.length > 0 && s.length < 50);
 }
 
 // Guardrails: cap input to ~500 tokens, output to ~600 tokens
 // At Haiku 4.5 pricing ($1/$5 per MTok): worst case ~$0.004/call
 const MAX_DREAM_TEXT_CHARS = 2000;
-const MAX_OUTPUT_TOKENS = 600;
+const MAX_OUTPUT_TOKENS = 350;
 
 export async function interpretDream(params: InterpretParams): Promise<InterpretResult> {
   const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
@@ -57,16 +52,26 @@ export async function interpretDream(params: InterpretParams): Promise<Interpret
   ].join('\n');
 
   const message = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-haiku-4-5',
     max_tokens: MAX_OUTPUT_TOKENS,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userPrompt }],
   });
 
   const textBlock = message.content.find((b) => b.type === 'text');
-  const fullText = textBlock?.text ?? '';
+  const rawText = textBlock?.text ?? '';
 
-  const symbols = parseSymbols(fullText);
+  const symbols = parseSymbols(rawText);
 
-  return { interpretation: fullText, symbols };
+  // Clean up: strip markdown, key symbols line, and disclaimer from body
+  const interpretation = rawText
+    .replace(/^#+\s+.*\n?/gm, '')                        // Headers
+    .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')             // Bold/italic
+    .replace(/^.*Key symbols?:.*$/im, '')                 // Key symbols line
+    .replace(/^.*entertainment and self-reflection.*$/im, '') // Disclaimer
+    .replace(/^.*not professional psychological.*$/im, '')    // Disclaimer cont.
+    .replace(/\n{3,}/g, '\n\n')                           // Collapse blank lines
+    .trim();
+
+  return { interpretation, symbols };
 }

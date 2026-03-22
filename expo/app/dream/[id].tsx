@@ -227,6 +227,7 @@ export default function DreamDetailScreen() {
                 </View>
               </>
             )}
+            <Text style={styles.disclaimer}>For entertainment and self-reflection only. Not professional psychological advice.</Text>
           </Animated.View>
         ) : isInterpreting ? (
           <View style={styles.interpretingContainer}>
@@ -235,7 +236,7 @@ export default function DreamDetailScreen() {
             </Animated.View>
             <Text style={styles.interpretingText}>Analyzing your dream...</Text>
           </View>
-        ) : (
+        ) : canInterpret() ? (
           <TouchableOpacity
             style={styles.interpretCta}
             onPress={handleInterpret}
@@ -245,6 +246,20 @@ export default function DreamDetailScreen() {
             <Sparkles size={18} color={colors.ctaAccentText} />
             <Text style={styles.interpretCtaText}>Interpret this dream</Text>
           </TouchableOpacity>
+        ) : (
+          <View style={styles.interpretDisabled}>
+            <View style={styles.interpretDisabledRow}>
+              <Sparkles size={16} color={colors.textDisabled} />
+              <Text style={styles.interpretDisabledText}>
+                {isPremium ? 'Daily limit reached — come back tomorrow' : 'Free interpretation used this week'}
+              </Text>
+            </View>
+            {!isPremium && (
+              <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.7}>
+                <Text style={styles.upgradeLink}>Upgrade to Premium</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </ScrollView>
     </View>
@@ -335,7 +350,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   dreamContent: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.sans,
     fontSize: typography.dreamText.fontSize,
     color: colors.textSecondary,
     lineHeight: 29,
@@ -381,7 +396,7 @@ const styles = StyleSheet.create({
     color: colors.accent,
   },
   interpText: {
-    fontFamily: fonts.serifItalic,
+    fontFamily: fonts.sans,
     fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
@@ -411,6 +426,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
+  },
+  disclaimer: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    color: colors.textDisabled,
+    marginTop: spacing.lg,
+    lineHeight: 16,
   },
   interpretingContainer: {
     alignItems: 'center',
@@ -444,5 +466,33 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.ctaAccentText,
+  },
+  interpretDisabled: {
+    borderRadius: radii.md,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: spacing.sm,
+    backgroundColor: colors.surfaceCard,
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  interpretDisabledRow: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: spacing.sm,
+  },
+  interpretDisabledText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+  },
+  upgradeLink: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '600' as const,
+    color: colors.accent,
+    marginTop: spacing.xs,
   },
 });

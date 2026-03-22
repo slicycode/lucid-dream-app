@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontWeight: '500' as const,
   },
   titleInput: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.sans,
     fontSize: typography.subheading.fontSize,
     color: colors.textPrimary,
     backgroundColor: colors.surfaceInput,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   contentInput: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.sans,
     fontSize: typography.dreamText.fontSize,
     color: colors.textPrimary,
     backgroundColor: colors.surfaceInput,
