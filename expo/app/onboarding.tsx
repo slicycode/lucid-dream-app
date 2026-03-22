@@ -16,6 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { ChevronLeft, Lock, Sparkles, Repeat, Moon, Calendar, Star, X } from 'lucide-react-native';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 import OnboardingButton from '@/components/OnboardingButton';
 import QuizOptionCard from '@/components/QuizOptionCard';
 import ProgressBar from '@/components/ProgressBar';
@@ -42,7 +43,8 @@ export default function OnboardingScreen() {
   const [localJournalExp, setLocalJournalExp] = useState(store.journalExperience);
   const [localRecurring, setLocalRecurring] = useState(store.recurringDreams);
   const [localDreamText, setLocalDreamText] = useState(store.firstDreamText);
-  const [selectedPlan, setSelectedPlan] = useState<'weekly' | 'yearly'>('weekly');
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -108,6 +110,30 @@ export default function OnboardingScreen() {
     store.completeOnboarding();
     router.replace('/(tabs)' as any);
   }, [localName, localFrequency, localDetail, localGoals, localJournalExp, localRecurring, localDreamText, store, router]);
+
+  const handlePurchase = useCallback(async () => {
+    const pkg = selectedPlan === 'monthly' ? monthlyPackage : annualPackage;
+    if (!pkg) {
+      finishOnboarding();
+      return;
+    }
+    const success = await purchasePackage(pkg);
+    if (success) finishOnboarding();
+  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding]);
+
+  const handleDiscountPurchase = useCallback(async () => {
+    if (!annualPackage) {
+      finishOnboarding();
+      return;
+    }
+    const success = await purchasePackage(annualPackage);
+    if (success) finishOnboarding();
+  }, [annualPackage, purchasePackage, finishOnboarding]);
+
+  const handleRestore = useCallback(async () => {
+    const restored = await restorePurchases();
+    if (restored) finishOnboarding();
+  }, [restorePurchases, finishOnboarding]);
 
   const toggleGoal = useCallback((goal: string) => {
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -557,8 +583,8 @@ export default function OnboardingScreen() {
         <View style={styles.trialTimeline}>
           {[
             { day: 'Today', desc: 'Unlock everything: unlimited AI interpretations, pattern detection, lucid dreaming tools, and more.' },
-            { day: 'Day 2', desc: "We'll remind you before your trial ends." },
-            { day: 'Day 3', desc: 'Your subscription begins. Cancel before then and pay nothing.' },
+            { day: 'Day 5', desc: "We'll remind you before your trial ends." },
+            { day: 'Day 7', desc: 'Your subscription begins. Cancel before then and pay nothing.' },
           ].map((item, i) => (
             <View key={i} style={styles.trialTimelineItem}>
               <Text style={styles.trialDay}>{item.day}</Text>
@@ -569,29 +595,31 @@ export default function OnboardingScreen() {
 
         <View style={styles.pricingCards}>
           <TouchableOpacity
-            style={[styles.pricingCard, selectedPlan === 'weekly' && styles.pricingCardSelected]}
-            onPress={() => setSelectedPlan('weekly')}
+            style={[styles.pricingCard, selectedPlan === 'monthly' && styles.pricingCardSelected]}
+            onPress={() => setSelectedPlan('monthly')}
             activeOpacity={0.7}
           >
-            {selectedPlan === 'weekly' && <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>}
-            <Text style={styles.pricingPrice}>$4.99 / week</Text>
-            <Text style={[styles.pricingTrial, selectedPlan === 'weekly' ? { color: colors.accent } : { color: colors.textSecondary }]}>3-day free trial</Text>
+            {selectedPlan === 'monthly' && <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>}
+            <Text style={styles.pricingPrice}>$9.99 / month</Text>
+            <Text style={[styles.pricingTrial, selectedPlan === 'monthly' ? { color: colors.accent } : { color: colors.textSecondary }]}>7-day free trial</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'yearly' && styles.pricingCardSelected]}
             onPress={() => setSelectedPlan('yearly')}
             activeOpacity={0.7}
           >
-            <Text style={styles.pricingPrice}>$29.99 / year</Text>
+            <Text style={styles.pricingPrice}>$39.99 / year</Text>
             <Text style={styles.pricingTrial}>7-day free trial</Text>
-            <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>Save 88%</Text></View>
+            <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>Save 67%</Text></View>
           </TouchableOpacity>
         </View>
       </ScrollView>
       <View style={styles.bottomCta}>
-        <OnboardingButton title="Start Free Trial" variant="accent" onPress={finishOnboarding} />
-        <Text style={styles.paywallSmall}>Then $4.99/week. Cancel anytime.</Text>
-        <TouchableOpacity onPress={() => {}} style={styles.restoreLink}>
+        <OnboardingButton title={rcLoading ? 'Processing...' : 'Start Free Trial'} variant="accent" onPress={handlePurchase} disabled={rcLoading} />
+        <Text style={styles.paywallSmall}>
+          {selectedPlan === 'monthly' ? 'Then $9.99/month. Cancel anytime.' : 'Then $39.99/year. Cancel anytime.'}
+        </Text>
+        <TouchableOpacity onPress={handleRestore} style={styles.restoreLink} disabled={rcLoading}>
           <Text style={styles.restoreText}>Restore Purchases</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => goToStep(16)} style={styles.skipLink}>
@@ -611,11 +639,11 @@ export default function OnboardingScreen() {
         <Text style={styles.discountHeading}>Still thinking?</Text>
         <Text style={styles.discountSub}>Here's something to make the decision easier.</Text>
         <View style={styles.discountPriceCard}>
-          <Text style={styles.crossedPrice}>$29.99/year</Text>
-          <Text style={styles.discountPrice}>$19.99 / year</Text>
+          <Text style={styles.crossedPrice}>$39.99/year</Text>
+          <Text style={styles.discountPrice}>$29.99 / year</Text>
           <Text style={styles.discountTrial}>First week free</Text>
         </View>
-        <OnboardingButton title="Claim This Offer" variant="accent" onPress={finishOnboarding} />
+        <OnboardingButton title={rcLoading ? 'Processing...' : 'Claim This Offer'} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
         <TouchableOpacity onPress={finishOnboarding} style={[styles.skipLink, { marginTop: spacing.md }]}>
           <Text style={styles.continueFreeTxt}>No thanks</Text>
         </TouchableOpacity>

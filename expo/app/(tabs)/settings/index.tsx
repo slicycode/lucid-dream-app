@@ -17,12 +17,23 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
   const isPremium = settings.isPremium;
+  const { monthlyPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
+
+  const handleUpgrade = useCallback(async () => {
+    if (!monthlyPackage) return;
+    await purchasePackage(monthlyPackage);
+  }, [monthlyPackage, purchasePackage]);
+
+  const handleRestore = useCallback(async () => {
+    await restorePurchases();
+  }, [restorePurchases]);
 
   const handleResetData = useCallback(() => {
     Alert.alert(
@@ -118,8 +129,8 @@ export default function SettingsScreen() {
         {!isPremium ? (
           renderNavRow(
             <Crown size={18} color={colors.accent} />,
-            'Upgrade to Premium',
-            () => {},
+            rcLoading ? 'Processing...' : 'Upgrade to Premium',
+            handleUpgrade,
             { accent: true }
           )
         ) : (
@@ -130,8 +141,8 @@ export default function SettingsScreen() {
         )}
         {renderNavRow(
           <RefreshCw size={18} color={colors.textSecondary} />,
-          'Restore Purchases',
-          () => {},
+          rcLoading ? 'Restoring...' : 'Restore Purchases',
+          handleRestore,
         )}
 
         <View style={styles.devToggle}>
@@ -148,26 +159,26 @@ export default function SettingsScreen() {
           <Text style={styles.sectionBadge}> PREMIUM</Text>
         </Text>
         {renderToggleRow(
-          <Brain size={18} color={colors.textSecondary} />,
+          <Brain size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
           'Reality Check Reminders',
-          settings.realityCheckEnabled,
-          settings.setRealityCheck,
-          settings.realityCheckEnabled ? `Every ${settings.realityCheckFrequency}` : undefined,
+          settings.realityCheckEnabled && isPremium,
+          (val) => isPremium ? settings.setRealityCheck(val) : handleUpgrade(),
+          isPremium && settings.realityCheckEnabled ? `Every ${settings.realityCheckFrequency}` : undefined,
         )}
         {renderToggleRow(
-          <Moon size={18} color={colors.textSecondary} />,
+          <Moon size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
           'WBTB Alarm',
-          settings.wbtbEnabled,
-          settings.setWbtb,
-          settings.wbtbEnabled ? settings.wbtbTime : undefined,
+          settings.wbtbEnabled && isPremium,
+          (val) => isPremium ? settings.setWbtb(val) : handleUpgrade(),
+          isPremium && settings.wbtbEnabled ? settings.wbtbTime : undefined,
         )}
 
         <Text style={styles.sectionHeader}>DATA</Text>
         {renderNavRow(
           <Download size={18} color={colors.textSecondary} />,
           'Export Dreams (JSON)',
-          () => {},
-          { badge: 'PREMIUM' }
+          isPremium ? () => {} : handleUpgrade,
+          { badge: isPremium ? undefined : 'PREMIUM' }
         )}
         {renderNavRow(
           <Trash2 size={18} color={colors.danger} />,

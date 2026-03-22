@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { ChevronLeft, MoreHorizontal, Sparkles, Moon } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 const PLACEHOLDER_INTERPRETATION = `This dream contains rich symbolic imagery that speaks to your current emotional landscape.
@@ -32,7 +33,9 @@ export default function DreamDetailScreen() {
   const dreams = useDreamsStore((s) => s.dreams);
   const updateDream = useDreamsStore((s) => s.updateDream);
   const deleteDream = useDreamsStore((s) => s.deleteDream);
-  const _isPremium = useSettingsStore((s) => s.isPremium);
+  const canInterpret = useSettingsStore((s) => s.canInterpret);
+  const useInterpretation = useSettingsStore((s) => s.useInterpretation);
+  const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
 
   const dream = useMemo(() => dreams.find((d) => d.id === id), [dreams, id]);
 
@@ -47,7 +50,25 @@ export default function DreamDetailScreen() {
     }
   }, [interpretationVisible, fadeAnim]);
 
+  const handleUpgrade = useCallback(async () => {
+    if (!monthlyPackage) return;
+    await purchasePackage(monthlyPackage);
+  }, [monthlyPackage, purchasePackage]);
+
   const handleInterpret = useCallback(() => {
+    if (!canInterpret()) {
+      Alert.alert(
+        'Free Limit Reached',
+        'You\'ve used your free interpretation this week. Upgrade to Premium for unlimited interpretations.',
+        [
+          { text: 'Maybe Later', style: 'cancel' },
+          { text: 'Upgrade', onPress: handleUpgrade },
+        ]
+      );
+      return;
+    }
+
+    useInterpretation();
     setIsInterpreting(true);
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -71,7 +92,7 @@ export default function DreamDetailScreen() {
       setInterpretationVisible(true);
       if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }, 3000);
-  }, [dream, updateDream, pulseAnim]);
+  }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, handleUpgrade]);
 
   const handleMenu = useCallback(() => {
     Alert.alert(

@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Lock } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 export default function InsightsScreen() {
@@ -18,6 +19,7 @@ export default function InsightsScreen() {
   const _router = useRouter();
   const dreams = useDreamsStore((s) => s.dreams);
   const isPremium = useSettingsStore((s) => s.isPremium);
+  const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
 
   const emotionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -181,10 +183,14 @@ export default function InsightsScreen() {
               <Text style={styles.lockSubtext}>Upgrade to Premium to see your patterns</Text>
               <TouchableOpacity
                 style={styles.lockCta}
-                onPress={() => {}}
+                onPress={async () => {
+                  if (!monthlyPackage) return;
+                  await purchasePackage(monthlyPackage);
+                }}
                 activeOpacity={0.8}
+                disabled={rcLoading}
               >
-                <Text style={styles.lockCtaText}>Start Free Trial</Text>
+                <Text style={styles.lockCtaText}>{rcLoading ? 'Processing...' : 'Start Free Trial'}</Text>
               </TouchableOpacity>
             </View>
           </View>
