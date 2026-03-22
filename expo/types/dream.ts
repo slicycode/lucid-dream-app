@@ -1,3 +1,5 @@
+export type DreamType = 'dream' | 'nightmare';
+
 export interface Dream {
   id: string;
   title: string;
@@ -7,8 +9,12 @@ export interface Dream {
   emotion: string;
   themes: string[];
   isLucid: boolean;
+  dreamType: DreamType;
+  rating: number | null;
+  vividness: number | null;
   interpretation: string | null;
   symbols: string[];
+  isForgotten: boolean;
 }
 
 export const EMOTIONS = [

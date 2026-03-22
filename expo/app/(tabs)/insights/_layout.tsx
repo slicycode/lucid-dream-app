@@ -7,7 +7,7 @@ export default function InsightsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
+        contentStyle: { backgroundColor: colors.background, paddingBottom: 44 },
       }}
     />
   );

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,15 @@ import {
   Switch,
   Alert,
   Platform,
+  Modal,
+  Pressable,
   Linking,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Bell, FileText, Crown, RefreshCw, Brain, Moon, Download, Trash2, Shield, FileQuestion, HelpCircle, Info } from 'lucide-react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { Bell, FileText, Crown, RefreshCw, Brain, Moon, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -28,11 +32,64 @@ import {
 } from '@/services/notifications';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
+const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
+
+function timeStringToDate(time: string): Date {
+  const [h, m] = time.split(':').map(Number);
+  const d = new Date();
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+function dateToTimeString(date: Date): string {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+function formatTime(time: string): string {
+  const [h, m] = time.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 || 12;
+  return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
+}
+
+type PickerTarget = 'morning' | 'wbtb' | 'reality' | null;
+
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
   const isPremium = settings.isPremium;
   const { monthlyPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
+
+  const [activePicker, setActivePicker] = useState<PickerTarget>(null);
+  const sheetAnim = useRef(new Animated.Value(0)).current;
+
+  const openPicker = useCallback((target: PickerTarget) => {
+    setActivePicker(target);
+    sheetAnim.setValue(0);
+    Animated.spring(sheetAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 200,
+      friction: 24,
+    }).start();
+  }, [sheetAnim]);
+
+  const closePicker = useCallback(() => {
+    Animated.timing(sheetAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setActivePicker(null));
+  }, [sheetAnim]);
+
+  const pickerTitle = activePicker === 'morning' ? 'Morning Reminder'
+    : activePicker === 'wbtb' ? 'WBTB Alarm'
+    : activePicker === 'reality' ? 'Reality Check Frequency'
+    : '';
+
+  const pickerTime = activePicker === 'morning' ? settings.morningReminderTime
+    : activePicker === 'wbtb' ? settings.wbtbTime
+    : '07:00';
 
   const handleUpgrade = useCallback(async () => {
     if (!monthlyPackage) return;
@@ -79,6 +136,35 @@ export default function SettingsScreen() {
     }
   }, [settings]);
 
+  const handleRealityFreqChange = useCallback(async (freq: string) => {
+    if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    settings.setRealityCheckFrequency(freq);
+    if (settings.realityCheckEnabled) {
+      await scheduleRealityChecks(freq);
+    }
+  }, [settings]);
+
+  const handleWbtbToggle = useCallback((enabled: boolean) => {
+    if (!isPremium) {
+      void handleUpgrade();
+      return;
+    }
+    settings.setWbtb(enabled);
+  }, [isPremium, settings, handleUpgrade]);
+
+  const handlePickerTimeChange = useCallback(async (_event: DateTimePickerEvent, date?: Date) => {
+    if (!date) return;
+    const timeStr = dateToTimeString(date);
+    if (activePicker === 'morning') {
+      settings.setMorningReminderTime(timeStr);
+      if (settings.morningReminderEnabled) await scheduleMorningReminder(timeStr);
+    } else if (activePicker === 'wbtb') {
+      settings.setWbtbTime(timeStr);
+    }
+  }, [activePicker, settings]);
+
+  const handlePickerDone = closePicker;
+
   const handleResetData = useCallback(() => {
     Alert.alert(
       'Reset All Data',
@@ -109,22 +195,36 @@ export default function SettingsScreen() {
     label: string,
     value: boolean,
     onToggle: (val: boolean) => void,
-    subtitle?: string
+    options?: { subtitle?: string; timeValue?: string; onTimeTap?: () => void }
   ) => (
-    <View style={styles.row}>
-      <View style={styles.rowLeft}>
-        <View style={styles.rowIcon}>{icon}</View>
-        <View>
+    <View style={styles.toggleCard}>
+      <View style={styles.row}>
+        <View style={styles.rowLeft}>
+          <View style={styles.rowIcon}>{icon}</View>
           <Text style={styles.rowLabel}>{label}</Text>
-          {subtitle && <Text style={styles.rowSub}>{subtitle}</Text>}
         </View>
+        <Switch
+          value={value}
+          onValueChange={onToggle}
+          trackColor={{ false: colors.surfaceCardBorder, true: colors.accent }}
+          thumbColor={colors.textPrimary}
+        />
       </View>
-      <Switch
-        value={value}
-        onValueChange={onToggle}
-        trackColor={{ false: colors.surfaceCardBorder, true: colors.accent }}
-        thumbColor={colors.textPrimary}
-      />
+      {value && (options?.subtitle || options?.timeValue) && (
+        <View style={styles.detailRow}>
+          {options?.subtitle && <Text style={styles.rowSub}>{options.subtitle}</Text>}
+          {options?.timeValue && options?.onTimeTap && (
+            <TouchableOpacity
+              style={styles.timePill}
+              onPress={options.onTimeTap}
+              activeOpacity={0.7}
+            >
+              <Clock size={12} color={colors.accent} />
+              <Text style={styles.timePillText}>{options.timeValue}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 
@@ -134,7 +234,7 @@ export default function SettingsScreen() {
     onPress: () => void,
     options?: { accent?: boolean; danger?: boolean; badge?: string; value?: string }
   ) => (
-    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.navRow} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.rowLeft}>
         <View style={styles.rowIcon}>{icon}</View>
         <Text style={[styles.rowLabel, options?.accent && styles.rowAccent, options?.danger && styles.rowDanger]}>
@@ -161,7 +261,11 @@ export default function SettingsScreen() {
           'Morning Reminder',
           settings.morningReminderEnabled,
           handleMorningReminderToggle,
-          settings.morningReminderEnabled ? settings.morningReminderTime : undefined,
+          {
+            subtitle: 'Get reminded to log your dreams',
+            timeValue: formatTime(settings.morningReminderTime),
+            onTimeTap: () => openPicker('morning'),
+          },
         )}
         {renderNavRow(
           <FileText size={18} color={colors.textSecondary} />,
@@ -208,14 +312,22 @@ export default function SettingsScreen() {
           'Reality Check Reminders',
           settings.realityCheckEnabled && isPremium,
           (val) => isPremium ? handleRealityCheckToggle(val) : handleUpgrade(),
-          isPremium && settings.realityCheckEnabled ? `Every ${settings.realityCheckFrequency}` : undefined,
+          {
+            subtitle: isPremium ? 'Periodic "Am I dreaming?" prompts' : undefined,
+            timeValue: `Every ${settings.realityCheckFrequency}`,
+            onTimeTap: () => openPicker('reality'),
+          },
         )}
         {renderToggleRow(
           <Moon size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
           'WBTB Alarm',
           settings.wbtbEnabled && isPremium,
-          (val) => isPremium ? settings.setWbtb(val) : handleUpgrade(),
-          isPremium && settings.wbtbEnabled ? settings.wbtbTime : undefined,
+          handleWbtbToggle,
+          {
+            subtitle: isPremium ? 'Wake Back to Bed technique alarm' : undefined,
+            timeValue: formatTime(settings.wbtbTime),
+            onTimeTap: () => openPicker('wbtb'),
+          },
         )}
 
         <Text style={styles.sectionHeader}>DATA</Text>
@@ -253,6 +365,70 @@ export default function SettingsScreen() {
           <Text style={styles.versionText}>Version 1.0.0</Text>
         </View>
       </ScrollView>
+
+      {/* Bottom sheet time picker */}
+      <Modal
+        visible={activePicker !== null}
+        transparent
+        animationType="none"
+        onRequestClose={handlePickerDone}
+      >
+        <Pressable style={styles.sheetOverlay} onPress={handlePickerDone}>
+          <Animated.View
+            style={[
+              styles.sheetContainer,
+              { paddingBottom: insets.bottom || spacing.md },
+              { transform: [{ translateY: sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [400, 0] }) }] },
+            ]}
+          >
+            <View style={styles.sheetHandle} />
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>{pickerTitle}</Text>
+              <TouchableOpacity onPress={handlePickerDone} activeOpacity={0.7}>
+                <Text style={styles.sheetDone}>Done</Text>
+              </TouchableOpacity>
+            </View>
+
+            {activePicker === 'reality' ? (
+              <View style={styles.freqContent}>
+                <Text style={styles.freqLabel}>How often should we remind you?</Text>
+                <View style={styles.freqRow}>
+                  {REALITY_CHECK_OPTIONS.map((opt) => (
+                    <TouchableOpacity
+                      key={opt}
+                      style={[
+                        styles.freqPill,
+                        settings.realityCheckFrequency === opt && styles.freqPillActive,
+                      ]}
+                      onPress={() => handleRealityFreqChange(opt)}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          styles.freqPillText,
+                          settings.realityCheckFrequency === opt && styles.freqPillTextActive,
+                        ]}
+                      >
+                        Every {opt}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            ) : (
+              <DateTimePicker
+                value={timeStringToDate(pickerTime)}
+                mode="time"
+                display="spinner"
+                onChange={handlePickerTimeChange}
+                themeVariant="dark"
+                textColor={colors.textPrimary}
+                minuteInterval={5}
+              />
+            )}
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -289,7 +465,29 @@ const styles = StyleSheet.create({
   sectionBadge: {
     color: colors.accent,
   },
+  toggleCard: {
+    backgroundColor: colors.surfaceCard,
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    borderRadius: radii.md,
+    marginBottom: spacing.sm,
+    overflow: 'hidden',
+  },
   row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    minHeight: 52,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  navRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -320,7 +518,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
-    marginTop: 2,
   },
   rowAccent: {
     color: colors.accent,
@@ -333,6 +530,98 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
+  },
+  timePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.accentMuted,
+    borderWidth: 1,
+    borderColor: colors.accentBorder,
+    borderRadius: radii.lg,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  timePillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500' as const,
+    color: colors.accent,
+  },
+  // Bottom sheet
+  sheetOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  sheetContainer: {
+    backgroundColor: colors.surfaceElevated,
+    borderTopLeftRadius: radii.xl,
+    borderTopRightRadius: radii.xl,
+    paddingTop: spacing.sm,
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.surfaceCardBorder,
+    alignSelf: 'center',
+    marginBottom: spacing.sm,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+  },
+  sheetTitle: {
+    fontFamily: fonts.serif,
+    fontSize: typography.subheading.fontSize,
+    fontWeight: '600' as const,
+    color: colors.textPrimary,
+  },
+  sheetDone: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    fontWeight: '600' as const,
+    color: colors.accent,
+  },
+  freqContent: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
+  },
+  freqLabel: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
+  },
+  freqRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  freqPill: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.surfaceInput,
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    borderRadius: radii.lg,
+    paddingVertical: 12,
+  },
+  freqPillActive: {
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accentBorder,
+  },
+  freqPillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    fontWeight: '500' as const,
+    color: colors.textMuted,
+  },
+  freqPillTextActive: {
+    color: colors.accent,
   },
   premiumBadge: {
     backgroundColor: colors.accentMuted,

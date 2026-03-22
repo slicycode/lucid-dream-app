@@ -7,7 +7,7 @@ export default function JournalLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
+        contentStyle: { backgroundColor: colors.background, paddingBottom: 44 },
       }}
     />
   );

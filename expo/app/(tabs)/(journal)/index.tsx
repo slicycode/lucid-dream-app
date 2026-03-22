@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Plus, Sparkles, Moon } from 'lucide-react-native';
+import { Plus, Sparkles, Moon, Skull } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
@@ -154,6 +154,25 @@ export default function JournalScreen() {
                 <Text style={styles.dreamPreview} numberOfLines={2}>
                   {dream.content}
                 </Text>
+                <View style={styles.dreamPillsRow}>
+                  {dream.dreamType === 'nightmare' ? (
+                    <View style={styles.nightmarePill}>
+                      <Skull size={10} color={colors.danger} />
+                      <Text style={styles.nightmarePillText}>Nightmare</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.dreamPill}>
+                      <Moon size={10} color={colors.textSecondary} />
+                      <Text style={styles.dreamPillText}>Dream</Text>
+                    </View>
+                  )}
+                  {dream.isLucid && (
+                    <View style={styles.lucidPill}>
+                      <Moon size={10} color={colors.accent} />
+                      <Text style={styles.lucidPillText}>Lucid</Text>
+                    </View>
+                  )}
+                </View>
               </TouchableOpacity>
             ))}
           </>
@@ -169,7 +188,7 @@ export default function JournalScreen() {
       </ScrollView>
 
       <TouchableOpacity
-        style={[styles.fab, { bottom: 80 + spacing.md }]}
+        style={[styles.fab, { bottom: 44 + spacing.md }]}
         onPress={() => {
           if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           router.push('/new-dream');
@@ -293,6 +312,57 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: 20,
     marginLeft: sizes.emotionDot + spacing.sm,
+  },
+  dreamPillsRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: spacing.sm,
+    marginLeft: sizes.emotionDot + spacing.sm,
+  },
+  dreamPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.surfaceInput,
+    borderRadius: radii.lg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  dreamPillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
+    color: colors.textSecondary,
+  },
+  nightmarePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    borderRadius: radii.lg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  nightmarePillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
+    color: colors.danger,
+  },
+  lucidPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.accentMuted,
+    borderRadius: radii.lg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  lucidPillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
+    color: colors.accent,
   },
   emptyState: {
     alignItems: 'center',

@@ -24,6 +24,8 @@ interface InterpretParams {
   emotion: string;
   themes: string[];
   isLucid: boolean;
+  dreamType?: string;
+  vividness?: number | null;
 }
 
 interface InterpretResult {
@@ -54,6 +56,8 @@ export async function interpretDream(params: InterpretParams): Promise<Interpret
     `Dream: ${trimmedDream}`,
     `Emotion: ${params.emotion}`,
     `Themes: ${params.themes.join(', ') || 'none specified'}`,
+    `Type: ${params.dreamType ?? 'dream'}`,
+    `Vividness: ${params.vividness ?? 'not rated'}`,
     `Lucid: ${params.isLucid ? 'yes' : 'no'}`,
   ].join('\n');
 

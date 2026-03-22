@@ -12,7 +12,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { ChevronLeft, MoreHorizontal, Sparkles, Moon } from 'lucide-react-native';
+import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
@@ -115,6 +115,8 @@ export default function DreamDetailScreen() {
         emotion: dream.emotion,
         themes: dream.themes,
         isLucid: dream.isLucid,
+        dreamType: dream.dreamType,
+        vividness: dream.vividness,
       });
 
       // Only decrement after successful API response
@@ -211,6 +213,12 @@ export default function DreamDetailScreen() {
               {dream.emotion}
             </Text>
           </View>
+          {dream.dreamType === 'nightmare' && (
+            <View style={styles.nightmareBadge}>
+              <Skull size={12} color={colors.danger} />
+              <Text style={styles.nightmareText}>Nightmare</Text>
+            </View>
+          )}
           {dream.isLucid && (
             <View style={styles.lucidBadge}>
               <Moon size={12} color={colors.accent} />
@@ -220,6 +228,23 @@ export default function DreamDetailScreen() {
         </View>
 
         <Text style={styles.title}>{dream.title}</Text>
+
+        {(dream.rating !== null || dream.vividness !== null) && (
+          <View style={styles.metaRow}>
+            {dream.rating !== null && (
+              <View style={styles.metaBadge}>
+                <Star size={12} color={colors.textSecondary} />
+                <Text style={styles.metaText}>{dream.rating}/5</Text>
+              </View>
+            )}
+            {dream.vividness !== null && (
+              <View style={styles.metaBadge}>
+                <Eye size={12} color={colors.textSecondary} />
+                <Text style={styles.metaText}>{dream.vividness}/5 vivid</Text>
+              </View>
+            )}
+          </View>
+        )}
         <Text style={styles.dreamContent}>{dream.content}</Text>
 
         {dream.themes.length > 0 && (
@@ -353,6 +378,37 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     fontWeight: '500' as const,
+  },
+  nightmareBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.30)',
+    borderRadius: radii.lg,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 6,
+  },
+  nightmareText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500' as const,
+    color: colors.danger,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  metaBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  metaText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textSecondary,
   },
   lucidBadge: {
     flexDirection: 'row',
