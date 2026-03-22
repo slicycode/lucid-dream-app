@@ -18,6 +18,14 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import {
+  requestPermissions,
+  scheduleMorningReminder,
+  cancelMorningReminder,
+  scheduleRealityChecks,
+  cancelRealityChecks,
+  cancelAllNotifications,
+} from '@/services/notifications';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 export default function SettingsScreen() {
@@ -35,6 +43,42 @@ export default function SettingsScreen() {
     await restorePurchases();
   }, [restorePurchases]);
 
+  const handleMorningReminderToggle = useCallback(async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestPermissions();
+      if (!granted) {
+        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use reminders.', [
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: 'Cancel', style: 'cancel' },
+        ]);
+        return;
+      }
+      settings.setMorningReminder(true);
+      await scheduleMorningReminder(settings.morningReminderTime);
+    } else {
+      settings.setMorningReminder(false);
+      await cancelMorningReminder();
+    }
+  }, [settings]);
+
+  const handleRealityCheckToggle = useCallback(async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestPermissions();
+      if (!granted) {
+        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use reminders.', [
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: 'Cancel', style: 'cancel' },
+        ]);
+        return;
+      }
+      settings.setRealityCheck(true);
+      await scheduleRealityChecks(settings.realityCheckFrequency);
+    } else {
+      settings.setRealityCheck(false);
+      await cancelRealityChecks();
+    }
+  }, [settings]);
+
   const handleResetData = useCallback(() => {
     Alert.alert(
       'Reset All Data',
@@ -46,6 +90,7 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: () => {
             if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            void cancelAllNotifications();
             resetAllData();
             useOnboardingStore.persist.clearStorage();
             useDreamsStore.persist.clearStorage();
@@ -115,7 +160,7 @@ export default function SettingsScreen() {
           <Bell size={18} color={colors.textSecondary} />,
           'Morning Reminder',
           settings.morningReminderEnabled,
-          settings.setMorningReminder,
+          handleMorningReminderToggle,
           settings.morningReminderEnabled ? settings.morningReminderTime : undefined,
         )}
         {renderNavRow(
@@ -162,7 +207,7 @@ export default function SettingsScreen() {
           <Brain size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
           'Reality Check Reminders',
           settings.realityCheckEnabled && isPremium,
-          (val) => isPremium ? settings.setRealityCheck(val) : handleUpgrade(),
+          (val) => isPremium ? handleRealityCheckToggle(val) : handleUpgrade(),
           isPremium && settings.realityCheckEnabled ? `Every ${settings.realityCheckFrequency}` : undefined,
         )}
         {renderToggleRow(

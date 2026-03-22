@@ -15,8 +15,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { ChevronLeft, Lock, Sparkles, Repeat, Moon, Calendar, Star, X } from 'lucide-react-native';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { requestPermissions, scheduleMorningReminder } from '@/services/notifications';
 import OnboardingButton from '@/components/OnboardingButton';
 import QuizOptionCard from '@/components/QuizOptionCard';
 import ProgressBar from '@/components/ProgressBar';
@@ -404,6 +406,15 @@ export default function OnboardingScreen() {
     );
   };
 
+  const handleEnableReminders = useCallback(async () => {
+    const granted = await requestPermissions();
+    if (granted) {
+      useSettingsStore.getState().setMorningReminder(true);
+      await scheduleMorningReminder('07:00');
+    }
+    goNext();
+  }, [goNext]);
+
   const renderNotificationPermission = () => (
     <View style={styles.centeredContent}>
       <Text style={styles.stepHeading}>Never lose a dream again</Text>
@@ -414,7 +425,7 @@ export default function OnboardingScreen() {
         </Text>
       </View>
       <View style={styles.bottomCta}>
-        <OnboardingButton title="Enable Reminders" onPress={goNext} />
+        <OnboardingButton title="Enable Reminders" onPress={handleEnableReminders} />
         <TouchableOpacity onPress={goNext} style={styles.skipLink} testID="skip-button">
           <Text style={styles.skipText}>Maybe later</Text>
         </TouchableOpacity>
