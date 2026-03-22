@@ -52,7 +52,8 @@ function getTodayString(): string {
 export default function JournalScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const dreams = useDreamsStore((s) => s.dreams);
+  const allDreams = useDreamsStore((s) => s.dreams);
+  const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const deleteDream = useDreamsStore((s) => s.deleteDream);
   const name = useOnboardingStore((s) => s.name);
   const [refreshing, setRefreshing] = React.useState(false);

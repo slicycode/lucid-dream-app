@@ -105,6 +105,7 @@ interface DreamsState {
   dreams: Dream[];
   stats: DreamStats;
   addDream: (dream: Dream) => void;
+  addForgotten: (date: string) => void;
   updateDream: (id: string, updates: Partial<Dream>) => void;
   deleteDream: (id: string) => void;
   getDreamsByDate: (date: string) => Dream[];
@@ -135,6 +136,37 @@ export const useDreamsStore = create<DreamsState>()(
               ...state.stats,
               ...streakUpdate,
               totalDreamsLogged: state.stats.totalDreamsLogged + 1,
+            },
+          };
+        }),
+
+      addForgotten: (date) =>
+        set((state) => {
+          const already = state.dreams.some((d) => d.date === date && d.isForgotten);
+          if (already) return {};
+
+          const forgotten: Dream = {
+            id: `forgotten-${date}`,
+            title: '',
+            content: '',
+            date,
+            loggedAt: new Date().toISOString(),
+            emotion: 'Neutral',
+            themes: [],
+            isLucid: false,
+            dreamType: 'dream',
+            rating: null,
+            vividness: null,
+            interpretation: null,
+            symbols: [],
+            isForgotten: true,
+          };
+
+          return {
+            dreams: [...state.dreams, forgotten],
+            stats: {
+              ...state.stats,
+              totalForgotten: state.stats.totalForgotten + 1,
             },
           };
         }),

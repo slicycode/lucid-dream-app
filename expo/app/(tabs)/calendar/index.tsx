@@ -1,14 +1,19 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Modal,
+  Pressable,
+  Platform,
+  Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
+import { ChevronLeft, ChevronRight, Sparkles, Plus, X } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
@@ -35,23 +40,69 @@ export default function CalendarScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const dreams = useDreamsStore((s) => s.dreams);
+  const addForgotten = useDreamsStore((s) => s.addForgotten);
 
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [sheetDate, setSheetDate] = useState<string | null>(null);
+  const sheetAnim = useRef(new Animated.Value(0)).current;
+
+  const openSheet = useCallback((date: string) => {
+    setSheetDate(date);
+    sheetAnim.setValue(0);
+    Animated.spring(sheetAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 200,
+      friction: 24,
+    }).start();
+  }, [sheetAnim]);
+
+  const closeSheet = useCallback(() => {
+    Animated.timing(sheetAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setSheetDate(null));
+  }, [sheetAnim]);
+
+  const handleDayPress = useCallback((dateKey: string, hasDreams: boolean) => {
+    setSelectedDate(dateKey);
+    if (!hasDreams) {
+      openSheet(dateKey);
+    }
+  }, [openSheet]);
+
+  const handleAddDream = useCallback(() => {
+    closeSheet();
+    router.push('/new-dream');
+  }, [closeSheet, router]);
+
+  const handleForgot = useCallback(() => {
+    if (!sheetDate) return;
+    if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    addForgotten(sheetDate);
+    closeSheet();
+  }, [sheetDate, addForgotten, closeSheet]);
 
   const todayKey = useMemo(() => {
     const n = new Date();
     return formatDateKey(n.getFullYear(), n.getMonth(), n.getDate());
   }, []);
 
-  const dreamsByDate = useMemo(() => {
+  const { dreamsByDate, forgottenDates } = useMemo(() => {
     const map: Record<string, typeof dreams> = {};
+    const forgotten = new Set<string>();
     dreams.forEach((d) => {
+      if (d.isForgotten) {
+        forgotten.add(d.date);
+        return;
+      }
       if (!map[d.date]) map[d.date] = [];
       map[d.date].push(d);
     });
-    return map;
+    return { dreamsByDate: map, forgottenDates: forgotten };
   }, [dreams]);
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
@@ -157,13 +208,14 @@ export default function CalendarScreen() {
             const isToday = dateKey === todayKey;
             const isSelected = dateKey === selectedDate;
             const dayDreams = dreamsByDate[dateKey];
+            const isForgotten = forgottenDates.has(dateKey);
             const primaryEmotion = dayDreams?.[0]?.emotion;
 
             return (
               <TouchableOpacity
                 key={dateKey}
                 style={[styles.dayCell, isSelected && styles.dayCellSelected]}
-                onPress={() => setSelectedDate(dateKey)}
+                onPress={() => handleDayPress(dateKey, !!dayDreams)}
                 activeOpacity={0.7}
               >
                 <Text style={[styles.dayNumber, isToday && styles.dayNumberToday]}>
@@ -176,6 +228,8 @@ export default function CalendarScreen() {
                       { backgroundColor: colors.emotions[primaryEmotion] || colors.emotions.Neutral },
                     ]}
                   />
+                ) : isForgotten ? (
+                  <X size={8} color={colors.textDisabled} />
                 ) : (
                   <View style={styles.emptyDot} />
                 )}
@@ -213,6 +267,13 @@ export default function CalendarScreen() {
               </TouchableOpacity>
             ))}
           </View>
+        ) : selectedDate && forgottenDates.has(selectedDate) ? (
+          <View style={styles.selectedSection}>
+            <View style={styles.forgottenCard}>
+              <X size={16} color={colors.textDisabled} />
+              <Text style={styles.forgottenText}>You marked this night as forgotten</Text>
+            </View>
+          </View>
         ) : (
           <View style={styles.streakSection}>
             <View style={styles.streakRow}>
@@ -226,6 +287,43 @@ export default function CalendarScreen() {
           </View>
         )}
       </ScrollView>
+
+      <Modal
+        visible={sheetDate !== null}
+        transparent
+        animationType="none"
+        onRequestClose={closeSheet}
+      >
+        <Pressable style={styles.sheetOverlay} onPress={closeSheet}>
+          <Animated.View
+            style={[
+              styles.sheetContainer,
+              { paddingBottom: insets.bottom || spacing.md },
+              { transform: [{ translateY: sheetAnim.interpolate({ inputRange: [0, 1], outputRange: [300, 0] }) }] },
+            ]}
+          >
+            <View style={styles.sheetHandle} />
+            <Text style={styles.sheetTitle}>No dream logged</Text>
+            <Text style={styles.sheetSubtitle}>What happened that night?</Text>
+
+            <TouchableOpacity style={styles.sheetOption} onPress={handleAddDream} activeOpacity={0.7}>
+              <Plus size={18} color={colors.accent} />
+              <View>
+                <Text style={styles.sheetOptionLabel}>Add a dream</Text>
+                <Text style={styles.sheetOptionSub}>Log a dream for this night</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.sheetOption} onPress={handleForgot} activeOpacity={0.7}>
+              <X size={18} color={colors.textMuted} />
+              <View>
+                <Text style={styles.sheetOptionLabel}>I forgot</Text>
+                <Text style={styles.sheetOptionSub}>Mark this night — helps track recall rate</Text>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -394,5 +492,76 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textSecondary,
+  },
+  forgottenCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.surfaceCard,
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    borderRadius: radii.md,
+    padding: spacing.cardPadding,
+  },
+  forgottenText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    color: colors.textMuted,
+  },
+  sheetOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  sheetContainer: {
+    backgroundColor: colors.surfaceElevated,
+    borderTopLeftRadius: radii.xl,
+    borderTopRightRadius: radii.xl,
+    paddingTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.surfaceCardBorder,
+    alignSelf: 'center',
+    marginBottom: spacing.md,
+  },
+  sheetTitle: {
+    fontFamily: fonts.serif,
+    fontSize: typography.subheading.fontSize,
+    fontWeight: '600' as const,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  sheetSubtitle: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+    marginBottom: spacing.lg,
+  },
+  sheetOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surfaceCard,
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  sheetOptionLabel: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    fontWeight: '500' as const,
+    color: colors.textPrimary,
+  },
+  sheetOptionSub: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    color: colors.textMuted,
+    marginTop: 2,
   },
 });
