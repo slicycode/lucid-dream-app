@@ -1,13 +1,12 @@
 {
   "expo": {
     "name": "Lucid",
-    "slug": "kn9xf5mzhihx1ae9x9qfj",
+    "slug": "lucid-dream-journal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rork-app",
+    "scheme": "lucid",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -15,14 +14,17 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "app.rork.kn9xf5mzhihx1ae9x9qfj"
+      "bundleIdentifier": "com.slicycode.lucid",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "app.rork.kn9xf5mzhihx1ae9x9qfj"
+      "package": "com.slicycode.lucid"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -31,7 +33,7 @@
       [
         "expo-router",
         {
-          "origin": "https://rork.com/"
+          "origin": "https://lucid.app/"
         }
       ],
       "expo-font",
@@ -39,6 +41,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": "https://lucid.app/"
+      },
+      "eas": {
+        "projectId": "90293442-b8b8-4d05-a613-1305f2076caf"
+      }
+    },
+    "owner": "slicycode"
   }
 }

@@ -1,62 +1,28 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
-import { BookOpen, Calendar, BarChart2, Settings } from 'lucide-react-native';
-import { colors, fonts, typography, spacing } from '@/constants/theme';
-import { StyleSheet } from 'react-native';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { colors } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: styles.tabLabel,
-      }}
+    <NativeTabs
+      tintColor={colors.accent}
     >
-      <Tabs.Screen
-        name="(journal)"
-        options={{
-          title: 'Journal',
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          title: 'Calendar',
-          tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="insights"
-        options={{
-          title: 'Insights',
-          tabBarIcon: ({ color, size }) => <BarChart2 size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="(journal)">
+        <NativeTabs.Trigger.Icon sf="book.fill" md="auto_stories" />
+        <NativeTabs.Trigger.Label>Journal</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="calendar">
+        <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
+        <NativeTabs.Trigger.Label>Calendar</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="insights">
+        <NativeTabs.Trigger.Icon sf="chart.bar.fill" md="bar_chart" />
+        <NativeTabs.Trigger.Label>Insights</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="settings">
+        <NativeTabs.Trigger.Icon sf="gearshape.fill" md="settings" />
+        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.background,
-    borderTopColor: colors.surfaceCardBorder,
-    borderTopWidth: 1,
-    paddingTop: spacing.xs,
-  },
-  tabLabel: {
-    fontFamily: fonts.sans,
-    fontSize: typography.tiny.fontSize,
-    fontWeight: '500' as const,
-  },
-});

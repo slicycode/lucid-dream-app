@@ -1,0 +1,30 @@
+name: Build and Submit to TestFlight
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  lint:
+    name: Lint
+    type: managed-run
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - name: Run ESLint
+        run: npx expo lint
+
+  build_ios:
+    name: Build iOS
+    needs: [lint]
+    type: build
+    platform: ios
+    profile: production
+
+  submit_ios:
+    name: Submit to TestFlight
+    needs: [build_ios]
+    type: submit
+    platform: ios
+    profile: production
+    build_id: ${{ needs.build_ios.outputs.build_id }}
