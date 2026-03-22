@@ -44,7 +44,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
   },
   extra: {
-    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
     revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS,
     sentryDsn: process.env.SENTRY_DSN,
     router: {
