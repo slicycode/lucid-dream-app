@@ -12,7 +12,7 @@ import {
   Switch,
   Animated,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useDreamsStore } from '@/store/dreamsStore';
@@ -89,10 +89,10 @@ function SnapSlider({
     });
   }, []);
 
-  const displayValue = value ?? 3;
+  const hasValue = value !== null;
   const displayThumbLeft =
-    trackWidth.current > 0
-      ? getPositionForStep(displayValue, trackWidth.current)
+    hasValue && trackWidth.current > 0
+      ? getPositionForStep(value, trackWidth.current)
       : null;
 
   return (
@@ -109,19 +109,21 @@ function SnapSlider({
         {...panResponder.panHandlers}
       >
         <View style={sliderStyles.track} />
-        <View
-          style={[
-            sliderStyles.trackFill,
-            {
-              width:
-                trackWidth.current > 0
-                  ? getPositionForStep(displayValue, trackWidth.current) + THUMB_SIZE / 2
-                  : 0,
-            },
-          ]}
-        />
+        {hasValue && (
+          <View
+            style={[
+              sliderStyles.trackFill,
+              {
+                width:
+                  trackWidth.current > 0
+                    ? getPositionForStep(value, trackWidth.current) + THUMB_SIZE / 2
+                    : 0,
+              },
+            ]}
+          />
+        )}
         {[1, 2, 3, 4, 5].map((step) => {
-          const active = step <= displayValue;
+          const active = hasValue && step <= value;
           return (
             <View
               key={step}
@@ -140,7 +142,7 @@ function SnapSlider({
         })}
         {displayThumbLeft !== null && (
           <View style={[sliderStyles.thumb, { left: displayThumbLeft }]}>
-            <Text style={sliderStyles.thumbText}>{displayValue}</Text>
+            <Text style={sliderStyles.thumbText}>{value}</Text>
           </View>
         )}
       </View>
@@ -150,14 +152,14 @@ function SnapSlider({
           hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
           activeOpacity={0.7}
         >
-          <Text style={[sliderStyles.stepText, displayValue === 1 && sliderStyles.stepTextActive]}>1</Text>
+          <Text style={[sliderStyles.stepText, value === 1 && sliderStyles.stepTextActive]}>1</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => tapStep(5)}
           hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
           activeOpacity={0.7}
         >
-          <Text style={[sliderStyles.stepText, displayValue === 5 && sliderStyles.stepTextActive]}>5</Text>
+          <Text style={[sliderStyles.stepText, value === 5 && sliderStyles.stepTextActive]}>5</Text>
         </TouchableOpacity>
       </View>
       <View style={sliderStyles.labels}>
@@ -324,8 +326,22 @@ function DreamTypeToggle({
   );
 }
 
+function formatDatePill(dateStr: string | undefined): string {
+  if (!dateStr) return 'Last night';
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const todayKey = today.toISOString().split('T')[0];
+  const yesterdayKey = yesterday.toISOString().split('T')[0];
+  if (dateStr === todayKey) return 'Last night';
+  if (dateStr === yesterdayKey) return 'Last night';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
 export default function NewDreamScreen() {
   const router = useRouter();
+  const { date: paramDate } = useLocalSearchParams<{ date?: string }>();
   const insets = useSafeAreaInsets();
   const addDream = useDreamsStore((s) => s.addDream);
 
@@ -337,6 +353,7 @@ export default function NewDreamScreen() {
   const [dreamType, setDreamType] = useState<DreamType>('dream');
   const [rating, setRating] = useState<number | null>(null);
   const [vividness, setVividness] = useState<number | null>(null);
+  const [isFirstPerson, setIsFirstPerson] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const canSave = title.trim().length > 0 && content.trim().length > 0;
@@ -346,14 +363,13 @@ export default function NewDreamScreen() {
     if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     const now = new Date();
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 0);
+    const dreamDate = paramDate || now.toISOString().split('T')[0];
 
     addDream({
       id: Date.now().toString(),
       title: title.trim(),
       content: content.trim(),
-      date: now.toISOString().split('T')[0],
+      date: dreamDate,
       loggedAt: now.toISOString(),
       emotion: emotion || 'Neutral',
       themes,
@@ -361,13 +377,14 @@ export default function NewDreamScreen() {
       dreamType,
       rating,
       vividness,
+      isFirstPerson,
       interpretation: null,
       symbols: [],
       isForgotten: false,
     });
 
     router.back();
-  }, [canSave, title, content, emotion, themes, isLucid, dreamType, rating, vividness, addDream, router]);
+  }, [canSave, title, content, emotion, themes, isLucid, dreamType, rating, vividness, isFirstPerson, addDream, router]);
 
   const toggleTheme = useCallback((theme: string) => {
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -403,7 +420,7 @@ export default function NewDreamScreen() {
         >
           <View style={styles.dateRow}>
             <View style={styles.datePill}>
-              <Text style={styles.datePillText}>Last night</Text>
+              <Text style={styles.datePillText}>{formatDatePill(paramDate)}</Text>
             </View>
           </View>
 
@@ -497,6 +514,19 @@ export default function NewDreamScreen() {
               onValueChange={(val) => {
                 if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setIsLucid(val);
+              }}
+              trackColor={{ false: colors.surfaceCardBorder, true: colors.accent }}
+              thumbColor={colors.textPrimary}
+            />
+          </View>
+
+          <View style={[styles.lucidRow, { marginTop: spacing.sm }]}>
+            <Text style={styles.lucidLabel}>Were you in this dream?</Text>
+            <Switch
+              value={isFirstPerson}
+              onValueChange={(val) => {
+                if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsFirstPerson(val);
               }}
               trackColor={{ false: colors.surfaceCardBorder, true: colors.accent }}
               thumbColor={colors.textPrimary}

@@ -76,7 +76,7 @@ export default function DreamDetailScreen() {
 
   const isPremium = useSettingsStore((s) => s.isPremium);
 
-  const handleInterpret = useCallback(async () => {
+  const doInterpret = useCallback(async () => {
     if (!canInterpret()) {
       if (isPremium) {
         Alert.alert(
@@ -117,6 +117,7 @@ export default function DreamDetailScreen() {
         isLucid: dream.isLucid,
         dreamType: dream.dreamType,
         vividness: dream.vividness,
+        isFirstPerson: dream.isFirstPerson,
       });
 
       // Only decrement after successful API response
@@ -147,6 +148,21 @@ export default function DreamDetailScreen() {
       );
     }
   }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, handleUpgrade]);
+
+  const handleInterpret = useCallback(() => {
+    if (dream?.interpretation) {
+      Alert.alert(
+        'Re-interpret this dream?',
+        `This will replace the current interpretation and use one of your ${isPremium ? 'daily' : 'weekly'} interpretations.`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Re-interpret', onPress: () => void doInterpret() },
+        ]
+      );
+    } else {
+      void doInterpret();
+    }
+  }, [dream, isPremium, doInterpret]);
 
   const handleMenu = useCallback(() => {
     Alert.alert(
@@ -206,26 +222,34 @@ export default function DreamDetailScreen() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.dateText}>{formattedDate} · {formattedTime}</Text>
 
-        <View style={styles.badgesRow}>
-          <View style={[styles.emotionBadge, { borderColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>
-            <View style={[styles.emotionDot, { backgroundColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]} />
-            <Text style={[styles.emotionText, { color: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>
-              {dream.emotion}
-            </Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.badgesScroll}>
+          <View style={styles.badgesRow}>
+            <View style={[styles.emotionBadge, { borderColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>
+              <View style={[styles.emotionDot, { backgroundColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]} />
+              <Text style={[styles.emotionText, { color: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>
+                {dream.emotion}
+              </Text>
+            </View>
+            {dream.dreamType === 'nightmare' && (
+              <View style={styles.nightmareBadge}>
+                <Skull size={12} color={colors.danger} />
+                <Text style={styles.nightmareText}>Nightmare</Text>
+              </View>
+            )}
+            {dream.isLucid && (
+              <View style={styles.lucidBadge}>
+                <Moon size={12} color={colors.accent} />
+                <Text style={styles.lucidText}>Lucid</Text>
+              </View>
+            )}
+            <View style={styles.observerBadge}>
+              <Eye size={12} color={dream.isFirstPerson === false ? colors.accent : colors.textSecondary} />
+              <Text style={[styles.observerText, dream.isFirstPerson === false && { color: colors.accent }]}>
+                {dream.isFirstPerson === false ? 'Observer' : 'First person'}
+              </Text>
+            </View>
           </View>
-          {dream.dreamType === 'nightmare' && (
-            <View style={styles.nightmareBadge}>
-              <Skull size={12} color={colors.danger} />
-              <Text style={styles.nightmareText}>Nightmare</Text>
-            </View>
-          )}
-          {dream.isLucid && (
-            <View style={styles.lucidBadge}>
-              <Moon size={12} color={colors.accent} />
-              <Text style={styles.lucidText}>Lucid</Text>
-            </View>
-          )}
-        </View>
+        </ScrollView>
 
         <Text style={styles.title}>{dream.title}</Text>
 
@@ -282,6 +306,16 @@ export default function DreamDetailScreen() {
               </>
             )}
             <Text style={styles.disclaimer}>For entertainment and self-reflection only. Not professional psychological advice.</Text>
+            {canInterpret() && (
+              <TouchableOpacity
+                style={styles.reinterpretCta}
+                onPress={handleInterpret}
+                activeOpacity={0.7}
+              >
+                <Sparkles size={14} color={colors.accent} />
+                <Text style={styles.reinterpretCtaText}>Re-interpret</Text>
+              </TouchableOpacity>
+            )}
           </Animated.View>
         ) : isInterpreting ? (
           <View style={styles.interpretingContainer}>
@@ -355,10 +389,14 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginBottom: spacing.md,
   },
+  badgesScroll: {
+    marginBottom: spacing.md,
+    marginHorizontal: -spacing.screenPadding,
+    paddingHorizontal: spacing.screenPadding,
+  },
   badgesRow: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginBottom: spacing.md,
   },
   emotionBadge: {
     flexDirection: 'row',
@@ -408,6 +446,22 @@ const styles = StyleSheet.create({
   metaText: {
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
+    color: colors.textSecondary,
+  },
+  observerBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.surfaceCardBorder,
+    borderRadius: radii.lg,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 6,
+  },
+  observerText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500' as const,
     color: colors.textSecondary,
   },
   lucidBadge: {
@@ -553,6 +607,20 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.ctaAccentText,
+  },
+  reinterpretCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  reinterpretCtaText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500' as const,
+    color: colors.accent,
   },
   interpretDisabled: {
     borderRadius: radii.md,

@@ -75,9 +75,10 @@ export default function CalendarScreen() {
   }, [openSheet]);
 
   const handleAddDream = useCallback(() => {
-    closeSheet();
-    router.push('/new-dream');
-  }, [closeSheet, router]);
+    const date = sheetDate!;
+    setSheetDate(null);
+    router.push(`/new-dream?date=${date}`);
+  }, [router, sheetDate]);
 
   const handleForgot = useCallback(() => {
     if (!sheetDate) return;
@@ -206,6 +207,7 @@ export default function CalendarScreen() {
             }
             const dateKey = formatDateKey(currentYear, currentMonth, day);
             const isToday = dateKey === todayKey;
+            const isFuture = dateKey > todayKey;
             const isSelected = dateKey === selectedDate;
             const dayDreams = dreamsByDate[dateKey];
             const isForgotten = forgottenDates.has(dateKey);
@@ -214,11 +216,12 @@ export default function CalendarScreen() {
             return (
               <TouchableOpacity
                 key={dateKey}
-                style={[styles.dayCell, isSelected && styles.dayCellSelected]}
-                onPress={() => handleDayPress(dateKey, !!dayDreams)}
-                activeOpacity={0.7}
+                style={[styles.dayCell, isSelected && !isFuture && styles.dayCellSelected]}
+                onPress={() => !isFuture && handleDayPress(dateKey, !!dayDreams)}
+                activeOpacity={isFuture ? 1 : 0.7}
+                disabled={isFuture}
               >
-                <Text style={[styles.dayNumber, isToday && styles.dayNumberToday]}>
+                <Text style={[styles.dayNumber, isToday && styles.dayNumberToday, isFuture && styles.dayNumberFuture]}>
                   {day}
                 </Text>
                 {dayDreams ? (
@@ -390,6 +393,10 @@ const styles = StyleSheet.create({
   dayNumberToday: {
     color: colors.accent,
     fontWeight: '700' as const,
+  },
+  dayNumberFuture: {
+    color: colors.textDisabled,
+    opacity: 0.4,
   },
   dreamDot: {
     width: 6,

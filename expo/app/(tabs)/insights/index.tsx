@@ -17,7 +17,8 @@ import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/th
 export default function InsightsScreen() {
   const insets = useSafeAreaInsets();
   const _router = useRouter();
-  const dreams = useDreamsStore((s) => s.dreams);
+  const allDreams = useDreamsStore((s) => s.dreams);
+  const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const isPremium = useSettingsStore((s) => s.isPremium);
   const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
 

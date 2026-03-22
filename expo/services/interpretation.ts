@@ -26,6 +26,7 @@ interface InterpretParams {
   isLucid: boolean;
   dreamType?: string;
   vividness?: number | null;
+  isFirstPerson?: boolean;
 }
 
 interface InterpretResult {
@@ -57,9 +58,10 @@ export async function interpretDream(params: InterpretParams): Promise<Interpret
     `Emotion: ${params.emotion}`,
     `Themes: ${params.themes.join(', ') || 'none specified'}`,
     `Type: ${params.dreamType ?? 'dream'}`,
-    `Vividness: ${params.vividness ?? 'not rated'}`,
     `Lucid: ${params.isLucid ? 'yes' : 'no'}`,
-  ].join('\n');
+    `Perspective: ${params.isFirstPerson !== false ? 'first-person (I was in the dream)' : 'third-person (watching it happen)'}`,
+    params.vividness ? `Vividness: ${params.vividness}/5` : '',
+  ].filter(Boolean).join('\n');
 
   const message = await client.messages.create({
     model: 'claude-haiku-4-5',

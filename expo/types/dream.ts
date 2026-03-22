@@ -12,6 +12,7 @@ export interface Dream {
   dreamType: DreamType;
   rating: number | null;
   vividness: number | null;
+  isFirstPerson: boolean;
   interpretation: string | null;
   symbols: string[];
   isForgotten: boolean;

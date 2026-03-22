@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Plus, Sparkles, Moon, Skull } from 'lucide-react-native';
+import { Plus, Sparkles, Moon, Skull, Eye } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
@@ -172,6 +172,17 @@ export default function JournalScreen() {
                       <Moon size={10} color={colors.accent} />
                       <Text style={styles.lucidPillText}>Lucid</Text>
                     </View>
+                  )}
+                  {!dream.isFirstPerson ? (
+                    <View style={styles.observerPill}>
+                      <Eye size={10} color={colors.textSecondary} />
+                      <Text style={styles.observerPillText}>Observer</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.observerPill}>
+                      <Eye size={10} color={colors.accent} />
+                      <Text style={[styles.observerPillText, { color: colors.accent }]}>First person</Text>
+                      </View> 
                   )}
                 </View>
               </TouchableOpacity>
@@ -364,6 +375,21 @@ const styles = StyleSheet.create({
     fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.accent,
+  },
+  observerPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.surfaceInput,
+    borderRadius: radii.lg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  observerPillText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
+    color: colors.textSecondary,
   },
   emptyState: {
     alignItems: 'center',
