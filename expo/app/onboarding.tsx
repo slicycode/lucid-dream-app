@@ -106,7 +106,7 @@ export default function OnboardingScreen() {
     store.setRecurringDreams(localRecurring);
     store.setFirstDreamText(localDreamText);
     store.completeOnboarding();
-    router.replace('/(tabs)');
+    router.replace('/(tabs)' as any);
   }, [localName, localFrequency, localDetail, localGoals, localJournalExp, localRecurring, localDreamText, store, router]);
 
   const toggleGoal = useCallback((goal: string) => {

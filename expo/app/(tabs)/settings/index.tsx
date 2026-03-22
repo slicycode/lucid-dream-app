@@ -15,6 +15,8 @@ import * as Haptics from 'expo-haptics';
 import { Bell, FileText, Crown, RefreshCw, Brain, Moon, Download, Trash2, Shield, FileQuestion, HelpCircle, Info } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
+import { resetAllData } from '@/store/mmkv';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 export default function SettingsScreen() {
@@ -33,7 +35,13 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: () => {
             if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-            useDreamsStore.getState().dreams.forEach((d) => useDreamsStore.getState().deleteDream(d.id));
+            resetAllData();
+            useOnboardingStore.persist.clearStorage();
+            useDreamsStore.persist.clearStorage();
+            useSettingsStore.persist.clearStorage();
+            useOnboardingStore.setState(useOnboardingStore.getInitialState());
+            useDreamsStore.setState(useDreamsStore.getInitialState());
+            useSettingsStore.setState(useSettingsStore.getInitialState());
           },
         },
       ]

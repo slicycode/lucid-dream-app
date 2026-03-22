@@ -30,7 +30,7 @@ function RootLayoutNav() {
     if (!hasCompletedOnboarding && !inOnboarding) {
       router.replace("/onboarding");
     } else if (hasCompletedOnboarding && inOnboarding) {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)" as any);
     }
   }, [isReady, hasCompletedOnboarding, segments, router]);
 
