@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
-import { colors, fonts, spacing, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   },
   monthLabel: {
     fontFamily: fonts.serif,
-    fontSize: 22,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   dayHeaderText: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     fontWeight: '500' as const,
   },
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   dayNumber: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textPrimary,
     marginBottom: 4,
   },
@@ -296,12 +296,12 @@ const styles = StyleSheet.create({
   dreamDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: radii.full,
   },
   emptyDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: radii.full,
     backgroundColor: 'transparent',
   },
   todayRing: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     top: 4,
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: radii.full,
     borderWidth: 1,
     borderColor: colors.accent,
   },
@@ -347,19 +347,19 @@ const styles = StyleSheet.create({
   },
   dreamTitle: {
     fontFamily: fonts.serif,
-    fontSize: 17,
+    fontSize: typography.subheading.fontSize,
     fontWeight: '500' as const,
     color: colors.textPrimary,
     marginBottom: 2,
   },
   dreamMeta: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   dreamPreview: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
     marginLeft: sizes.emotionDot + spacing.sm,
@@ -380,18 +380,18 @@ const styles = StyleSheet.create({
   },
   streakLabel: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
   },
   streakValue: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '700' as const,
     color: colors.accent,
   },
   streakValueMuted: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textSecondary,
   },

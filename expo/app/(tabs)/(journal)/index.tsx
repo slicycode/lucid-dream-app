@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { Plus, Sparkles, Moon } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { colors, fonts, spacing, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.textMuted,
     letterSpacing: 1.5,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontFamily: fonts.serif,
-    fontSize: 26,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     lineHeight: 34,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   weekStat: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
   },
@@ -228,19 +228,19 @@ const styles = StyleSheet.create({
   },
   quickEntryTitle: {
     fontFamily: fonts.serif,
-    fontSize: 18,
+    fontSize: typography.subheading.fontSize,
     fontWeight: '500' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   quickEntrySubtext: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   sectionLabel: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.textMuted,
     letterSpacing: 1.5,
@@ -277,19 +277,19 @@ const styles = StyleSheet.create({
   },
   dreamTitle: {
     fontFamily: fonts.serif,
-    fontSize: 17,
+    fontSize: typography.subheading.fontSize,
     fontWeight: '500' as const,
     color: colors.textPrimary,
     marginBottom: 2,
   },
   dreamMeta: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   dreamPreview: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
     marginLeft: sizes.emotionDot + spacing.sm,
@@ -302,12 +302,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontFamily: fonts.serif,
-    fontSize: 20,
+    fontSize: typography.subheading.fontSize,
     color: colors.textSecondary,
   },
   emptySubtext: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   fab: {

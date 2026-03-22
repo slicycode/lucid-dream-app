@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, fonts, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, radii, sizes } from '@/constants/theme';
 
 interface OnboardingButtonProps {
   title: string;
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
   },
   primaryText: {

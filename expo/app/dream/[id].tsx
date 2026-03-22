@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { ChevronLeft, MoreHorizontal, Sparkles, Moon } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { colors, fonts, spacing, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 const PLACEHOLDER_INTERPRETATION = `This dream contains rich symbolic imagery that speaks to your current emotional landscape.
 
@@ -230,12 +230,12 @@ const styles = StyleSheet.create({
   },
   notFoundText: {
     fontFamily: fonts.serif,
-    fontSize: 18,
+    fontSize: typography.subheading.fontSize,
     color: colors.textMuted,
   },
   dateText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     marginBottom: spacing.md,
   },
@@ -256,11 +256,11 @@ const styles = StyleSheet.create({
   emotionDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radii.full,
   },
   emotionText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     fontWeight: '500' as const,
   },
   lucidBadge: {
@@ -275,13 +275,13 @@ const styles = StyleSheet.create({
   },
   lucidText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     fontWeight: '500' as const,
     color: colors.accent,
   },
   title: {
     fontFamily: fonts.serif,
-    fontSize: 24,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     lineHeight: 32,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   dreamContent: {
     fontFamily: fonts.serif,
-    fontSize: 17,
+    fontSize: typography.dreamText.fontSize,
     color: colors.textSecondary,
     lineHeight: 29,
     marginBottom: spacing.lg,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   },
   themeTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   divider: {
@@ -329,13 +329,13 @@ const styles = StyleSheet.create({
   },
   interpLabel: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
   },
   interpText: {
     fontFamily: fonts.serif,
-    fontSize: 16,
+    fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
     lineHeight: 27,
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   symbolsLabel: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     marginBottom: spacing.sm,
   },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   symbolTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   interpretingContainer: {
@@ -373,14 +373,14 @@ const styles = StyleSheet.create({
   interpretingPulse: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radii.full,
     backgroundColor: colors.accentMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   interpretingText: {
     fontFamily: fonts.serif,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
   },
   interpretCta: {
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   interpretCtaText: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.ctaAccentText,
   },

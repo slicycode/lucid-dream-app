@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { Bell, FileText, Crown, RefreshCw, Brain, Moon, Download, Trash2, Shield, FileQuestion, HelpCircle, Info } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
-import { colors, fonts, spacing, radii } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -208,14 +208,14 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontFamily: fonts.serif,
-    fontSize: 26,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
   sectionHeader: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.textMuted,
     letterSpacing: 1.5,
@@ -249,12 +249,12 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textPrimary,
   },
   rowSub: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     marginTop: 2,
   },
@@ -267,18 +267,18 @@ const styles = StyleSheet.create({
   },
   rowValue: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   premiumBadge: {
     backgroundColor: colors.accentMuted,
-    borderRadius: 6,
+    borderRadius: radii.sm,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   premiumBadgeText: {
     fontFamily: fonts.sans,
-    fontSize: 9,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
     letterSpacing: 0.5,
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   premiumActiveText: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
   },
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textDisabled,
   },
 });

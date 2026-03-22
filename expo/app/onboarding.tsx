@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { ChevronLeft, Lock, Sparkles, Repeat, Moon, Calendar, Star, X } from 'lucide-react-native';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { colors, fonts, spacing, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 import OnboardingButton from '@/components/OnboardingButton';
 import QuizOptionCard from '@/components/QuizOptionCard';
 import ProgressBar from '@/components/ProgressBar';
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
   },
   stepHeading: {
     fontFamily: fonts.serif,
-    fontSize: 26,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     lineHeight: 36,
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
   },
   stepSubtext: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
     lineHeight: 24,
     marginBottom: spacing.lg,
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontFamily: fonts.serif,
-    fontSize: 36,
+    fontSize: typography.display.fontSize,
     fontWeight: '700' as const,
     color: colors.textPrimary,
     textAlign: 'center',
@@ -710,7 +710,7 @@ const styles = StyleSheet.create({
   },
   welcomeHeading: {
     fontFamily: fonts.serif,
-    fontSize: 28,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     textAlign: 'center',
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textAlign: 'center',
     lineHeight: 20,
@@ -737,11 +737,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     color: colors.textPrimary,
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
   },
   charCount: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textAlign: 'right',
     marginTop: spacing.xs,
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
   },
   privacySmall: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   painPointBlock: {
@@ -762,14 +762,14 @@ const styles = StyleSheet.create({
   },
   painPointText: {
     fontFamily: fonts.serif,
-    fontSize: 24,
+    fontSize: typography.heading.fontSize,
     color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 34,
   },
   painPointAccent: {
     fontFamily: fonts.serif,
-    fontSize: 28,
+    fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.accent,
     textAlign: 'center',
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   },
   painPointSub: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 24,
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
   featureIcon: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     backgroundColor: colors.accentMuted,
     alignItems: 'center',
     justifyContent: 'center',
@@ -807,14 +807,14 @@ const styles = StyleSheet.create({
   },
   featureTitle: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   featureDesc: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
   },
@@ -823,7 +823,7 @@ const styles = StyleSheet.create({
   },
   notifBody: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 24,
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   dreamInput: {
@@ -846,14 +846,14 @@ const styles = StyleSheet.create({
     minHeight: 200,
     color: colors.textPrimary,
     fontFamily: fonts.serif,
-    fontSize: 17,
+    fontSize: typography.dreamText.fontSize,
     lineHeight: 28,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
   },
   freeTrialNote: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.sm,
@@ -867,8 +867,8 @@ const styles = StyleSheet.create({
   pulseCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: radii.full,
+    backgroundColor: colors.surfacePulse,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xl,
@@ -876,12 +876,12 @@ const styles = StyleSheet.create({
   pulseInner: {
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: radii.full,
     backgroundColor: colors.textPrimary,
   },
   processingTitle: {
     fontFamily: fonts.serif,
-    fontSize: 20,
+    fontSize: typography.subheading.fontSize,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
@@ -892,7 +892,7 @@ const styles = StyleSheet.create({
   },
   processingStep: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   progressBarContainer: {
@@ -908,7 +908,7 @@ const styles = StyleSheet.create({
   },
   interpretationLabel: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.accent,
     letterSpacing: 2,
@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
   },
   interpretationText: {
     fontFamily: fonts.serif,
-    fontSize: 16,
+    fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
     lineHeight: 27,
@@ -931,7 +931,7 @@ const styles = StyleSheet.create({
   },
   symbolsLabel: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     marginBottom: spacing.sm,
   },
@@ -951,7 +951,7 @@ const styles = StyleSheet.create({
   },
   symbolTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   premiumCard: {
@@ -966,14 +966,14 @@ const styles = StyleSheet.create({
   },
   premiumCardText: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.accent,
     flex: 1,
     lineHeight: 20,
   },
   statLine: {
     fontFamily: fonts.serif,
-    fontSize: 18,
+    fontSize: typography.subheading.fontSize,
     textAlign: 'center',
     marginBottom: spacing.lg,
   },
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
   },
   reviewText: {
     fontFamily: fonts.serif,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
     lineHeight: 24,
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
   },
   reviewName: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   timeline: {
@@ -1020,7 +1020,7 @@ const styles = StyleSheet.create({
   timelineDot: {
     width: 12,
     height: 12,
-    borderRadius: 6,
+    borderRadius: radii.full,
     borderWidth: 2,
     borderColor: colors.textMuted,
     backgroundColor: 'transparent',
@@ -1041,14 +1041,14 @@ const styles = StyleSheet.create({
   },
   timelineLabel: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   timelineDesc: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
   },
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
   },
   premiumBadgeText: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
     letterSpacing: 1,
@@ -1076,7 +1076,7 @@ const styles = StyleSheet.create({
   dismissButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1093,14 +1093,14 @@ const styles = StyleSheet.create({
   },
   trialDay: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   trialDesc: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
   },
@@ -1124,27 +1124,27 @@ const styles = StyleSheet.create({
   },
   popularBadge: {
     backgroundColor: colors.accent,
-    borderRadius: 8,
+    borderRadius: radii.sm,
     paddingHorizontal: 8,
     paddingVertical: 2,
     marginBottom: spacing.sm,
   },
   popularBadgeText: {
     fontFamily: fonts.sans,
-    fontSize: 10,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '700' as const,
     color: colors.ctaAccentText,
   },
   pricingPrice: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '700' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   pricingTrial: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   saveBadge: {
@@ -1152,13 +1152,13 @@ const styles = StyleSheet.create({
   },
   saveBadgeText: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
   },
   paywallSmall: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.sm,
@@ -1169,12 +1169,12 @@ const styles = StyleSheet.create({
   },
   restoreText: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   continueFreeTxt: {
     fontFamily: fonts.sans,
-    fontSize: 12,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
   discountSheet: {
@@ -1192,7 +1192,7 @@ const styles = StyleSheet.create({
   },
   discountHeading: {
     fontFamily: fonts.serif,
-    fontSize: 24,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginTop: spacing.lg,
@@ -1200,7 +1200,7 @@ const styles = StyleSheet.create({
   },
   discountSub: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
@@ -1217,21 +1217,21 @@ const styles = StyleSheet.create({
   },
   crossedPrice: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textDecorationLine: 'line-through',
     marginBottom: spacing.xs,
   },
   discountPrice: {
     fontFamily: fonts.sans,
-    fontSize: 24,
+    fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   discountTrial: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.accent,
   },
 });

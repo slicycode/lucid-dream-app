@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Lock } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { colors, fonts, spacing, radii } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 export default function InsightsScreen() {
   const insets = useSafeAreaInsets();
@@ -209,14 +209,14 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontFamily: fonts.serif,
-    fontSize: 26,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
   sectionTitle: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.textMuted,
     letterSpacing: 1.5,
@@ -245,19 +245,19 @@ const styles = StyleSheet.create({
     height: 100,
     width: 24,
     justifyContent: 'flex-end',
-    borderRadius: 4,
+    borderRadius: radii.xs,
     overflow: 'hidden',
     backgroundColor: colors.surfaceCardBorder,
   },
   bar: {
     width: '100%',
     backgroundColor: colors.accent,
-    borderRadius: 4,
+    borderRadius: radii.xs,
     minHeight: 2,
   },
   barLabel: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     color: colors.textMuted,
     marginTop: spacing.xs,
   },
@@ -268,25 +268,25 @@ const styles = StyleSheet.create({
   },
   emotionLabel: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     width: 80,
   },
   emotionBarBg: {
     flex: 1,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radii.xs,
     backgroundColor: colors.surfaceCardBorder,
     marginHorizontal: spacing.sm,
     overflow: 'hidden',
   },
   emotionBarFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: radii.xs,
   },
   emotionCount: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     width: 24,
     textAlign: 'right',
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   themeTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   themeTagTextAccent: {
@@ -330,21 +330,21 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontFamily: fonts.sans,
-    fontSize: 28,
+    fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.accent,
     marginBottom: spacing.xs,
   },
   statLabel: {
     fontFamily: fonts.sans,
-    fontSize: 10,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
     color: colors.textMuted,
     letterSpacing: 1,
   },
   noDataText: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textMuted,
     textAlign: 'center',
     paddingVertical: spacing.md,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   },
   lockTitle: {
     fontFamily: fonts.serif,
-    fontSize: 22,
+    fontSize: typography.heading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginTop: spacing.md,
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   },
   lockSubtext: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
   },
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   },
   lockCtaText: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.ctaAccentText,
   },

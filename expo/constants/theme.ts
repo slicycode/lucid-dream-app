@@ -6,6 +6,7 @@ export const colors = {
   surfaceCardBorder: '#1A1A1A',
   surfaceElevated: '#111111',
   surfaceInput: '#141414',
+  surfacePulse: 'rgba(255, 255, 255, 0.08)',
 
   textPrimary: '#FFFFFF',
   textSecondary: '#A0A0A0',
@@ -121,6 +122,7 @@ export const spacing = {
 } as const;
 
 export const radii = {
+  xs: 4,
   sm: 8,
   md: 16,
   lg: 20,

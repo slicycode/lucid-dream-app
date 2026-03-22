@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { EMOTIONS, THEMES } from '@/types/dream';
-import { colors, fonts, spacing, radii, sizes } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 export default function NewDreamScreen() {
   const router = useRouter();
@@ -181,18 +181,18 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     color: colors.textMuted,
   },
   headerTitle: {
     fontFamily: fonts.serif,
-    fontSize: 18,
+    fontSize: typography.subheading.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
   },
   saveText: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.accent,
   },
@@ -216,13 +216,13 @@ const styles = StyleSheet.create({
   },
   datePillText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.accent,
     fontWeight: '500' as const,
   },
   titleInput: {
     fontFamily: fonts.serif,
-    fontSize: 18,
+    fontSize: typography.subheading.fontSize,
     color: colors.textPrimary,
     backgroundColor: colors.surfaceInput,
     borderWidth: 1,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   contentInput: {
     fontFamily: fonts.serif,
-    fontSize: 17,
+    fontSize: typography.dreamText.fontSize,
     color: colors.textPrimary,
     backgroundColor: colors.surfaceInput,
     borderWidth: 1,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     marginBottom: spacing.sm,
   },
@@ -279,11 +279,11 @@ const styles = StyleSheet.create({
   emotionColorDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radii.full,
   },
   emotionTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   emotionTagTextSelected: {
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   themeTagText: {
     fontFamily: fonts.sans,
-    fontSize: 13,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
   },
   themeTagTextSelected: {
@@ -321,13 +321,13 @@ const styles = StyleSheet.create({
   },
   lucidLabel: {
     fontFamily: fonts.sans,
-    fontSize: 15,
+    fontSize: typography.body.fontSize,
     color: colors.textPrimary,
   },
   lucidToggle: {
     width: 48,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radii.full,
     backgroundColor: colors.surfaceCardBorder,
     padding: 2,
     justifyContent: 'center',
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   lucidKnob: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radii.full,
     backgroundColor: colors.textPrimary,
   },
   lucidKnobActive: {

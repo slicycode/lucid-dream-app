@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { BookOpen, Calendar, BarChart2, Settings } from 'lucide-react-native';
-import { colors, fonts, spacing } from '@/constants/theme';
+import { colors, fonts, typography, spacing } from '@/constants/theme';
 import { StyleSheet } from 'react-native';
 
 export default function TabLayout() {
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontFamily: fonts.sans,
-    fontSize: 11,
+    fontSize: typography.tiny.fontSize,
     fontWeight: '500' as const,
   },
 });

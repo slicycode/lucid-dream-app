@@ -1,6 +1,7 @@
 // template
 import { Link, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { colors, typography, spacing } from '@/constants/theme';
 
 export default function NotFoundScreen() {
   return (
@@ -22,18 +23,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: spacing.cardPadding,
+    backgroundColor: colors.background,
   },
   title: {
-    fontSize: 20,
+    fontSize: typography.subheading.fontSize,
     fontWeight: "bold",
+    color: colors.textPrimary,
   },
   link: {
-    marginTop: 15,
-    paddingVertical: 15,
+    marginTop: spacing.md,
+    paddingVertical: spacing.md,
   },
   linkText: {
-    fontSize: 14,
-    color: "#2e78b7",
+    fontSize: typography.caption.fontSize,
+    color: colors.accent,
   },
 });

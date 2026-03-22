@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Check } from 'lucide-react-native';
-import { colors, fonts, spacing, radii } from '@/constants/theme';
+import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 interface QuizOptionCardProps {
   title: string;
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: fonts.sans,
-    fontSize: 16,
+    fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: fonts.sans,
-    fontSize: 14,
+    fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
   },
