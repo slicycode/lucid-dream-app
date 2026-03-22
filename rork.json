@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "Lucid",
+      "path": "expo",
+      "framework": "react-native"
+    }
+  ]
+}
