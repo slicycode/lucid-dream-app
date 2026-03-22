@@ -23,10 +23,20 @@ export function configureRevenueCat() {
   isConfigured = true;
 }
 
+function checkPremium(customerInfo: CustomerInfo): boolean {
+  // Primary: check entitlement
+  if (customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined) {
+    return true;
+  }
+  // Fallback: any active subscription counts as premium
+  if (customerInfo.activeSubscriptions.length > 0) {
+    return true;
+  }
+  return false;
+}
+
 function syncPremiumStatus(customerInfo: CustomerInfo) {
-  const isPremium =
-    customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  useSettingsStore.getState().setIsPremium(isPremium);
+  useSettingsStore.getState().setIsPremium(checkPremium(customerInfo));
 }
 
 export function useRevenueCat() {
@@ -70,7 +80,7 @@ export function useRevenueCat() {
     try {
       const { customerInfo } = await Purchases.purchasePackage(pkg);
       syncPremiumStatus(customerInfo);
-      return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      return checkPremium(customerInfo);
     } catch (e: any) {
       if (!e.userCancelled) {
         Alert.alert('Purchase Failed', e.message || 'Something went wrong. Please try again.');
@@ -87,7 +97,7 @@ export function useRevenueCat() {
     try {
       const customerInfo = await Purchases.restorePurchases();
       syncPremiumStatus(customerInfo);
-      const restored = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      const restored = checkPremium(customerInfo);
       if (restored) {
         Alert.alert('Restored', 'Your premium access has been restored.');
       } else {
