@@ -19,6 +19,28 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { interpretDream } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
+function highlightSymbols(text: string, symbols: string[]) {
+  if (symbols.length === 0) return text;
+
+  // Build regex matching any symbol word (case-insensitive, whole-ish match)
+  const escaped = symbols.map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp(`(${escaped.join('|')})`, 'gi');
+
+  const parts = text.split(pattern);
+  const symbolsLower = new Set(symbols.map((s) => s.toLowerCase()));
+
+  return parts.map((part, i) => {
+    if (symbolsLower.has(part.toLowerCase())) {
+      return (
+        <Text key={i} style={{ color: colors.accent }}>
+          {part}
+        </Text>
+      );
+    }
+    return part;
+  });
+}
+
 export default function DreamDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -31,6 +53,10 @@ export default function DreamDetailScreen() {
   const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
 
   const dream = useMemo(() => dreams.find((d) => d.id === id), [dreams, id]);
+
+  // useEffect(() => {
+  //   if (dream) console.log('[Dream Detail]', JSON.stringify(dream, null, 2));
+  // }, [dream]);
 
   const [isInterpreting, setIsInterpreting] = useState(false);
   const [interpretationVisible, setInterpretationVisible] = useState(false);
@@ -122,7 +148,7 @@ export default function DreamDetailScreen() {
 
   const handleMenu = useCallback(() => {
     Alert.alert(
-      dream?.title || 'Dream',
+      'Are you sure you want to delete this dream?',
       undefined,
       [
         { text: 'Cancel', style: 'cancel' },
@@ -214,13 +240,16 @@ export default function DreamDetailScreen() {
               <Sparkles size={16} color={colors.accent} />
               <Text style={styles.interpLabel}>AI Interpretation</Text>
             </View>
-            <Text style={styles.interpText}>{dream.interpretation}</Text>
+            <Text style={styles.interpText}>
+              {highlightSymbols(dream.interpretation ?? '', dream.symbols)}
+            </Text>
             {dream.symbols.length > 0 && (
               <>
                 <Text style={styles.symbolsLabel}>Key Symbols</Text>
                 <View style={styles.symbolsRow}>
                   {dream.symbols.map((s) => (
                     <View key={s} style={styles.symbolTag}>
+                      <Sparkles size={10} color={colors.accent} />
                       <Text style={styles.symbolTagText}>{s}</Text>
                     </View>
                   ))}
@@ -398,7 +427,6 @@ const styles = StyleSheet.create({
   interpText: {
     fontFamily: fonts.sans,
     fontSize: typography.aiInterpretation.fontSize,
-    fontStyle: 'italic',
     color: colors.textSecondary,
     lineHeight: 27,
     marginBottom: spacing.lg,
@@ -415,17 +443,20 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   symbolTag: {
-    backgroundColor: colors.surfaceCard,
+    backgroundColor: colors.accentMuted,
     borderWidth: 1,
-    borderColor: colors.surfaceCardBorder,
+    borderColor: colors.accentBorder,
     borderRadius: radii.lg,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 5,
   },
   symbolTagText: {
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
-    color: colors.textSecondary,
+    color: colors.accent,
   },
   disclaimer: {
     fontFamily: fonts.sans,

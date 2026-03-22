@@ -13,8 +13,8 @@ function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-// Free: 1 interpretation per week. Premium: 10 per day (cost guardrail).
-const FREE_WEEKLY_LIMIT = 1;
+// Free: 3 interpretation per week. Premium: 10 per day (cost guardrail).
+const FREE_WEEKLY_LIMIT = 3;
 const PREMIUM_DAILY_LIMIT = 10;
 
 interface SettingsState {
