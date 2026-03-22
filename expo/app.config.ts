@@ -35,6 +35,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['expo-router', { origin: 'https://lucid.app/' }],
     'expo-font',
     'expo-web-browser',
+    [
+      '@sentry/react-native',
+      { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT },
+    ],
   ],
   experiments: {
     typedRoutes: true,
@@ -42,6 +46,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
     revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS,
+    sentryDsn: process.env.SENTRY_DSN,
     router: {
       origin: 'https://lucid.app/',
     },

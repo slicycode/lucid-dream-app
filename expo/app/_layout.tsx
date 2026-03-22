@@ -1,5 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as Sentry from "@sentry/react-native";
+import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import {
   InstrumentSerif_400Regular,
@@ -14,6 +16,15 @@ import { configureRevenueCat } from "@/hooks/useRevenueCat";
 
 void SplashScreen.preventAutoHideAsync();
 configureRevenueCat();
+
+const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
+if (sentryDsn && sentryDsn !== "YOUR_SENTRY_DSN") {
+  Sentry.init({
+    dsn: sentryDsn,
+    tracesSampleRate: 0.2,
+    sendDefaultPii: false,
+  });
+}
 
 function RootLayoutNav() {
   const router = useRouter();
@@ -58,7 +69,7 @@ function RootLayoutNav() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     InstrumentSerif_400Regular,
     InstrumentSerif_400Regular_Italic,
@@ -84,3 +95,5 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(RootLayout);
