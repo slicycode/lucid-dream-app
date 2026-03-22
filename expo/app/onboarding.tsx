@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
   stepHeading: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     lineHeight: 36,
     marginBottom: spacing.sm,
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
   welcomeHeading: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 38,
@@ -917,7 +917,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   interpretationText: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.serifItalic,
     fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
@@ -991,7 +991,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   reviewText: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.serifItalic,
     fontSize: typography.body.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
@@ -1193,7 +1193,7 @@ const styles = StyleSheet.create({
   discountHeading: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     marginTop: spacing.lg,
     marginBottom: spacing.sm,

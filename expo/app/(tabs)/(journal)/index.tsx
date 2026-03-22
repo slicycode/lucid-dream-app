@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   greeting: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     lineHeight: 34,
     marginBottom: spacing.xs,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   quickEntryTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.subheading.fontSize,
-    fontWeight: '500' as const,
+    fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   dreamTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.subheading.fontSize,
-    fontWeight: '500' as const,
+    fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: 2,
   },

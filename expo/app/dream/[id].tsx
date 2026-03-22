@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     lineHeight: 32,
     marginBottom: spacing.md,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     color: colors.accent,
   },
   interpText: {
-    fontFamily: fonts.serif,
+    fontFamily: fonts.serifItalic,
     fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,

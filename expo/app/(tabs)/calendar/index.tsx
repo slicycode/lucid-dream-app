@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   monthLabel: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
   },
   daysHeader: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   dreamTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.subheading.fontSize,
-    fontWeight: '500' as const,
+    fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: 2,
   },

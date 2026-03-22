@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   lockTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     marginTop: spacing.md,
     marginBottom: spacing.sm,

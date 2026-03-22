@@ -39,12 +39,6 @@ export const colors = {
   } as Record<string, string>,
 } as const;
 
-const serifFont = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  web: 'Georgia, serif',
-}) as string;
-
 const sansFont = Platform.select({
   ios: 'System',
   android: 'sans-serif',
@@ -52,27 +46,28 @@ const sansFont = Platform.select({
 }) as string;
 
 export const fonts = {
-  serif: serifFont,
+  serif: 'InstrumentSerif_400Regular',
+  serifItalic: 'InstrumentSerif_400Regular_Italic',
   sans: sansFont,
 } as const;
 
 export const typography = {
   display: {
-    fontFamily: serifFont,
+    fontFamily: fonts.serif,
     fontSize: 34,
-    fontWeight: '700' as const,
+    fontWeight: '400' as const,
     lineHeight: 34 * 1.4,
   },
   heading: {
-    fontFamily: serifFont,
+    fontFamily: fonts.serif,
     fontSize: 26,
-    fontWeight: '600' as const,
+    fontWeight: '400' as const,
     lineHeight: 26 * 1.4,
   },
   subheading: {
-    fontFamily: serifFont,
+    fontFamily: fonts.serif,
     fontSize: 19,
-    fontWeight: '500' as const,
+    fontWeight: '400' as const,
     lineHeight: 19 * 1.4,
   },
   body: {
@@ -95,13 +90,13 @@ export const typography = {
     letterSpacing: 0.3,
   },
   dreamText: {
-    fontFamily: serifFont,
+    fontFamily: fonts.serif,
     fontSize: 17,
     fontWeight: '400' as const,
     lineHeight: 17 * 1.7,
   },
   aiInterpretation: {
-    fontFamily: serifFont,
+    fontFamily: fonts.serifItalic,
     fontSize: 16,
     fontWeight: '400' as const,
     fontStyle: 'italic' as const,

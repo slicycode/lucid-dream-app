@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
-    fontWeight: '600' as const,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
