@@ -1,23 +1,23 @@
-import React, { useMemo, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Platform,
-  Alert,
-  Animated,
-} from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
-import { Plus, Sparkles, Moon, Skull, Eye, Trash2 } from 'lucide-react-native';
+import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import { Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  Alert,
+  Animated,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -60,6 +60,72 @@ export default function JournalScreen() {
   const name = useOnboardingStore((s) => s.name);
   const [refreshing, setRefreshing] = React.useState(false);
 
+  // Entrance animations
+  const headerFade = useRef(new Animated.Value(0)).current;
+  const headerSlide = useRef(new Animated.Value(12)).current;
+  const cardAnims = useRef<Map<string, Animated.Value>>(new Map()).current;
+  const fabScale = useRef(new Animated.Value(0)).current;
+  const prevDreamCount = useRef(dreams.length);
+  const isInitialMount = useRef(true);
+
+  // Get or create an anim value for a dream id
+  const getCardAnim = useCallback((id: string) => {
+    if (!cardAnims.has(id)) {
+      cardAnims.set(id, new Animated.Value(0));
+    }
+    return cardAnims.get(id)!;
+  }, [cardAnims]);
+
+  // Initial mount: stagger all cards
+  useEffect(() => {
+    // Header entrance
+    Animated.parallel([
+      Animated.timing(headerFade, { toValue: 1, duration: 500, delay: 50, useNativeDriver: true }),
+      Animated.spring(headerSlide, { toValue: 0, damping: 20, stiffness: 200, delay: 50, useNativeDriver: true }),
+    ]).start();
+
+    // Stagger all existing cards on first mount
+    const cardAnimations = dreams.map((dream, i) => {
+      const anim = getCardAnim(dream.id);
+      return Animated.spring(anim, {
+        toValue: 1,
+        damping: 18,
+        stiffness: 180,
+        delay: 200 + i * 60,
+        useNativeDriver: true,
+      });
+    });
+    Animated.parallel(cardAnimations).start();
+
+    // FAB pop-in
+    Animated.spring(fabScale, {
+      toValue: 1,
+      damping: 12,
+      stiffness: 200,
+      delay: 400,
+      useNativeDriver: true,
+    }).start();
+
+    isInitialMount.current = false;
+  }, []);
+
+  // When a new dream is added, only animate the new one (index 0)
+  useEffect(() => {
+    if (isInitialMount.current) return;
+    if (dreams.length > prevDreamCount.current && dreams.length > 0) {
+      const newestDream = dreams[0];
+      const anim = getCardAnim(newestDream.id);
+      anim.setValue(0);
+      Animated.spring(anim, {
+        toValue: 1,
+        damping: 16,
+        stiffness: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+    prevDreamCount.current = dreams.length;
+  }, [dreams.length]);
+
   const today = useMemo(() => {
     const d = new Date();
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase();
@@ -74,6 +140,28 @@ export default function JournalScreen() {
   }, []);
 
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
+  const isSwiping = useRef(false);
+  const deleteAnims = useRef<Map<string, Animated.Value>>(new Map());
+
+  const getDeleteAnim = useCallback((id: string) => {
+    if (!deleteAnims.current.has(id)) {
+      deleteAnims.current.set(id, new Animated.Value(1));
+    }
+    return deleteAnims.current.get(id)!;
+  }, []);
+
+  const animateDelete = useCallback((id: string) => {
+    if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const anim = getDeleteAnim(id);
+    Animated.timing(anim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      deleteDream(id);
+      deleteAnims.current.delete(id);
+    });
+  }, [deleteDream, getDeleteAnim]);
 
   const handleDeleteDream = useCallback((id: string, title: string) => {
     Alert.alert(
@@ -88,14 +176,11 @@ export default function JournalScreen() {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => {
-            if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            deleteDream(id);
-          },
+          onPress: () => animateDelete(id),
         },
       ]
     );
-  }, [deleteDream]);
+  }, [animateDelete]);
 
   const renderDeleteAction = useCallback(
     (progress: Animated.AnimatedInterpolation<number>) => {
@@ -126,11 +211,13 @@ export default function JournalScreen() {
           />
         }
       >
-        <Text style={styles.dateLabel}>{today}</Text>
-        <Text style={styles.greeting}>{getGreeting()}, {name || 'Dreamer'}.</Text>
-        {weekCount > 0 && (
-          <Text style={styles.weekStat}>{weekCount} dream{weekCount !== 1 ? 's' : ''} this week</Text>
-        )}
+        <Animated.View style={{ opacity: headerFade, transform: [{ translateY: headerSlide }] }}>
+          <Text style={styles.dateLabel}>{today}</Text>
+          <Text style={styles.greeting}>{getGreeting()}, {name || 'Dreamer'}.</Text>
+          {weekCount > 0 && (
+            <Text style={styles.weekStat}>{weekCount} dream{weekCount !== 1 ? 's' : ''} this week</Text>
+          )}
+        </Animated.View>
 
         {!hasDreamToday && (
           <TouchableOpacity
@@ -147,21 +234,52 @@ export default function JournalScreen() {
         {dreams.length > 0 && (
           <>
             <Text style={styles.sectionLabel}>RECENT DREAMS</Text>
-            {dreams.map((dream) => (
-              <Swipeable
+            {dreams.map((dream) => {
+              const deleteAnim = getDeleteAnim(dream.id);
+              const entryAnim = getCardAnim(dream.id);
+              return (
+              <Animated.View
                 key={dream.id}
+                style={{
+                  opacity: Animated.multiply(entryAnim, deleteAnim),
+                  marginBottom: spacing.sm,
+                  transform: [{
+                    translateY: entryAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [16, 0],
+                    }),
+                  }, {
+                    scale: deleteAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.95, 1],
+                    }),
+                  }, {
+                    translateX: deleteAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [80, 0],
+                    }),
+                  }],
+                }}
+              >
+              <Swipeable
                 ref={(ref) => { if (ref) swipeableRefs.current.set(dream.id, ref); }}
                 renderRightActions={renderDeleteAction}
+                onSwipeableWillOpen={() => { isSwiping.current = true; }}
                 onSwipeableOpen={() => {
                   if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   handleDeleteDream(dream.id, dream.title);
                 }}
+                onSwipeableClose={() => { isSwiping.current = false; }}
                 rightThreshold={80}
                 overshootRight={false}
               >
               <TouchableOpacity
                 style={styles.dreamCard}
-                onPress={() => router.push(`/dream/${dream.id}`)}
+                onPress={() => {
+                  if (isSwiping.current) return;
+                  if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push(`/dream/${dream.id}`);
+                }}
                 onLongPress={() => handleDeleteDream(dream.id, dream.title)}
                 activeOpacity={0.7}
                 testID={`dream-card-${dream.id}`}
@@ -220,7 +338,9 @@ export default function JournalScreen() {
                 </View>
               </TouchableOpacity>
               </Swipeable>
-            ))}
+              </Animated.View>
+              );
+            })}
           </>
         )}
 
@@ -233,17 +353,19 @@ export default function JournalScreen() {
         )}
       </ScrollView>
 
-      <TouchableOpacity
-        style={[styles.fab, { bottom: 44 + spacing.md }]}
-        onPress={() => {
-          if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          router.push('/new-dream');
-        }}
-        activeOpacity={0.8}
-        testID="fab-new-dream"
-      >
-        <Plus size={24} color={colors.ctaAccentText} />
-      </TouchableOpacity>
+      <Animated.View style={[styles.fab, { bottom: 44 + spacing.md, transform: [{ scale: fabScale }] }]}>
+        <TouchableOpacity
+          style={styles.fabTouchable}
+          onPress={() => {
+            if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            router.push('/new-dream');
+          }}
+          activeOpacity={0.8}
+          testID="fab-new-dream"
+        >
+          <Plus size={24} color={colors.ctaAccentText} />
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 }
@@ -317,7 +439,6 @@ const styles = StyleSheet.create({
     borderColor: colors.surfaceCardBorder,
     borderRadius: radii.md,
     padding: spacing.cardPadding,
-    marginBottom: spacing.sm,
   },
   dreamCardHeader: {
     flexDirection: 'row',
@@ -456,12 +577,16 @@ const styles = StyleSheet.create({
     height: sizes.fabSize,
     borderRadius: sizes.fabSize / 2,
     backgroundColor: colors.ctaAccentBg,
-    alignItems: 'center',
-    justifyContent: 'center',
     shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  fabTouchable: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

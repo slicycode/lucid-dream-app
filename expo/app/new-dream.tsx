@@ -383,6 +383,7 @@ export default function NewDreamScreen() {
       isForgotten: false,
     });
 
+    if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     router.back();
   }, [canSave, title, content, emotion, themes, isLucid, dreamType, rating, vividness, isFirstPerson, addDream, router]);
 

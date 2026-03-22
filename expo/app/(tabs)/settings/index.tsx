@@ -63,6 +63,17 @@ export default function SettingsScreen() {
   const [activePicker, setActivePicker] = useState<PickerTarget>(null);
   const sheetAnim = useRef(new Animated.Value(0)).current;
 
+  // Entrance animation
+  const contentFade = useRef(new Animated.Value(0)).current;
+  const contentSlide = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(contentFade, { toValue: 1, duration: 400, delay: 50, useNativeDriver: true }),
+      Animated.spring(contentSlide, { toValue: 0, damping: 20, stiffness: 200, delay: 50, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
   const openPicker = useCallback((target: PickerTarget) => {
     setActivePicker(target);
     sheetAnim.setValue(0);
@@ -205,7 +216,10 @@ export default function SettingsScreen() {
         </View>
         <Switch
           value={value}
-          onValueChange={onToggle}
+          onValueChange={(val) => {
+            if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onToggle(val);
+          }}
           trackColor={{ false: colors.surfaceCardBorder, true: colors.accent }}
           thumbColor={colors.textPrimary}
         />
@@ -234,7 +248,10 @@ export default function SettingsScreen() {
     onPress: () => void,
     options?: { accent?: boolean; danger?: boolean; badge?: string; value?: string }
   ) => (
-    <TouchableOpacity style={styles.navRow} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.navRow} onPress={() => {
+      if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onPress();
+    }} activeOpacity={0.7}>
       <View style={styles.rowLeft}>
         <View style={styles.rowIcon}>{icon}</View>
         <Text style={[styles.rowLabel, options?.accent && styles.rowAccent, options?.danger && styles.rowDanger]}>
@@ -253,6 +270,7 @@ export default function SettingsScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
         <Text style={styles.pageTitle}>Settings</Text>
 
         <Text style={styles.sectionHeader}>JOURNALING</Text>
@@ -364,6 +382,7 @@ export default function SettingsScreen() {
           <Info size={14} color={colors.textDisabled} />
           <Text style={styles.versionText}>Version 1.0.0</Text>
         </View>
+        </Animated.View>
       </ScrollView>
 
       {/* Bottom sheet time picker */}

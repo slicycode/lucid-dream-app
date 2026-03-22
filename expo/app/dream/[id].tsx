@@ -63,9 +63,20 @@ export default function DreamDetailScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
+  // Content entrance animation
+  const contentFade = useRef(new Animated.Value(0)).current;
+  const contentSlide = useRef(new Animated.Value(16)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(contentFade, { toValue: 1, duration: 450, delay: 100, useNativeDriver: true }),
+      Animated.spring(contentSlide, { toValue: 0, damping: 20, stiffness: 200, delay: 100, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
   useEffect(() => {
     if (interpretationVisible) {
-      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
+      Animated.spring(fadeAnim, { toValue: 1, damping: 18, stiffness: 200, useNativeDriver: true }).start();
     }
   }, [interpretationVisible, fadeAnim]);
 
@@ -220,6 +231,7 @@ export default function DreamDetailScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
         <Text style={styles.dateText}>{formattedDate} · {formattedTime}</Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.badgesScroll}>
@@ -349,6 +361,7 @@ export default function DreamDetailScreen() {
             )}
           </View>
         )}
+        </Animated.View>
       </ScrollView>
     </View>
   );

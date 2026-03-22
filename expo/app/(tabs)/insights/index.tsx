@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -159,6 +160,23 @@ export default function InsightsScreen() {
   }, [dreams]);
 
   const maxWeekly = Math.max(...weeklyData, 1);
+
+  // Entrance animations
+  const contentFade = useRef(new Animated.Value(0)).current;
+  const contentSlide = useRef(new Animated.Value(16)).current;
+  const statAnims = useRef([0, 1, 2, 3].map(() => new Animated.Value(0))).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(contentFade, { toValue: 1, duration: 450, delay: 50, useNativeDriver: true }),
+      Animated.spring(contentSlide, { toValue: 0, damping: 20, stiffness: 200, delay: 50, useNativeDriver: true }),
+    ]).start();
+
+    // Stagger stat cards
+    Animated.stagger(80, statAnims.map((anim) =>
+      Animated.spring(anim, { toValue: 1, damping: 16, stiffness: 180, useNativeDriver: true })
+    )).start();
+  }, []);
 
   const renderContent = () => (
     <>
@@ -315,22 +333,23 @@ export default function InsightsScreen() {
 
       <Text style={styles.sectionTitle}>Dream Stats</Text>
       <View style={styles.statsGrid}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{totalDreams}</Text>
-          <Text style={styles.statLabel}>DREAMS</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{streak}</Text>
-          <Text style={styles.statLabel}>STREAK</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{interpretedCount}</Text>
-          <Text style={styles.statLabel}>INTERPRETED</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{recallRate ?? 0}%</Text>
-          <Text style={styles.statLabel}>RECALL</Text>
-        </View>
+        {[
+          { value: totalDreams, label: 'DREAMS' },
+          { value: streak, label: 'STREAK' },
+          { value: interpretedCount, label: 'INTERPRETED' },
+          { value: `${recallRate ?? 0}%`, label: 'RECALL' },
+        ].map((stat, i) => (
+          <Animated.View
+            key={stat.label}
+            style={[styles.statCard, {
+              opacity: statAnims[i],
+              transform: [{ translateY: statAnims[i].interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+            }]}
+          >
+            <Text style={styles.statNumber}>{stat.value}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </Animated.View>
+        ))}
       </View>
     </>
   );
@@ -366,8 +385,10 @@ export default function InsightsScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.pageTitle}>Insights</Text>
-        {renderContent()}
+        <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
+          <Text style={styles.pageTitle}>Insights</Text>
+          {renderContent()}
+        </Animated.View>
       </ScrollView>
     </View>
   );
