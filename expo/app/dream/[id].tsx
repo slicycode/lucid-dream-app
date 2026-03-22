@@ -72,7 +72,6 @@ export default function DreamDetailScreen() {
     }
     if (!dream) return;
 
-    useInterpretation();
     setIsInterpreting(true);
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -91,6 +90,9 @@ export default function DreamDetailScreen() {
         themes: dream.themes,
         isLucid: dream.isLucid,
       });
+
+      // Only decrement after successful API response
+      useInterpretation();
 
       pulseLoop.stop();
       pulseAnim.setValue(1);

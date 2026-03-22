@@ -1,7 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
+import Constants from 'expo-constants';
 
-// TODO: Move to a backend proxy before production to protect this key
-const ANTHROPIC_API_KEY = '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';
+// Read from .env locally or EAS secrets in CI builds
+const ANTHROPIC_API_KEY = Constants.expoConfig?.extra?.anthropicApiKey ?? '';
 
 const SYSTEM_PROMPT = `You are a dream interpretation assistant. Analyze the dream described below and provide a thoughtful, personalized interpretation. Cover:
 

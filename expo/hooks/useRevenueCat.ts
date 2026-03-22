@@ -6,10 +6,11 @@ import Purchases, {
   PurchasesPackage,
   CustomerInfo,
 } from 'react-native-purchases';
+import Constants from 'expo-constants';
 import { useSettingsStore } from '@/store/settingsStore';
 
-// TODO: Replace with production RevenueCat API key before release
-const RC_API_KEY_IOS = 'test_tswNbtSNOtzugoRQAtNuGSYJQHK';
+// Read from .env locally or EAS secrets in CI builds
+const RC_API_KEY_IOS = Constants.expoConfig?.extra?.revenueCatApiKeyIos ?? '';
 
 const ENTITLEMENT_ID = 'premium';
 

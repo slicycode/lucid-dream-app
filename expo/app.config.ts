@@ -1,0 +1,53 @@
+import { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'Lucid',
+  slug: 'lucid-dream-journal',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: './assets/images/icon.png',
+  scheme: 'lucid',
+  userInterfaceStyle: 'dark',
+  splash: {
+    image: './assets/images/splash-icon.png',
+    resizeMode: 'contain',
+    backgroundColor: '#000000',
+  },
+  ios: {
+    supportsTablet: false,
+    bundleIdentifier: 'com.slicycode.lucid',
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: './assets/images/adaptive-icon.png',
+      backgroundColor: '#000000',
+    },
+    package: 'com.slicycode.lucid',
+  },
+  web: {
+    favicon: './assets/images/favicon.png',
+  },
+  plugins: [
+    ['expo-router', { origin: 'https://lucid.app/' }],
+    'expo-font',
+    'expo-web-browser',
+  ],
+  experiments: {
+    typedRoutes: true,
+  },
+  extra: {
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+    revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS,
+    router: {
+      origin: 'https://lucid.app/',
+    },
+    eas: {
+      projectId: '90293442-b8b8-4d05-a613-1305f2076caf',
+    },
+  },
+  owner: 'slicycode',
+});
