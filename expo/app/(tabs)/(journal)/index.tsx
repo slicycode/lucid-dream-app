@@ -169,7 +169,7 @@ export default function JournalScreen() {
       </ScrollView>
 
       <TouchableOpacity
-        style={[styles.fab, { bottom: spacing.md }]}
+        style={[styles.fab, { bottom: 80 + spacing.md }]}
         onPress={() => {
           if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           router.push('/new-dream');

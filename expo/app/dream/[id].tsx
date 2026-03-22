@@ -16,15 +16,8 @@ import { ChevronLeft, MoreHorizontal, Sparkles, Moon } from 'lucide-react-native
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { interpretDream } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
-
-const PLACEHOLDER_INTERPRETATION = `This dream contains rich symbolic imagery that speaks to your current emotional landscape.
-
-The central theme suggests a period of transition or transformation in your waking life. The symbols present point to unresolved feelings that are seeking expression.
-
-Your subconscious appears to be processing experiences related to control, vulnerability, and self-discovery. Pay attention to recurring elements — they often hold the most personal significance.`;
-
-const PLACEHOLDER_SYMBOLS = ['Transition', 'Self-discovery', 'Vulnerability'];
 
 export default function DreamDetailScreen() {
   const router = useRouter();
@@ -55,43 +48,74 @@ export default function DreamDetailScreen() {
     await purchasePackage(monthlyPackage);
   }, [monthlyPackage, purchasePackage]);
 
-  const handleInterpret = useCallback(() => {
+  const isPremium = useSettingsStore((s) => s.isPremium);
+
+  const handleInterpret = useCallback(async () => {
     if (!canInterpret()) {
-      Alert.alert(
-        'Free Limit Reached',
-        'You\'ve used your free interpretation this week. Upgrade to Premium for unlimited interpretations.',
-        [
-          { text: 'Maybe Later', style: 'cancel' },
-          { text: 'Upgrade', onPress: handleUpgrade },
-        ]
-      );
+      if (isPremium) {
+        Alert.alert(
+          'Daily Limit Reached',
+          'You\'ve used all 10 interpretations for today. Come back tomorrow!',
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          'Free Limit Reached',
+          'You\'ve used your free interpretation this week. Upgrade to Premium for more interpretations.',
+          [
+            { text: 'Maybe Later', style: 'cancel' },
+            { text: 'Upgrade', onPress: handleUpgrade },
+          ]
+        );
+      }
       return;
     }
+    if (!dream) return;
 
     useInterpretation();
     setIsInterpreting(true);
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.2, duration: 800, useNativeDriver: true }),
         Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
       ])
-    ).start();
+    );
+    pulseLoop.start();
 
-    setTimeout(() => {
-      pulseAnim.stopAnimation();
+    try {
+      const result = await interpretDream({
+        dreamText: dream.content,
+        emotion: dream.emotion,
+        themes: dream.themes,
+        isLucid: dream.isLucid,
+      });
+
+      pulseLoop.stop();
       pulseAnim.setValue(1);
       setIsInterpreting(false);
 
-      if (dream) {
-        const interp = dream.interpretation || PLACEHOLDER_INTERPRETATION;
-        const syms = dream.symbols.length > 0 ? dream.symbols : PLACEHOLDER_SYMBOLS;
-        updateDream(dream.id, { interpretation: interp, symbols: syms });
-      }
+      updateDream(dream.id, {
+        interpretation: result.interpretation,
+        symbols: result.symbols,
+      });
       setInterpretationVisible(true);
       if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }, 3000);
+    } catch (e: any) {
+      pulseLoop.stop();
+      pulseAnim.setValue(1);
+      setIsInterpreting(false);
+
+      const isOffline = e?.message?.includes('Network') || e?.message?.includes('fetch');
+      Alert.alert(
+        isOffline ? 'No Connection' : 'Interpretation Failed',
+        isOffline
+          ? 'Please check your internet connection and try again.'
+          : 'Something went wrong. Please try again.',
+        [{ text: 'OK' }]
+      );
+    }
   }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, handleUpgrade]);
 
   const handleMenu = useCallback(() => {
@@ -139,7 +163,7 @@ export default function DreamDetailScreen() {
   const hasInterpretation = dream.interpretation !== null || interpretationVisible;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: insets.top - 32, paddingBottom: insets.bottom }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} testID="back-button">
           <ChevronLeft size={24} color={colors.textPrimary} />

@@ -66,7 +66,7 @@ export default function NewDreamScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top - 32 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} testID="cancel-button">
           <Text style={styles.cancelText}>Cancel</Text>

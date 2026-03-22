@@ -9,6 +9,14 @@ function getWeekStart(): string {
   return new Date(now.setDate(diff)).toISOString().split('T')[0];
 }
 
+function getToday(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+// Free: 1 interpretation per week. Premium: 10 per day (cost guardrail).
+const FREE_WEEKLY_LIMIT = 1;
+const PREMIUM_DAILY_LIMIT = 10;
+
 interface SettingsState {
   morningReminderEnabled: boolean;
   morningReminderTime: string;
@@ -19,6 +27,8 @@ interface SettingsState {
   isPremium: boolean;
   freeInterpretationsUsedThisWeek: number;
   lastFreeInterpretationWeekStart: string;
+  premiumInterpretationsUsedToday: number;
+  lastPremiumInterpretationDate: string;
 
   setMorningReminder: (enabled: boolean) => void;
   setMorningReminderTime: (time: string) => void;
@@ -43,6 +53,8 @@ export const useSettingsStore = create<SettingsState>()(
       isPremium: false,
       freeInterpretationsUsedThisWeek: 0,
       lastFreeInterpretationWeekStart: '',
+      premiumInterpretationsUsedToday: 0,
+      lastPremiumInterpretationDate: '',
 
       setMorningReminder: (morningReminderEnabled) => set({ morningReminderEnabled }),
       setMorningReminderTime: (morningReminderTime) => set({ morningReminderTime }),
@@ -54,21 +66,36 @@ export const useSettingsStore = create<SettingsState>()(
 
       canInterpret: () => {
         const state = get();
-        if (state.isPremium) return true;
+        if (state.isPremium) {
+          const today = getToday();
+          if (state.lastPremiumInterpretationDate !== today) return true;
+          return state.premiumInterpretationsUsedToday < PREMIUM_DAILY_LIMIT;
+        }
         const currentWeek = getWeekStart();
         if (state.lastFreeInterpretationWeekStart !== currentWeek) return true;
-        return state.freeInterpretationsUsedThisWeek < 1;
+        return state.freeInterpretationsUsedThisWeek < FREE_WEEKLY_LIMIT;
       },
 
       useInterpretation: () => {
         const state = get();
-        if (state.isPremium) return true;
+        if (state.isPremium) {
+          const today = getToday();
+          if (state.lastPremiumInterpretationDate !== today) {
+            set({ premiumInterpretationsUsedToday: 1, lastPremiumInterpretationDate: today });
+            return true;
+          }
+          if (state.premiumInterpretationsUsedToday < PREMIUM_DAILY_LIMIT) {
+            set({ premiumInterpretationsUsedToday: state.premiumInterpretationsUsedToday + 1 });
+            return true;
+          }
+          return false;
+        }
         const currentWeek = getWeekStart();
         if (state.lastFreeInterpretationWeekStart !== currentWeek) {
           set({ freeInterpretationsUsedThisWeek: 1, lastFreeInterpretationWeekStart: currentWeek });
           return true;
         }
-        if (state.freeInterpretationsUsedThisWeek < 1) {
+        if (state.freeInterpretationsUsedThisWeek < FREE_WEEKLY_LIMIT) {
           set({ freeInterpretationsUsedThisWeek: state.freeInterpretationsUsedThisWeek + 1 });
           return true;
         }
