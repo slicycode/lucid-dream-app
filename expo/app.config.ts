@@ -1,6 +1,6 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
-const PRODUCTION_ORIGIN = 'https://lucid.app/';
+const PRODUCTION_ORIGIN = 'https://slicycode.github.io/lucid-dream-app/';
 const isProduction = process.env.EXPO_ENV === 'production' || process.env.APP_VARIANT === 'production';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
