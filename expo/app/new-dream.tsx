@@ -20,6 +20,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { THEMES, DreamType } from '@/types/dream';
 import { isLikelyGibberish, MIN_DREAM_CONTENT_LENGTH } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { trackEvent } from '@/services/analytics';
 
 const SLIDER_STEPS = 5;
 const THUMB_SIZE = 28;
@@ -386,6 +387,17 @@ export default function NewDreamScreen() {
       interpretation: null,
       symbols: [],
       isForgotten: false,
+    });
+
+    trackEvent('dream_created', {
+      has_title: title.trim().length > 0,
+      has_emotion: !!emotion,
+      theme_count: themes.length,
+      is_lucid: isLucid,
+      dream_type: dreamType,
+      has_rating: rating !== null,
+      has_vividness: vividness !== null,
+      word_count: content.trim().split(/\s+/).length,
     });
 
     if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

@@ -6,6 +6,7 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { scheduleTrialReminder } from '@/services/notifications';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { trackEvent } from '@/services/analytics';
 import { Bell, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
@@ -21,28 +22,41 @@ export default function PaywallScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const paywallViewTracked = React.useRef(false);
   const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
-  const { dreamTitle } = useLocalSearchParams<{ dreamTitle?: string }>();
+  const { dreamTitle, source } = useLocalSearchParams<{ dreamTitle?: string; source?: string }>();
   const contextualDreamTitle = dreamTitle ? decodeURIComponent(dreamTitle) : null;
+  const paywallSource = source || 'settings';
 
-  const dismiss = () => router.back();
+  React.useEffect(() => {
+    if (!paywallViewTracked.current) {
+      trackEvent('paywall_viewed', { source: paywallSource });
+      paywallViewTracked.current = true;
+    }
+  }, [paywallSource]);
+
+  const dismiss = () => { trackEvent('paywall_dismissed', { source: paywallSource }); router.back(); };
 
   const handlePurchase = async () => {
-    const pkg = selectedPlan === 'monthly' ? monthlyPackage : annualPackage;
+    const plan = selectedPlan;
+    trackEvent('paywall_purchase_started', { plan, source: paywallSource });
+    const pkg = plan === 'monthly' ? monthlyPackage : annualPackage;
     if (!pkg) {
       dismiss();
       return;
     }
     const success = await purchasePackage(pkg);
     if (success) {
+      trackEvent('paywall_purchase_completed', { plan, source: paywallSource, has_trial: true });
       void scheduleTrialReminder();
-      dismiss();
+      router.back();
     }
   };
 
   const handleRestore = async () => {
+    trackEvent('paywall_restore_tapped', { source: paywallSource });
     const restored = await restorePurchases();
-    if (restored) dismiss();
+    if (restored) router.back();
   };
 
   const trialTimelineSteps = [
@@ -116,7 +130,7 @@ export default function PaywallScreen() {
         <View style={styles.pricingCards}>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'monthly' && styles.pricingCardSelected]}
-            onPress={() => setSelectedPlan('monthly')}
+            onPress={() => { setSelectedPlan('monthly'); trackEvent('paywall_plan_selected', { plan: 'monthly', source: paywallSource }); }}
             activeOpacity={0.7}
           >
             <View style={styles.popularBadge}>
@@ -129,7 +143,7 @@ export default function PaywallScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'yearly' && styles.pricingCardSelected]}
-            onPress={() => setSelectedPlan('yearly')}
+            onPress={() => { setSelectedPlan('yearly'); trackEvent('paywall_plan_selected', { plan: 'yearly', source: paywallSource }); }}
             activeOpacity={0.7}
           >
             <Text style={styles.pricingPrice}>$39.99 / yr</Text>

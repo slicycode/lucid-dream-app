@@ -1,10 +1,11 @@
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
+import { trackScreen } from '@/services/analytics';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { generateWeeklyDigest } from '@/services/weeklyDigest';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ChevronDown, Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
@@ -70,6 +71,8 @@ export default function JournalScreen() {
   const [digestCollapsed, setDigestCollapsed] = useState(false);
   const [digestContentHeight, setDigestContentHeight] = useState(0);
   const digestHeight = useRef(new Animated.Value(1)).current;
+
+  useFocusEffect(useCallback(() => { trackScreen('Journal'); }, []));
   const chevronRotation = useRef(new Animated.Value(0)).current;
 
   const toggleDigest = useCallback(() => {
@@ -355,7 +358,7 @@ export default function JournalScreen() {
           ) : (
             <TouchableOpacity
               style={[styles.digestCard, styles.digestCardLocked]}
-              onPress={() => router.push('/paywall' as any)}
+              onPress={() => router.push('/paywall?source=journal' as any)}
               activeOpacity={0.8}
             >
               <View style={styles.digestHeader}>

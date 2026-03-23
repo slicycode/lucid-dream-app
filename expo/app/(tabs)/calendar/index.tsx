@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -18,6 +19,7 @@ import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { trackEvent, trackScreen } from '@/services/analytics';
 
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -43,6 +45,8 @@ export default function CalendarScreen() {
   const insets = useSafeAreaInsets();
   const dreams = useDreamsStore((s) => s.dreams);
   const addForgotten = useDreamsStore((s) => s.addForgotten);
+
+  useFocusEffect(useCallback(() => { trackScreen('Calendar'); }, []));
 
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
@@ -89,6 +93,7 @@ export default function CalendarScreen() {
   const handleForgot = useCallback(() => {
     if (!sheetDate) return;
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    trackEvent('dream_forgot_marked');
     addForgotten(sheetDate);
     closeSheet();
   }, [sheetDate, addForgotten, closeSheet]);

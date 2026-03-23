@@ -23,6 +23,23 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
+    privacyManifests: {
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+          NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
+        },
+      ],
+      NSPrivacyCollectedDataTypes: [
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeProductInteraction',
+          NSPrivacyCollectedDataTypeLinked: false,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAnalytics'],
+        },
+      ],
+      NSPrivacyTracking: false,
+    },
   },
   android: {
     adaptiveIcon: {
@@ -44,6 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       '@sentry/react-native',
       { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT },
     ],
+    'expo-localization',
   ],
   experiments: {
     typedRoutes: true,
@@ -51,6 +69,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS,
     sentryDsn: process.env.SENTRY_DSN,
+    posthogApiKey: process.env.POSTHOG_API_KEY,
     router: isProduction ? { origin: PRODUCTION_ORIGIN } : undefined,
     eas: {
       projectId: '90293442-b8b8-4d05-a613-1305f2076caf',

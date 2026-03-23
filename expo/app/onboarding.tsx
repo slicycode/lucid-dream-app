@@ -12,6 +12,7 @@ import { matchOnboardingInterpretation } from '@/constants/onboardingInterpretat
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { scheduleTrialReminder } from '@/services/notifications';
+import { trackEvent, setUserProperty } from '@/services/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -62,6 +63,25 @@ export default function OnboardingScreen() {
   const ctaFadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     setCurrentStepInStore(step);
+    const screenEvents: Record<number, string> = {
+      0: 'onboarding_welcome_viewed',
+      1: 'onboarding_name_viewed',
+      2: 'onboarding_dream_frequency_viewed',
+      3: 'onboarding_dream_detail_viewed',
+      4: 'onboarding_goals_viewed',
+      5: 'onboarding_stat_viewed',
+      6: 'onboarding_journal_experience_viewed',
+      7: 'onboarding_recurring_dreams_viewed',
+      8: 'onboarding_features_viewed',
+      9: 'onboarding_notifications_viewed',
+      10: 'onboarding_dream_entry_viewed',
+      11: 'onboarding_processing_viewed',
+      12: 'onboarding_interpretation_viewed',
+      13: 'onboarding_paywall_viewed',
+      14: 'onboarding_discount_paywall_viewed',
+    };
+    const eventName = screenEvents[step];
+    if (eventName) trackEvent(eventName);
   }, [step, setCurrentStepInStore]);
 
   useEffect(() => {
@@ -127,8 +147,21 @@ export default function OnboardingScreen() {
 
   const goNext = useCallback(() => {
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    switch (step) {
+      case 0: trackEvent('onboarding_welcome_started'); break;
+      case 1: trackEvent('onboarding_name_completed', { has_name: localName.trim().length > 0 }); break;
+      case 2: trackEvent('onboarding_dream_frequency_completed', { frequency: localFrequency }); break;
+      case 3: trackEvent('onboarding_dream_detail_completed', { detail_level: localDetail }); break;
+      case 4: trackEvent('onboarding_goals_completed', { goals: localGoals, goal_count: localGoals.length }); break;
+      case 5: trackEvent('onboarding_stat_continued'); break;
+      case 6: trackEvent('onboarding_journal_experience_completed', { experience: localJournalExp }); break;
+      case 7: trackEvent('onboarding_recurring_dreams_completed', { recurring_type: localRecurring }); break;
+      case 8: trackEvent('onboarding_features_continued'); break;
+      case 10: trackEvent('onboarding_dream_entry_completed', { dream_length: localDreamText.trim().length }); break;
+      case 12: trackEvent('onboarding_interpretation_continued'); break;
+    }
     goToStep(step + 1);
-  }, [step, goToStep]);
+  }, [step, goToStep, localName, localFrequency, localDetail, localGoals, localJournalExp, localRecurring, localDreamText]);
 
   const finishOnboarding = useCallback(() => {
     store.setName(localName);
@@ -139,35 +172,49 @@ export default function OnboardingScreen() {
     store.setRecurringDreams(localRecurring);
     store.setFirstDreamText(localDreamText);
     store.completeOnboarding();
+    setUserProperty({
+      dream_frequency: localFrequency,
+      dream_detail: localDetail,
+      main_goals: localGoals,
+      journal_experience: localJournalExp,
+      has_recurring_dreams: localRecurring,
+      onboarding_completed_at: new Date().toISOString(),
+    });
     router.replace('/(tabs)' as any);
   }, [localName, localFrequency, localDetail, localGoals, localJournalExp, localRecurring, localDreamText, store, router]);
 
   const handlePurchase = useCallback(async () => {
-    const pkg = selectedPlan === 'monthly' ? monthlyPackage : annualPackage;
+    const plan = selectedPlan;
+    trackEvent('paywall_purchase_started', { plan, source: 'onboarding' });
+    const pkg = plan === 'monthly' ? monthlyPackage : annualPackage;
     if (!pkg) {
       finishOnboarding();
       return;
     }
     const success = await purchasePackage(pkg);
     if (success) {
+      trackEvent('paywall_purchase_completed', { plan, source: 'onboarding', has_trial: true });
       void scheduleTrialReminder();
       finishOnboarding();
     }
   }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding]);
 
   const handleDiscountPurchase = useCallback(async () => {
+    trackEvent('paywall_purchase_started', { plan: 'yearly', source: 'discount' });
     if (!annualPackage) {
       finishOnboarding();
       return;
     }
     const success = await purchasePackage(annualPackage);
     if (success) {
+      trackEvent('paywall_purchase_completed', { plan: 'yearly', source: 'discount', has_trial: true });
       void scheduleTrialReminder();
       finishOnboarding();
     }
   }, [annualPackage, purchasePackage, finishOnboarding]);
 
   const handleRestore = useCallback(async () => {
+    trackEvent('paywall_restore_tapped', { source: 'onboarding' });
     const restored = await restorePurchases();
     if (restored) finishOnboarding();
   }, [restorePurchases, finishOnboarding]);
@@ -443,7 +490,7 @@ export default function OnboardingScreen() {
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.paywallHeader}>
           <TouchableOpacity
-            onPress={() => goToStep(14)}
+            onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); goToStep(14); }}
             style={styles.dismissButton}
             testID="paywall-dismiss"
           >
@@ -487,7 +534,7 @@ export default function OnboardingScreen() {
         <View style={styles.pricingCards}>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'monthly' && styles.pricingCardSelected]}
-            onPress={() => setSelectedPlan('monthly')}
+            onPress={() => { setSelectedPlan('monthly'); trackEvent('paywall_plan_selected', { plan: 'monthly', source: 'onboarding' }); }}
             activeOpacity={0.7}
           >
             <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>
@@ -496,7 +543,7 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'yearly' && styles.pricingCardSelected]}
-            onPress={() => setSelectedPlan('yearly')}
+            onPress={() => { setSelectedPlan('yearly'); trackEvent('paywall_plan_selected', { plan: 'yearly', source: 'onboarding' }); }}
             activeOpacity={0.7}
           >
             <Text style={styles.pricingPrice}>$39.99 / yr</Text>
@@ -520,7 +567,7 @@ export default function OnboardingScreen() {
             <Text style={styles.restoreText}>Restore Purchases</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
-          <TouchableOpacity onPress={() => goToStep(14)}>
+          <TouchableOpacity onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); goToStep(14); }}>
             <Text style={styles.continueFreeTxt}>Continue free</Text>
           </TouchableOpacity>
         </View>
@@ -533,7 +580,7 @@ export default function OnboardingScreen() {
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.paywallHeader}>
           <TouchableOpacity
-            onPress={finishOnboarding}
+            onPress={() => { trackEvent('paywall_dismissed', { source: 'discount' }); finishOnboarding(); }}
             style={styles.dismissButton}
           >
             <X size={20} color={colors.textMuted} />

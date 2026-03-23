@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Lucid — Dream Journal & AI Interpretation**
-**Effective Date:** March 22, 2026
+**Effective Date:** March 23, 2026
 **Developer:** slicycode
 **Contact:** slicycode.dev@gmail.com
 
@@ -37,6 +37,7 @@ The App integrates with third-party services that may process limited data:
 | **Anthropic (Claude AI)** | Dream text you choose to interpret | Only when you tap "Interpret" | AI-generated dream interpretation |
 | **RevenueCat** | Anonymous purchase receipts, device ID | When you subscribe or restore purchases | Subscription management |
 | **Sentry** | Crash logs, device model, OS version | Automatically on app errors | Crash reporting and stability |
+| **PostHog** | Anonymous usage events (screens viewed, features used) | During normal app usage | Product analytics to improve the app |
 
 **Important:** Dream text is only sent to Anthropic's API when you explicitly tap the "Interpret" button. Dreams you do not interpret are never transmitted anywhere.
 
@@ -76,25 +77,38 @@ Crash reports **do not** include your name, dream content, or any personally ide
 
 ---
 
-## 6. Notifications
+## 6. Usage Analytics
+
+We collect anonymized usage data to understand how features are used and to improve the app experience. This data includes:
+- Which screens you view and which features you use (e.g., tapping "Interpret," toggling a reminder)
+- Onboarding step progression
+- General app lifecycle events (app opened, backgrounded)
+
+This data is **not** linked to your identity and **does not** include your dream content, name, or any personal information. We use PostHog for this purpose. You can review [PostHog's Privacy Policy](https://posthog.com/privacy) for details on how they handle data.
+
+No dream text, journal entries, or personal details are ever included in analytics events.
+
+---
+
+## 7. Notifications
 
 The App may request permission to send local notifications (morning dream reminders, reality check prompts). These notifications are scheduled entirely on your device and are not sent through any external server. You can disable them at any time in Settings.
 
 ---
 
-## 7. Children's Privacy
+## 8. Children's Privacy
 
 The App is not directed at children under 13. We do not knowingly collect data from children.
 
 ---
 
-## 8. Changes to This Policy
+## 9. Changes to This Policy
 
 We may update this Privacy Policy from time to time. The updated version will be indicated by the "Effective Date" at the top. Continued use of the App after changes constitutes acceptance.
 
 ---
 
-## 9. Your Rights
+## 10. Your Rights
 
 Since we do not collect or store your personal data on any server, there is nothing to request deletion of. Your data lives on your device and can be erased by deleting the App.
 
@@ -102,4 +116,4 @@ If you have questions about this Privacy Policy, contact us at **slicycode.dev@g
 
 ---
 
-*Last updated: March 22, 2026*
+*Last updated: March 23, 2026*

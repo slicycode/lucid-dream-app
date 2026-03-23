@@ -3,9 +3,10 @@ import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { trackScreen } from '@/services/analytics';
 import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -23,6 +24,8 @@ export default function InsightsScreen() {
   const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const isPremium = useSettingsStore((s) => s.isPremium);
   const router = useRouter();
+
+  useFocusEffect(useCallback(() => { trackScreen('Insights'); }, []));
 
   const emotionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -433,7 +436,7 @@ export default function InsightsScreen() {
           </Text>
           <TouchableOpacity
             style={styles.lockCta}
-            onPress={() => router.push('/paywall' as any)}
+            onPress={() => router.push('/paywall?source=insights' as any)}
             activeOpacity={0.8}
           >
             <Text style={styles.lockCtaText}>Start Free Trial</Text>

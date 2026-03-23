@@ -15,6 +15,7 @@ import { ChevronLeft, RotateCcw, Check } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { ALL_EMOTION_TAGS, DEFAULT_EMOTION_TAGS } from '@/types/dream';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
+import { trackEvent } from '@/services/analytics';
 
 export default function EmotionTagsScreen() {
   const router = useRouter();
@@ -31,19 +32,23 @@ export default function EmotionTagsScreen() {
         Alert.alert('Minimum Tags', 'You need at least 2 emotion tags enabled.');
         return;
       }
-      setCustomEmotionTags(customEmotionTags.filter((t) => t !== tag));
+      const removed = customEmotionTags.filter((t) => t !== tag);
+      setCustomEmotionTags(removed);
+      trackEvent('emotion_tags_customized', { tag_count: removed.length });
     } else {
       // Preserve canonical order from ALL_EMOTION_TAGS
       const updated = ALL_EMOTION_TAGS.filter(
         (t) => customEmotionTags.includes(t) || t === tag
       ) as unknown as string[];
       setCustomEmotionTags(updated);
+      trackEvent('emotion_tags_customized', { tag_count: updated.length });
     }
   };
 
   const handleReset = () => {
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setCustomEmotionTags([...DEFAULT_EMOTION_TAGS]);
+    trackEvent('emotion_tags_customized', { tag_count: DEFAULT_EMOTION_TAGS.length });
   };
 
   return (

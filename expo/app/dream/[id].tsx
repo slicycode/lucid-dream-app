@@ -18,6 +18,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 
 import { interpretDream, MIN_DREAM_CONTENT_LENGTH, SHORT_DREAM_MESSAGE, isLikelyGibberish, GIBBERISH_DREAM_MESSAGE } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { trackEvent } from '@/services/analytics';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 
@@ -70,6 +71,7 @@ export default function DreamDetailScreen() {
       Animated.timing(contentFade, { toValue: 1, duration: 450, delay: 100, useNativeDriver: true }),
       Animated.spring(contentSlide, { toValue: 0, damping: 20, stiffness: 200, delay: 100, useNativeDriver: true }),
     ]).start();
+    if (dream) trackEvent('dream_viewed', { has_interpretation: !!dream.interpretation });
   }, []);
 
   useEffect(() => {
@@ -79,14 +81,15 @@ export default function DreamDetailScreen() {
   }, [interpretationVisible, fadeAnim]);
 
   const handleUpgrade = useCallback(() => {
-    const titleParam = dream?.title ? `?dreamTitle=${encodeURIComponent(dream.title)}` : '';
-    router.push(`/paywall${titleParam}` as any);
+    const titleParam = dream?.title ? `&dreamTitle=${encodeURIComponent(dream.title)}` : '';
+    router.push(`/paywall?source=dream${titleParam}` as any);
   }, [router, dream]);
 
   const isPremium = useSettingsStore((s) => s.isPremium);
 
   const doInterpret = useCallback(async () => {
     if (!canInterpret()) {
+      trackEvent('interpretation_limit_hit', { is_premium: isPremium });
       if (isPremium) {
         Alert.alert(
           'Daily Limit Reached',
@@ -112,9 +115,17 @@ export default function DreamDetailScreen() {
       return;
     }
 
+    const isReinterpret = !!dream.interpretation;
+    trackEvent('interpretation_requested', {
+      is_premium: isPremium,
+      is_reinterpret: isReinterpret,
+      dream_word_count: dream.content.trim().split(/\s+/).length,
+    });
+
     // Decrement before API call to prevent spam
     useInterpretation();
 
+    const interpretStartTime = Date.now();
     setIsInterpreting(true);
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -145,9 +156,15 @@ export default function DreamDetailScreen() {
         interpretation: result.interpretation,
         symbols: result.symbols,
       });
+      trackEvent('interpretation_completed', {
+        is_premium: isPremium,
+        symbol_count: result.symbols.length,
+        response_time_ms: Date.now() - interpretStartTime,
+      });
       setInterpretationVisible(true);
       if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e: any) {
+      trackEvent('interpretation_failed', { error: e?.message || 'unknown', is_premium: isPremium });
       // Refund the interpretation on failure
       refundInterpretation();
 
@@ -192,6 +209,7 @@ export default function DreamDetailScreen() {
           style: 'destructive',
           onPress: () => {
             if (dream) {
+              trackEvent('dream_deleted');
               deleteDream(dream.id);
               router.back();
             }

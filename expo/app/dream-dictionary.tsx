@@ -90,7 +90,7 @@ export default function DreamDictionaryScreen() {
           </Text>
           <TouchableOpacity
             style={styles.lockCta}
-            onPress={() => router.push('/paywall' as any)}
+            onPress={() => router.push('/paywall?source=dictionary' as any)}
             activeOpacity={0.8}
           >
             <Text style={styles.lockCtaText}>Start Free Trial</Text>

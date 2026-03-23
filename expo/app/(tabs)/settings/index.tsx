@@ -22,7 +22,7 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import {
   requestPermissions,
   scheduleMorningReminder,
@@ -36,6 +36,7 @@ import {
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
+import { resetAnalytics, trackEvent, trackScreen } from '@/services/analytics';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
 
@@ -65,6 +66,8 @@ export default function SettingsScreen() {
   const settings = useSettingsStore();
   const isPremium = settings.isPremium;
   const { isLoading: rcLoading, restorePurchases } = useRevenueCat();
+
+  useFocusEffect(useCallback(() => { trackScreen('Settings'); }, []));
 
   const [activePicker, setActivePicker] = useState<PickerTarget>(null);
   const sheetAnim = useRef(new Animated.Value(0)).current;
@@ -109,7 +112,7 @@ export default function SettingsScreen() {
     : '07:00';
 
   const handleUpgrade = useCallback(() => {
-    router.push('/paywall' as any);
+    router.push('/paywall?source=settings' as any);
   }, [router]);
 
   const handleRestore = useCallback(async () => {
@@ -132,6 +135,7 @@ export default function SettingsScreen() {
       settings.setMorningReminder(false);
       await cancelMorningReminder();
     }
+    trackEvent('morning_reminder_toggled', { enabled, time: settings.morningReminderTime });
   }, [settings]);
 
   const handleRealityCheckToggle = useCallback(async (enabled: boolean) => {
@@ -150,6 +154,7 @@ export default function SettingsScreen() {
       settings.setRealityCheck(false);
       await cancelRealityChecks();
     }
+    trackEvent('reality_check_toggled', { enabled, frequency: settings.realityCheckFrequency });
   }, [settings]);
 
   const handleRealityFreqChange = useCallback(async (freq: string) => {
@@ -180,6 +185,7 @@ export default function SettingsScreen() {
       settings.setWbtb(false);
       await cancelWbtbAlarm();
     }
+    trackEvent('wbtb_toggled', { enabled, time: settings.wbtbTime });
   }, [isPremium, settings, handleUpgrade]);
 
   const handlePickerTimeChange = useCallback(async (_event: DateTimePickerEvent, date?: Date) => {
@@ -207,6 +213,7 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: () => {
             if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            trackEvent('data_reset_confirmed');
             void cancelAllNotifications();
             resetAllData();
             useOnboardingStore.persist.clearStorage();
@@ -215,6 +222,7 @@ export default function SettingsScreen() {
             useOnboardingStore.setState(useOnboardingStore.getInitialState());
             useDreamsStore.setState(useDreamsStore.getInitialState());
             useSettingsStore.setState(useSettingsStore.getInitialState());
+            resetAnalytics();
           },
         },
       ]
@@ -226,6 +234,7 @@ export default function SettingsScreen() {
     const exportable = allDreams
       .filter((d) => !d.isForgotten)
       .map(({ id, isForgotten, ...rest }) => rest);
+    trackEvent('export_dreams_tapped', { dream_count: exportable.length });
 
     if (exportable.length === 0) {
       Alert.alert('No Dreams', 'There are no dreams to export.');

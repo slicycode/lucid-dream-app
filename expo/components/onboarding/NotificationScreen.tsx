@@ -7,6 +7,7 @@ import { glassAssets } from '@/constants/glassAssets';
 import { useSettingsStore } from '@/store/settingsStore';
 import { requestPermissions, scheduleMorningReminder } from '@/services/notifications';
 import { spacing } from '@/constants/theme';
+import { trackEvent } from '@/services/analytics';
 import { styles } from './styles';
 
 interface NotificationScreenProps {
@@ -56,6 +57,7 @@ export function NotificationScreen({ goNext }: NotificationScreenProps) {
       useSettingsStore.getState().setMorningReminder(true);
       await scheduleMorningReminder('07:00');
     }
+    trackEvent('onboarding_notifications_completed', { notifications_enabled: granted });
     goNext();
   }, [goNext]);
 
@@ -83,7 +85,7 @@ export function NotificationScreen({ goNext }: NotificationScreenProps) {
 
       <Animated.View style={[styles.bottomCta, { opacity: ctaFade }]}>
         <OnboardingButton title="Enable Reminders" onPress={handleEnableReminders} />
-        <TouchableOpacity onPress={goNext} style={styles.skipLink} testID="skip-button">
+        <TouchableOpacity onPress={() => { trackEvent('onboarding_notifications_completed', { notifications_enabled: false }); goNext(); }} style={styles.skipLink} testID="skip-button">
           <Text style={styles.skipText}>Maybe later</Text>
         </TouchableOpacity>
       </Animated.View>

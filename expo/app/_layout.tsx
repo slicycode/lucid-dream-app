@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { colors } from "@/constants/theme";
 import { configureRevenueCat } from "@/hooks/useRevenueCat";
+import "@/services/analytics";
 
 void SplashScreen.preventAutoHideAsync();
 configureRevenueCat();

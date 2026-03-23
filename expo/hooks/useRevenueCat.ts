@@ -8,6 +8,7 @@ import Purchases, {
 } from 'react-native-purchases';
 import Constants from 'expo-constants';
 import { useSettingsStore } from '@/store/settingsStore';
+import { trackEvent } from '@/services/analytics';
 
 // Read from .env locally or EAS secrets in CI builds
 const RC_API_KEY_IOS = Constants.expoConfig?.extra?.revenueCatApiKeyIos ?? '';
@@ -83,7 +84,10 @@ export function useRevenueCat() {
       syncPremiumStatus(customerInfo);
       return checkPremium(customerInfo);
     } catch (e: any) {
-      if (!e.userCancelled) {
+      if (e.userCancelled) {
+        trackEvent('paywall_purchase_cancelled');
+      } else {
+        trackEvent('paywall_purchase_failed', { error: e.message || 'unknown' });
         Alert.alert('Purchase Failed', e.message || 'Something went wrong. Please try again.');
       }
       return false;
