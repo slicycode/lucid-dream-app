@@ -15,6 +15,7 @@ Notifications.setNotificationHandler({
 // Notification identifiers for cancellation
 const MORNING_REMINDER_ID = 'morning-reminder';
 const REALITY_CHECK_PREFIX = 'reality-check';
+const WBTB_ALARM_ID = 'wbtb-alarm';
 
 export async function requestPermissions(): Promise<boolean> {
   if (Platform.OS === 'web') return false;
@@ -62,20 +63,56 @@ export async function cancelMorningReminder() {
 // --- Reality Check Reminders (Premium) ---
 // Fires at intervals throughout the day
 
+const REALITY_CHECK_MESSAGES = [
+  {
+    title: 'Are you dreaming?',
+    body: 'Look at your hands. Read something nearby. Look again. Did it change?',
+  },
+  {
+    title: 'Pause for a moment',
+    body: 'How did you get here? Can you trace your steps back to this morning?',
+  },
+  {
+    title: 'Check in with yourself',
+    body: 'Does anything feel slightly off right now? Trust that feeling.',
+  },
+  {
+    title: 'A gentle question',
+    body: "Are you sure you're awake? Look around. Really look.",
+  },
+  {
+    title: 'Reality check',
+    body: 'Try pushing your finger through your palm. In a dream, it might go through.',
+  },
+  {
+    title: 'Notice your surroundings',
+    body: 'What time is it? Look away. Now check again. Same time?',
+  },
+  {
+    title: 'This might be a dream',
+    body: 'Can you remember waking up this morning? Every detail?',
+  },
+  {
+    title: 'Look closer',
+    body: "Read any text near you. Look away. Read it again. Dreams can't keep text stable.",
+  },
+];
+
 export async function scheduleRealityChecks(frequency: string) {
   await cancelRealityChecks();
 
-  const intervalHours = frequency === '2h' ? 2 : frequency === '3h' ? 3 : 2;
+  const intervalHours = frequency === '2h' ? 2 : frequency === '3h' ? 3 : frequency === '4h' ? 4 : 2;
   const startHour = 9;
   const endHour = 22;
 
   let index = 0;
   for (let hour = startHour; hour < endHour; hour += intervalHours) {
+    const message = REALITY_CHECK_MESSAGES[index % REALITY_CHECK_MESSAGES.length];
     await Notifications.scheduleNotificationAsync({
       identifier: `${REALITY_CHECK_PREFIX}-${index}`,
       content: {
-        title: 'Reality Check',
-        body: 'Are you dreaming right now? Look around. Check the time.',
+        title: message.title,
+        body: message.body,
         sound: 'default',
       },
       trigger: {
@@ -95,6 +132,33 @@ export async function cancelRealityChecks() {
       await Notifications.cancelScheduledNotificationAsync(notif.identifier);
     }
   }
+}
+
+// --- WBTB Alarm (Premium) ---
+// Fires daily at the user's chosen WBTB time
+
+export async function scheduleWbtbAlarm(time: string) {
+  await cancelWbtbAlarm();
+
+  const [hours, minutes] = time.split(':').map(Number);
+
+  await Notifications.scheduleNotificationAsync({
+    identifier: WBTB_ALARM_ID,
+    content: {
+      title: 'Time to wake up briefly',
+      body: 'Stay still. Keep your eyes soft. Hold onto whatever was just happening in your mind.',
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      hour: hours,
+      minute: minutes,
+    },
+  });
+}
+
+export async function cancelWbtbAlarm() {
+  await Notifications.cancelScheduledNotificationAsync(WBTB_ALARM_ID);
 }
 
 // --- Cancel all ---

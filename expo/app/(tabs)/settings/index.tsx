@@ -29,10 +29,12 @@ import {
   cancelMorningReminder,
   scheduleRealityChecks,
   cancelRealityChecks,
+  scheduleWbtbAlarm,
+  cancelWbtbAlarm,
   cancelAllNotifications,
 } from '@/services/notifications';
-// import { File, Paths } from 'expo-file-system';
-// import * as Sharing from 'expo-sharing';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
@@ -158,12 +160,26 @@ export default function SettingsScreen() {
     }
   }, [settings]);
 
-  const handleWbtbToggle = useCallback((enabled: boolean) => {
+  const handleWbtbToggle = useCallback(async (enabled: boolean) => {
     if (!isPremium) {
       void handleUpgrade();
       return;
     }
-    settings.setWbtb(enabled);
+    if (enabled) {
+      const granted = await requestPermissions();
+      if (!granted) {
+        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use the WBTB alarm.', [
+          { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          { text: 'Cancel', style: 'cancel' },
+        ]);
+        return;
+      }
+      settings.setWbtb(true);
+      await scheduleWbtbAlarm(settings.wbtbTime);
+    } else {
+      settings.setWbtb(false);
+      await cancelWbtbAlarm();
+    }
   }, [isPremium, settings, handleUpgrade]);
 
   const handlePickerTimeChange = useCallback(async (_event: DateTimePickerEvent, date?: Date) => {
@@ -174,6 +190,7 @@ export default function SettingsScreen() {
       if (settings.morningReminderEnabled) await scheduleMorningReminder(timeStr);
     } else if (activePicker === 'wbtb') {
       settings.setWbtbTime(timeStr);
+      if (settings.wbtbEnabled) await scheduleWbtbAlarm(timeStr);
     }
   }, [activePicker, settings]);
 
@@ -204,47 +221,47 @@ export default function SettingsScreen() {
     );
   }, []);
 
-  // const handleExportDreams = useCallback(async () => {
-  //   const allDreams = useDreamsStore.getState().dreams;
-  //   const exportable = allDreams
-  //     .filter((d) => !d.isForgotten)
-  //     .map(({ id, isForgotten, ...rest }) => rest);
+  const handleExportDreams = useCallback(async () => {
+    const allDreams = useDreamsStore.getState().dreams;
+    const exportable = allDreams
+      .filter((d) => !d.isForgotten)
+      .map(({ id, isForgotten, ...rest }) => rest);
 
-  //   if (exportable.length === 0) {
-  //     Alert.alert('No Dreams', 'There are no dreams to export.');
-  //     return;
-  //   }
+    if (exportable.length === 0) {
+      Alert.alert('No Dreams', 'There are no dreams to export.');
+      return;
+    }
 
-  //   try {
-  //     const jsonString = JSON.stringify(
-  //       { exportedAt: new Date().toISOString(), dreamCount: exportable.length, dreams: exportable },
-  //       null,
-  //       2
-  //     );
-  //     const fileName = `lucid-dreams-${new Date().toISOString().split('T')[0]}.json`;
-  //     const file = new File(Paths.cache, fileName);
-  //     file.write(jsonString);
+    try {
+      const jsonString = JSON.stringify(
+        { exportedAt: new Date().toISOString(), dreamCount: exportable.length, dreams: exportable },
+        null,
+        2
+      );
+      const fileName = `lucid-dreams-${new Date().toISOString().split('T')[0]}.json`;
+      const file = new File(Paths.cache, fileName);
+      file.write(jsonString);
 
-  //     const isAvailable = await Sharing.isAvailableAsync();
-  //     if (!isAvailable) {
-  //       Alert.alert('Error', 'Sharing is not available on this device.');
-  //       return;
-  //     }
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        Alert.alert('Error', 'Sharing is not available on this device.');
+        return;
+      }
 
-  //     await Sharing.shareAsync(file.uri, {
-  //       mimeType: 'application/json',
-  //       dialogTitle: 'Export Dreams',
-  //       UTI: 'public.json',
-  //     });
+      await Sharing.shareAsync(file.uri, {
+        mimeType: 'application/json',
+        dialogTitle: 'Export Dreams',
+        UTI: 'public.json',
+      });
 
-  //     if (Platform.OS !== 'web') {
-  //       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  //     }
-  //   } catch (error) {
-  //     console.error('Export failed:', error);
-  //     Alert.alert('Export Failed', 'Something went wrong while exporting your dreams. Please try again.');
-  //   }
-  // }, []);
+      if (Platform.OS !== 'web') {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      Alert.alert('Export Failed', 'Something went wrong while exporting your dreams. Please try again.');
+    }
+  }, []);
 
   const renderToggleRow = (
     icon: React.ReactNode,
@@ -397,17 +414,21 @@ export default function SettingsScreen() {
         )}
 
         <Text style={styles.sectionHeader}>DATA</Text>
-        {/* {renderNavRow(
+        {renderNavRow(
           <Download size={18} color={colors.textSecondary} />,
           'Export Dreams (JSON)',
           isPremium ? handleExportDreams : handleUpgrade,
           { badge: isPremium ? undefined : 'PREMIUM' }
-        )} */}
-        {renderNavRow(
-          <Trash2 size={18} color={colors.danger} />,
-          'Reset All Data',
-          handleResetData,
-          { danger: true }
+        )}
+         {__DEV__ && (
+          <>
+            {renderNavRow(
+              <Trash2 size={18} color={colors.danger} />,
+              'Reset All Data',
+              handleResetData,
+              { danger: true }
+            )}
+          </>
         )}
 
         <Text style={styles.sectionHeader}>ABOUT</Text>

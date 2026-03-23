@@ -53,7 +53,7 @@ export const useSettingsStore = create<SettingsState>()(
       realityCheckEnabled: false,
       realityCheckFrequency: '2h',
       wbtbEnabled: false,
-      wbtbTime: '04:00',
+      wbtbTime: '06:00',
       isPremium: false,
       freeInterpretationsUsedThisWeek: 0,
       lastFreeInterpretationWeekStart: '',
