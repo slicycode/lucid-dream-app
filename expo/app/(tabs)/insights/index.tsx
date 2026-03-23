@@ -208,25 +208,27 @@ export default function InsightsScreen() {
       )}
 
       <Text style={styles.sectionTitle}>Dream Frequency</Text>
-      <View style={styles.chartCard}>
-        <View style={styles.barChart}>
-          {weeklyData.map((count, i) => (
-            <View key={i} style={styles.barColumn}>
-              <View style={styles.barContainer}>
-                <View
-                  style={[
-                    styles.bar,
-                    {
-                      height: `${(count / maxWeekly) * 100}%`,
-                    },
-                  ]}
-                />
-              </View>
-              <Text style={styles.barLabel}>W{i + 1}</Text>
-            </View>
-          ))}
+      {totalDreams < 3 ? (
+        <View style={styles.chartCard}>
+          <Text style={styles.lowDataCount}>
+            {totalDreams} dream{totalDreams === 1 ? '' : 's'} logged
+          </Text>
+          <Text style={styles.lowDataMessage}>Log a few more to see trends</Text>
         </View>
-      </View>
+      ) : (
+        <View style={styles.chartCard}>
+          <View style={styles.barChart}>
+            {weeklyData.map((count, i) => (
+              <View key={i} style={styles.barColumn}>
+                <View style={styles.barContainer}>
+                  <View style={[styles.bar, { height: `${(count / maxWeekly) * 100}%` }]} />
+                </View>
+                <Text style={styles.barLabel}>W{i + 1}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       <Text style={styles.sectionTitle}>Most Common Emotions</Text>
       <View style={styles.chartCard}>
@@ -252,7 +254,7 @@ export default function InsightsScreen() {
         )}
       </View>
 
-      {emotionTrends.length > 0 && (
+      {emotionTrends.length > 0 && totalDreams >= 5 && (
         <>
           <Text style={styles.sectionTitle}>Emotion Trends</Text>
           <View style={styles.chartCard}>
@@ -295,33 +297,27 @@ export default function InsightsScreen() {
 
       <Text style={styles.sectionTitle}>Recurring Themes</Text>
       <View style={styles.tagsContainer}>
-        {themeCounts.map(([theme, count]) => (
-          <View
-            key={theme}
-            style={[
-              styles.themeTag,
-              count >= 2 && styles.themeTagAccent,
-            ]}
-          >
-            <Text style={[styles.themeTagText, count >= 2 && styles.themeTagTextAccent]}>
-              {theme} ({count})
-            </Text>
-          </View>
-        ))}
-        {themeCounts.length === 0 && (
+        {themeCounts.length >= 2 ? (
+          themeCounts.map(([theme, count]) => (
+            <View key={theme} style={[styles.themeTag, count >= 2 && styles.themeTagAccent]}>
+              <Text style={[styles.themeTagText, count >= 2 && styles.themeTagTextAccent]}>
+                {theme} ({count})
+              </Text>
+            </View>
+          ))
+        ) : themeCounts.length === 1 ? (
+          <Text style={styles.noDataText}>Patterns will appear as you log more dreams</Text>
+        ) : (
           <Text style={styles.noDataText}>No themes recorded yet</Text>
         )}
       </View>
 
-      {symbolCounts.length > 0 && (
+      {symbolCounts.length >= 2 ? (
         <>
           <Text style={styles.sectionTitle}>Recurring Symbols</Text>
           <View style={styles.tagsContainer}>
             {symbolCounts.map(([symbol, count]) => (
-              <View
-                key={symbol}
-                style={[styles.symbolTag, count >= 2 && styles.symbolTagAccent]}
-              >
+              <View key={symbol} style={[styles.symbolTag, count >= 2 && styles.symbolTagAccent]}>
                 <Sparkles size={10} color={count >= 2 ? colors.accent : colors.textMuted} />
                 <Text style={[styles.symbolTagText, count >= 2 && styles.symbolTagTextAccent]}>
                   {symbol} ({count})
@@ -330,7 +326,12 @@ export default function InsightsScreen() {
             ))}
           </View>
         </>
-      )}
+      ) : symbolCounts.length === 1 ? (
+        <>
+          <Text style={styles.sectionTitle}>Recurring Symbols</Text>
+          <Text style={styles.noDataText}>Patterns will appear as you log more dreams</Text>
+        </>
+      ) : null}
 
       <Text style={styles.sectionTitle}>Dream Stats</Text>
       <View style={styles.statsGrid}>
@@ -415,6 +416,25 @@ export default function InsightsScreen() {
             activeOpacity={0.8}
           >
             <Text style={styles.lockCtaText}>Start Free Trial</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  if (totalDreams === 0) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.zeroStateContainer}>
+          <GlassAsset source={glassAssets.spiral} size={140} />
+          <Text style={styles.zeroStateTitle}>Your insights are waiting</Text>
+          <Text style={styles.zeroStateSub}>Log your first dream to start seeing patterns</Text>
+          <TouchableOpacity
+            style={styles.zeroStateCta}
+            onPress={() => router.push('/new-dream' as any)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.zeroStateCtaText}>Log a Dream</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -754,6 +774,53 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   lockCtaText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    fontWeight: '600' as const,
+    color: colors.ctaAccentText,
+  },
+  lowDataCount: {
+    fontFamily: fonts.sans,
+    fontSize: typography.heading.fontSize,
+    fontWeight: '700' as const,
+    color: colors.accent,
+    marginBottom: spacing.xs,
+  },
+  lowDataMessage: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+  },
+  zeroStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.screenPadding,
+  },
+  zeroStateTitle: {
+    fontFamily: fonts.serif,
+    fontSize: typography.heading.fontSize,
+    fontWeight: '700' as const,
+    color: colors.textPrimary,
+    textAlign: 'center',
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  zeroStateSub: {
+    fontFamily: fonts.sans,
+    fontSize: typography.body.fontSize,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: spacing.lg,
+  },
+  zeroStateCta: {
+    backgroundColor: colors.ctaAccentBg,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: 14,
+  },
+  zeroStateCtaText: {
     fontFamily: fonts.sans,
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,

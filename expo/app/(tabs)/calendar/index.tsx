@@ -181,6 +181,21 @@ export default function CalendarScreen() {
     return cells;
   }, [firstDay, daysInMonth]);
 
+  // Emotions actually logged by the user (for legend)
+  const usedEmotions = useMemo(() => {
+    const seen = new Set<string>();
+    dreams.forEach((d) => {
+      if (!d.isForgotten && d.emotion && colors.emotions[d.emotion]) seen.add(d.emotion);
+    });
+    return Array.from(seen);
+  }, [dreams]);
+
+  // Whether the currently viewed month has any logged dreams
+  const currentMonthHasDreams = useMemo(() => {
+    const prefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    return Object.keys(dreamsByDate).some((k) => k.startsWith(prefix));
+  }, [dreamsByDate, currentYear, currentMonth]);
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -244,6 +259,17 @@ export default function CalendarScreen() {
           })}
         </View>
 
+        {usedEmotions.length > 0 && (
+          <View style={styles.emotionLegend}>
+            {usedEmotions.map((emotion) => (
+              <View key={emotion} style={styles.legendEntry}>
+                <View style={[styles.legendCircle, { backgroundColor: colors.emotions[emotion] }]} />
+                <Text style={styles.legendLabel}>{emotion}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
         {selectedDreams.length > 0 ? (
           <View style={styles.selectedSection}>
             {selectedDreams.map((dream) => (
@@ -280,6 +306,10 @@ export default function CalendarScreen() {
             </View>
           </View>
         ) : (
+          <>
+            {!currentMonthHasDreams && (
+              <Text style={styles.emptyMonthText}>No dreams logged this month</Text>
+            )}
           <View style={styles.streakSection}>
             <View style={styles.streakRow}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -293,6 +323,7 @@ export default function CalendarScreen() {
               <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest === 1 ? '' : 's'}</Text>
             </View>
           </View>
+          </>
         )}
       </ScrollView>
 
@@ -575,5 +606,35 @@ const styles = StyleSheet.create({
     fontSize: typography.tiny.fontSize,
     color: colors.textMuted,
     marginTop: 2,
+  },
+  emotionLegend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  legendEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  legendCircle: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+  },
+  legendLabel: {
+    fontFamily: fonts.sans,
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  emptyMonthText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
   },
 });
