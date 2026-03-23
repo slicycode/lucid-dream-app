@@ -311,16 +311,14 @@ export default function CalendarScreen() {
               <Text style={styles.emptyMonthText}>No dreams logged this month</Text>
             )}
           <View style={styles.streakSection}>
+            <GlassAsset source={glassAssets.hourglass} size={80} style={styles.streakHourglass} />
             <View style={styles.streakRow}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <GlassAsset source={glassAssets.hourglass} size={60} />
-                <Text style={styles.streakLabel}>Current streak</Text>
-              </View>
-              <Text style={styles.streakValue}>{streak.current} day{streak.current === 1 ? '' : 's'}</Text>
+              <Text style={styles.streakLabel}>Current streak</Text>
+              <Text style={styles.streakValue}>{streak.current} day{streak.current <= 1 ? '' : 's'}</Text>
             </View>
             <View style={styles.streakRow}>
               <Text style={styles.streakLabel}>Longest streak</Text>
-              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest === 1 ? '' : 's'}</Text>
+              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest <= 1 ? '' : 's'}</Text>
             </View>
           </View>
           </>
@@ -512,7 +510,15 @@ const styles = StyleSheet.create({
     borderColor: colors.surfaceCardBorder,
     borderRadius: radii.md,
     padding: spacing.cardPadding,
+    paddingTop: spacing.xl,
     gap: spacing.md,
+    overflow: 'visible',
+  },
+  streakHourglass: {
+    position: 'absolute',
+    top: -52,
+    right: 0,
+    transform: "rotate(45deg)",
   },
   streakRow: {
     flexDirection: 'row',

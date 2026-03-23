@@ -4,7 +4,7 @@ import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRouter } from 'expo-router';
-import { Droplets, Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
+import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
@@ -183,9 +183,8 @@ export default function InsightsScreen() {
       {recallRate !== null && (
         <>
           <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
-          <View style={styles.recallCard}>
+          <View style={[styles.recallCard, styles.recallCardHero]}>
             <View style={styles.recallMain}>
-              <Droplets size={24} color={colors.accent} />
               <Text style={styles.recallPercent}>{recallRate}%</Text>
               <View style={styles.recallTrend}>
                 {recallTrend > 0 ? (
@@ -203,20 +202,29 @@ export default function InsightsScreen() {
             <Text style={styles.recallSub}>
               {stats.totalDreamsLogged} remembered · {stats.totalForgotten} forgotten
             </Text>
+            <View style={styles.recallGlassAccent} pointerEvents="none">
+              <GlassAsset source={glassAssets.brain} size={56} glowIntensity={0.6} />
+            </View>
           </View>
         </>
       )}
 
       <Text style={styles.sectionTitle}>Dream Frequency</Text>
       {totalDreams < 3 ? (
-        <View style={styles.chartCard}>
+        <View style={[styles.chartCard, { overflow: 'hidden' }]}>
           <Text style={styles.lowDataCount}>
             {totalDreams} dream{totalDreams === 1 ? '' : 's'} logged
           </Text>
           <Text style={styles.lowDataMessage}>Log a few more to see trends</Text>
+          <View style={styles.freqLowDataAccent} pointerEvents="none">
+            <GlassAsset source={glassAssets.cloud} size={50} glowIntensity={0.5} />
+          </View>
         </View>
       ) : (
-        <View style={styles.chartCard}>
+        <View style={[styles.chartCard, { overflow: 'hidden' }]}>
+          <View style={styles.freqChartAccent} pointerEvents="none">
+            <GlassAsset source={glassAssets.cloud} size={44} glowIntensity={0.4} />
+          </View>
           <View style={styles.barChart}>
             {weeklyData.map((count, i) => (
               <View key={i} style={styles.barColumn}>
@@ -295,7 +303,9 @@ export default function InsightsScreen() {
         </>
       )}
 
-      <Text style={styles.sectionTitle}>Recurring Themes</Text>
+      <View style={styles.sectionTitleRow}>
+        <Text style={styles.sectionTitleInRow}>Recurring Themes</Text>
+      </View>
       <View style={styles.tagsContainer}>
         {themeCounts.length >= 2 ? (
           themeCounts.map(([theme, count]) => (
@@ -361,7 +371,7 @@ export default function InsightsScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {/* Background skeleton preview */}
         <View style={styles.scrollContent} pointerEvents="none">
-          <Text style={styles.pageTitle}>Insights</Text>
+          <Text style={[styles.pageTitle, { marginBottom: spacing.lg }]}>Insights</Text>
           <View style={{ opacity: 0.2 }}>
             <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
             <View style={styles.recallCard}>
@@ -445,7 +455,9 @@ export default function InsightsScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
-          <Text style={styles.pageTitle}>Insights</Text>
+          <View style={styles.pageTitleRow}>
+            <Text style={styles.pageTitle}>Insights</Text>
+          </View>
           {renderContent()}
         </Animated.View>
       </ScrollView>
@@ -471,7 +483,6 @@ const styles = StyleSheet.create({
     fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.lg,
   },
   sectionTitle: {
     fontFamily: fonts.sans,
@@ -588,7 +599,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   recallPercent: {
-    fontFamily: fonts.sans,
+    fontFamily: fonts.serif,
     fontSize: 36,
     fontWeight: '700' as const,
     color: colors.accent,
@@ -688,9 +699,10 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     alignItems: 'center',
     flexGrow: 1,
+    overflow: 'hidden',
   },
   statNumber: {
-    fontFamily: fonts.sans,
+    fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.accent,
@@ -780,7 +792,7 @@ const styles = StyleSheet.create({
     color: colors.ctaAccentText,
   },
   lowDataCount: {
-    fontFamily: fonts.sans,
+    fontFamily: fonts.serif,
     fontSize: typography.heading.fontSize,
     fontWeight: '700' as const,
     color: colors.accent,
@@ -825,5 +837,50 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.ctaAccentText,
+  },
+  pageTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.lg,
+  },
+  recallCardHero: {
+    borderColor: 'rgba(201, 168, 76, 0.25)',
+    backgroundColor: 'rgba(201, 168, 76, 0.04)',
+    overflow: 'hidden',
+  },
+  recallGlassAccent: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  freqLowDataAccent: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  freqChartAccent: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+    marginTop: spacing.lg,
+  },
+  sectionTitleInRow: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
+    color: colors.textMuted,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase' as const,
   },
 });
