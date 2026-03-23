@@ -43,3 +43,8 @@ yarn-error.*
 core
 node_modules
 .expo
+
+# Fastlane secrets
+fastlane/api_key.json
+fastlane/report.xml
+fastlane/Preview.html

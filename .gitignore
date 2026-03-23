@@ -7,3 +7,4 @@ docs/*
 !docs/terms/
 !docs/support/
 progress.txt
+fastlane
