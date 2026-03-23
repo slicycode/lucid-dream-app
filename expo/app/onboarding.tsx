@@ -501,7 +501,7 @@ export default function OnboardingScreen() {
         <GlassAsset source={glassAssets.diamond} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
         <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginBottom: spacing.xs }]}>
-          How does your free{'\n'}trial work?
+          How does your free trial work?
         </Text>
         <Text style={[styles.stepSubtext, { textAlign: 'center' as const, marginBottom: spacing.sm }]}>No surprises. No pressure.</Text>
 

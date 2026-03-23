@@ -21,6 +21,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
+import { seedDreams, removeSeedDreams } from '@/utils/seedDreams';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useRouter, useFocusEffect } from 'expo-router';
 import {
@@ -435,6 +436,17 @@ export default function SettingsScreen() {
               <Trash2 size={18} color={colors.danger} />,
               'Reset All Data',
               handleResetData,
+              { danger: true }
+            )}
+            {renderNavRow(
+              <Download size={18} color={colors.textSecondary} />,
+              'Seed 10 Dreams',
+              () => { seedDreams(); Alert.alert('Done', 'Seeded 10 dreams'); },
+            )}
+            {renderNavRow(
+              <Trash2 size={18} color={colors.danger} />,
+              'Remove Seed Dreams',
+              () => { removeSeedDreams(); Alert.alert('Done', 'Removed seed dreams'); },
               { danger: true }
             )}
           </>

@@ -159,9 +159,10 @@ export default function JournalScreen() {
   const isInitialMount = useRef(true);
 
   // Get or create an anim value for a dream id
+  // After initial mount, new cards start fully visible (1) to avoid invisible gaps
   const getCardAnim = useCallback((id: string) => {
     if (!cardAnims.has(id)) {
-      cardAnims.set(id, new Animated.Value(0));
+      cardAnims.set(id, new Animated.Value(isInitialMount.current ? 0 : 1));
     }
     return cardAnims.get(id)!;
   }, [cardAnims]);
@@ -199,19 +200,24 @@ export default function JournalScreen() {
     isInitialMount.current = false;
   }, []);
 
-  // When a new dream is added, only animate the new one (index 0)
+  // When new dreams are added, animate them in
   useEffect(() => {
     if (isInitialMount.current) return;
-    if (dreams.length > prevDreamCount.current && dreams.length > 0) {
-      const newestDream = dreams[0];
-      const anim = getCardAnim(newestDream.id);
-      anim.setValue(0);
-      Animated.spring(anim, {
-        toValue: 1,
-        damping: 16,
-        stiffness: 200,
-        useNativeDriver: true,
-      }).start();
+    const added = dreams.length - prevDreamCount.current;
+    if (added > 0 && dreams.length > 0) {
+      // Animate all newly added dreams (they appear at the front)
+      const newDreams = dreams.slice(0, added);
+      newDreams.forEach((dream, i) => {
+        const anim = getCardAnim(dream.id);
+        anim.setValue(0);
+        Animated.spring(anim, {
+          toValue: 1,
+          damping: 16,
+          stiffness: 200,
+          delay: i * 40,
+          useNativeDriver: true,
+        }).start();
+      });
     }
     prevDreamCount.current = dreams.length;
   }, [dreams.length]);

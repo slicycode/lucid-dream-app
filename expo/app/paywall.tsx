@@ -98,7 +98,7 @@ export default function PaywallScreen() {
         ) : (
           <>
             <Text style={styles.heading}>
-              How does your free{'\n'}trial work?
+              How does your free trial work?
             </Text>
             <Text style={styles.subtext}>No surprises. No pressure.</Text>
           </>

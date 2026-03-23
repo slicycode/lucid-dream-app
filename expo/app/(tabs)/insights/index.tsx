@@ -450,7 +450,7 @@ export default function InsightsScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.zeroStateContainer}>
-          <GlassAsset source={glassAssets.spiral} size={140} />
+          <GlassAsset source={glassAssets.hand} size={140} />
           <Text style={styles.zeroStateTitle}>Your insights are waiting</Text>
           <Text style={styles.zeroStateSub}>Log your first dream to start seeing patterns</Text>
           <TouchableOpacity
