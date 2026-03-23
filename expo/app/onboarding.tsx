@@ -8,12 +8,14 @@ import { WelcomeScreen } from '@/components/onboarding/WelcomeScreen';
 import OnboardingButton from '@/components/OnboardingButton';
 import { StaggerChildren } from '@/components/StaggerChildren';
 import { glassAssets } from '@/constants/glassAssets';
+import { matchOnboardingInterpretation } from '@/constants/onboardingInterpretations';
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Lock, Star, X } from 'lucide-react-native';
+import { Bell, ChevronLeft, Lock, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -27,14 +29,6 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const HARDCODED_INTERPRETATION = `The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.
-
-Water rising gradually is one of the most common dream symbols. It typically reflects emotions building up slowly — things you've been setting aside that are starting to demand attention.
-
-The combination suggests you may be on the edge of an emotional or personal transition. Your subconscious is inviting you to explore these rising feelings rather than wait for them to overflow.`;
-
-const INTERPRETATION_SYMBOLS = ['Unfamiliar house', 'Rising water', 'Familiarity'];
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -53,6 +47,11 @@ export default function OnboardingScreen() {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
   const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
 
+  const matchedInterpretation = React.useMemo(
+    () => matchOnboardingInterpretation(localDreamText),
+    [localDreamText]
+  );
+
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -67,7 +66,7 @@ export default function OnboardingScreen() {
     if (step === 11) {
       Animated.loop(
         Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.3, duration: 1200, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1.15, duration: 1200, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
         ])
       ).start();
@@ -80,7 +79,9 @@ export default function OnboardingScreen() {
       const t4 = setTimeout(() => {
         Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
           setStep(12);
+          ctaFadeAnim.setValue(0);
           Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+          Animated.timing(ctaFadeAnim, { toValue: 1, duration: 400, delay: 2000, useNativeDriver: true }).start();
         });
       }, 4200);
 
@@ -266,16 +267,14 @@ export default function OnboardingScreen() {
       case 10: return renderFirstDream();
       case 11: return renderProcessing();
       case 12: return renderInterpretation();
-      case 13: return renderSocialProof();
-      case 14: return renderTrialReassurance();
-      case 15: return renderPaywall();
-      case 16: return renderDiscountedPaywall();
+      case 13: return renderPaywall();
+      case 14: return renderDiscountedPaywall();
       default: return null;
     }
   };
 
   const renderNameInput = () => (
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top + 44}>
       <View style={styles.stepContent}>
         <Text style={styles.stepHeading}>What should we call you?</Text>
         <Text style={styles.stepSubtext}>We'll use this to personalize your experience.</Text>
@@ -302,8 +301,9 @@ export default function OnboardingScreen() {
     </KeyboardAvoidingView>
   );
 
+  const dreamCharsNeeded = Math.max(0, 20 - localDreamText.length);
   const renderFirstDream = () => (
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top + 44}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <Text style={styles.stepHeading}>Let's try it right now.</Text>
         <Text style={styles.stepSubtext}>What did you dream about last night?</Text>
@@ -315,6 +315,7 @@ export default function OnboardingScreen() {
           placeholderTextColor={colors.textMuted}
           multiline
           textAlignVertical="top"
+          autoFocus
           testID="dream-input"
         />
         <View style={styles.privacyRow}>
@@ -324,7 +325,7 @@ export default function OnboardingScreen() {
       </ScrollView>
       <View style={styles.bottomCta}>
         <OnboardingButton
-          title="Interpret My Dream"
+          title={localDreamText.length < dreamCharsNeeded ? "Write a few words" : "Interpret My Dream"}
           variant="accent"
           onPress={goNext}
           disabled={localDreamText.length < 20}
@@ -342,11 +343,29 @@ export default function OnboardingScreen() {
         <Animated.View style={{ transform: [{ scale: pulseAnim }], marginBottom: spacing.xl }}>
           <GlassAsset source={glassAssets.eye} size={120} />
         </Animated.View>
-        <Text style={styles.processingTitle}>Analyzing your dream...</Text>
+        <FlowingText
+          text="Analyzing your dream..."
+          style={styles.processingTitle}
+          wordDelay={80}
+          initialDelay={100}
+          haptic
+        />
         <View style={styles.processingSteps}>
-          {processingTexts >= 1 && <Text style={styles.processingStep}>Identifying symbols and themes...</Text>}
-          {processingTexts >= 2 && <Text style={styles.processingStep}>Mapping emotional patterns...</Text>}
-          {processingTexts >= 3 && <Text style={styles.processingStep}>Building your interpretation...</Text>}
+          {processingTexts >= 1 ? (
+            <FlowingText text="Identifying symbols and themes..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+          ) : (
+            <Text style={[styles.processingStep, { opacity: 0 }]}>Identifying symbols and themes...</Text>
+          )}
+          {processingTexts >= 2 ? (
+            <FlowingText text="Mapping emotional patterns..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+          ) : (
+            <Text style={[styles.processingStep, { opacity: 0 }]}>Mapping emotional patterns...</Text>
+          )}
+          {processingTexts >= 3 ? (
+            <FlowingText text="Building your interpretation..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+          ) : (
+            <Text style={[styles.processingStep, { opacity: 0 }]}>Building your interpretation...</Text>
+          )}
         </View>
         <View style={styles.progressBarContainer}>
           <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
@@ -358,18 +377,17 @@ export default function OnboardingScreen() {
   const renderInterpretation = () => (
     <View style={styles.flex}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.interpretationLabel}>YOUR DREAM INTERPRETATION</Text>
+        <Text style={styles.interpretationLabel}>Your dream interpretation</Text>
         <FlowingText
-          text={HARDCODED_INTERPRETATION}
+          text={matchedInterpretation.interpretation}
           style={styles.interpretationText}
           wordDelay={35}
-          initialDelay={400}
           haptic
         />
         <View style={styles.divider} />
         <Text style={styles.symbolsLabel}>Key symbols</Text>
         <StaggerChildren stagger={120} initialDelay={3000} style={styles.tagsRow} triggerKey={step}>
-          {INTERPRETATION_SYMBOLS.map((s) => (
+          {matchedInterpretation.symbols.map((s) => (
             <View key={s} style={styles.symbolTag}>
               <Text style={styles.symbolTagText}>{s}</Text>
             </View>
@@ -388,112 +406,78 @@ export default function OnboardingScreen() {
     </View>
   );
 
-  const renderSocialProof = () => {
-    const reviews = [
-      { stars: 5, text: "I've been journaling dreams for years but never understood them. The AI interpretations gave me actual insight into recurring patterns I'd missed.", name: 'Sarah K.' },
-      { stars: 5, text: 'The morning reminder changed everything. I went from remembering dreams once a month to logging them almost daily.', name: 'Marcus T.' },
-      { stars: 5, text: 'Clean, private, no ads. Exactly what a dream journal should be. The interpretation quality blew me away.', name: 'Lina R.' },
-    ];
-
-    return (
-      <View style={styles.flex}>
-        <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <Text style={styles.stepHeading}>Join thousands of dreamers</Text>
-          <Text style={[styles.statLine, { color: colors.accent }]}>50,000+ dreams interpreted</Text>
-          <StaggerChildren stagger={120} initialDelay={200} distance={16} style={styles.optionsContainer} triggerKey={step}>
-            {reviews.map((r, i) => (
-              <View key={i} style={styles.reviewCard}>
-                <View style={styles.starsRow}>
-                  {Array.from({ length: r.stars }, (_, j) => (
-                    <Star key={j} size={14} color={colors.accent} fill={colors.accent} />
-                  ))}
-                </View>
-                <Text style={styles.reviewText}>"{r.text}"</Text>
-                <Text style={styles.reviewName}>— {r.name}</Text>
-              </View>
-            ))}
-          </StaggerChildren>
-        </ScrollView>
-        <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-          <OnboardingButton title="Continue" onPress={goNext} />
-        </Animated.View>
-      </View>
-    );
-  };
-
-  const renderTrialReassurance = () => (
-    <View style={styles.centeredContent}>
-      <FlowingText
-        text="No surprises. No pressure."
-        style={styles.stepHeading}
-        wordDelay={90}
-        initialDelay={200}
-        haptic
-      />
-      <View style={styles.timeline}>
-        {[
-          { label: 'Today', desc: 'Full access to everything', filled: true },
-          { label: 'Before trial ends', desc: "We'll send you a reminder", filled: false },
-          { label: 'Your choice', desc: 'Cancel anytime in Settings. No questions asked.', filled: false },
-        ].map((item, i) => (
-          <View key={i} style={styles.timelineItem}>
-            <View style={styles.timelineDotColumn}>
-              <View style={[styles.timelineDot, item.filled && styles.timelineDotFilled]} />
-              {i < 2 && <View style={styles.timelineLine} />}
-            </View>
-            <View style={styles.timelineContent}>
-              <Text style={styles.timelineLabel}>{item.label}</Text>
-              <Text style={styles.timelineDesc}>{item.desc}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
-      <View style={styles.bottomCta}>
-        <OnboardingButton title="Continue" onPress={goNext} />
-      </View>
-    </View>
-  );
+  const trialTimelineSteps = [
+    {
+      icon: <Sparkles size={15} color={colors.accent} />,
+      label: 'Today',
+      desc: 'Unlock everything — unlimited interpretations, patterns, lucid dreaming tools & more.',
+    },
+    {
+      icon: <Bell size={15} color={colors.accent} />,
+      label: 'Day 5',
+      desc: "We'll remind you before your trial ends.",
+    },
+    {
+      icon: <ShieldCheck size={15} color={colors.accent} />,
+      label: 'Day 7',
+      desc: 'Subscription begins — cancel anytime in a few taps.',
+    },
+  ];
 
   const renderPaywall = () => (
     <View style={styles.flex}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.paywallHeader}>
-          <View style={styles.premiumBadge}>
-            <Text style={styles.premiumBadgeText}>PREMIUM</Text>
-          </View>
           <TouchableOpacity
-            onPress={() => goToStep(16)}
+            onPress={() => goToStep(14)}
             style={styles.dismissButton}
             testID="paywall-dismiss"
           >
             <X size={20} color={colors.textMuted} />
           </TouchableOpacity>
         </View>
-        <GlassAsset source={glassAssets.key} size={160} style={{ alignSelf: 'center', marginBottom: spacing.lg }} />
-        <Text style={[styles.stepHeading, { textAlign: 'center' as const }]}>Unlock the full power of your dreams.</Text>
-        <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>Start your free trial today.</Text>
 
-        <View style={styles.trialTimeline}>
-          {[
-            { day: 'Today', desc: 'Unlock everything: unlimited AI interpretations, pattern detection, lucid dreaming tools, and more.' },
-            { day: 'Day 5', desc: "We'll remind you before your trial ends." },
-            { day: 'Day 7', desc: 'Your subscription begins. Cancel before then and pay nothing.' },
-          ].map((item, i) => (
-            <View key={i} style={styles.trialTimelineItem}>
-              <Text style={styles.trialDay}>{item.day}</Text>
-              <Text style={styles.trialDesc}>{item.desc}</Text>
+        <GlassAsset source={glassAssets.key} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
+
+        <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginBottom: spacing.xs }]}>
+          How does your free{'\n'}trial work?
+        </Text>
+        <Text style={[styles.stepSubtext, { textAlign: 'center' as const, marginBottom: spacing.sm }]}>No surprises. No pressure.</Text>
+
+        {/* Timeline with fading accent line */}
+        <View style={styles.pwTimeline}>
+          {/* Gradient line behind icons */}
+          <View style={styles.pwTimelineLineTrack}>
+            <LinearGradient
+              colors={[colors.accent, 'rgba(201, 168, 76, 0.25)', 'transparent']}
+              locations={[0, 0.55, 1]}
+              style={StyleSheet.absoluteFill}
+            />
+          </View>
+          {trialTimelineSteps.map((item, i) => (
+            <View key={i} style={styles.pwTimelineItem}>
+              <View style={styles.pwTimelineDotCol}>
+                <View style={styles.pwTimelineIconWrap}>
+                  {item.icon}
+                </View>
+              </View>
+              <View style={styles.pwTimelineContent}>
+                <Text style={styles.pwTimelineLabel}>{item.label}</Text>
+                <Text style={styles.pwTimelineDesc}>{item.desc}</Text>
+              </View>
             </View>
           ))}
         </View>
 
+        {/* Pricing cards */}
         <View style={styles.pricingCards}>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'monthly' && styles.pricingCardSelected]}
             onPress={() => setSelectedPlan('monthly')}
             activeOpacity={0.7}
           >
-            {selectedPlan === 'monthly' && <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>}
-            <Text style={styles.pricingPrice}>$9.99 / month</Text>
+            <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>
+            <Text style={styles.pricingPrice}>$9.99 / mo</Text>
             <Text style={[styles.pricingTrial, selectedPlan === 'monthly' ? { color: colors.accent } : { color: colors.textSecondary }]}>7-day free trial</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -501,45 +485,75 @@ export default function OnboardingScreen() {
             onPress={() => setSelectedPlan('yearly')}
             activeOpacity={0.7}
           >
-            <Text style={styles.pricingPrice}>$39.99 / year</Text>
+            <Text style={styles.pricingPrice}>$39.99 / yr</Text>
             <Text style={styles.pricingTrial}>7-day free trial</Text>
             <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>Save 67%</Text></View>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
       <View style={styles.bottomCta}>
         <OnboardingButton title={rcLoading ? 'Processing...' : 'Start Free Trial'} variant="accent" onPress={handlePurchase} disabled={rcLoading} />
+
         <Text style={styles.paywallSmall}>
-          {selectedPlan === 'monthly' ? 'Then $9.99/month. Cancel anytime.' : 'Then $39.99/year. Cancel anytime.'}
+          {selectedPlan === 'monthly'
+            ? '7 days free, then $9.99/month. Cancel anytime.'
+            : '7 days free, then $39.99/year ($3.33/mo). Cancel anytime.'}
         </Text>
-        <TouchableOpacity onPress={handleRestore} style={styles.restoreLink} disabled={rcLoading}>
-          <Text style={styles.restoreText}>Restore Purchases</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => goToStep(16)} style={styles.skipLink}>
-          <Text style={styles.continueFreeTxt}>Continue with free version</Text>
-        </TouchableOpacity>
+
+        <View style={styles.pwBottomLinks}>
+          <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
+            <Text style={styles.restoreText}>Restore Purchases</Text>
+          </TouchableOpacity>
+          <Text style={styles.pwLinkDot}>·</Text>
+          <TouchableOpacity onPress={() => goToStep(14)}>
+            <Text style={styles.continueFreeTxt}>Continue free</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 
   const renderDiscountedPaywall = () => (
-    <View style={styles.centeredContent}>
-      <View style={styles.discountSheet}>
-        <View style={styles.sheetHandle} />
-        <View style={styles.premiumBadge}>
-          <Text style={styles.premiumBadgeText}>SPECIAL OFFER</Text>
+    <View style={styles.flex}>
+      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.paywallHeader}>
+          <TouchableOpacity
+            onPress={finishOnboarding}
+            style={styles.dismissButton}
+          >
+            <X size={20} color={colors.textMuted} />
+          </TouchableOpacity>
         </View>
-        <Text style={styles.discountHeading}>Still thinking?</Text>
-        <Text style={styles.discountSub}>Here's something to make the decision easier.</Text>
+
+        <GlassAsset source={glassAssets.gift}  size={200} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
+
+        <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginTop: spacing.sm }]}>Still thinking?</Text>
+        <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>Here's something to make the decision easier.</Text>
+
         <View style={styles.discountPriceCard}>
           <Text style={styles.crossedPrice}>$39.99/year</Text>
           <Text style={styles.discountPrice}>$29.99 / year</Text>
-          <Text style={styles.discountTrial}>First week free</Text>
+          <Text style={styles.discountTrial}>7-day free trial included</Text>
+          <View style={styles.floatingBadge}>
+            <View style={[styles.premiumBadge, { backgroundColor: colors.background }]}>
+              <Text style={styles.premiumBadgeText}>SPECIAL OFFER</Text>
+            </View>
+          </View>
         </View>
+      </ScrollView>
+
+      <View style={[styles.bottomCta, { position: 'relative' as const }]}>
         <OnboardingButton title={rcLoading ? 'Processing...' : 'Claim This Offer'} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
-        <TouchableOpacity onPress={finishOnboarding} style={[styles.skipLink, { marginTop: spacing.md }]}>
-          <Text style={styles.continueFreeTxt}>No thanks</Text>
-        </TouchableOpacity>
+
+        <Text style={styles.paywallSmall}>7 days free, then $29.99/year ($2.49/mo). Cancel anytime.</Text>
+
+        <View style={styles.pwBottomLinks}>
+          <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
+            <Text style={styles.restoreText}>Restore Purchases</Text>
+          </TouchableOpacity>
+          <Text style={styles.pwLinkDot}>·</Text>
+        </View>
       </View>
     </View>
   );
@@ -593,7 +607,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.screenPadding,
-    paddingBottom: spacing.lg,
+    paddingBottom: spacing.sm,
   },
   stepHeading: {
     fontFamily: fonts.serif,
@@ -766,7 +780,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     minHeight: 200,
     color: colors.textPrimary,
-    fontFamily: fonts.serif,
+    fontFamily: fonts.sans,
     fontSize: typography.dreamText.fontSize,
     lineHeight: 28,
     marginTop: spacing.md,
@@ -828,17 +842,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textPrimary,
   },
   interpretationLabel: {
-    fontFamily: fonts.sans,
-    fontSize: typography.tiny.fontSize,
+    fontFamily: fonts.serif,
+    fontSize: typography.subheading.fontSize,
     fontWeight: '500' as const,
     color: colors.accent,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
     marginBottom: spacing.lg,
     marginTop: spacing.md,
   },
   interpretationText: {
-    fontFamily: fonts.serifItalic,
+    fontFamily: fonts.sans,
     fontSize: typography.aiInterpretation.fontSize,
     fontStyle: 'italic',
     color: colors.textSecondary,
@@ -924,60 +936,94 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
-  timeline: {
-    marginTop: spacing.xl,
-    marginBottom: spacing.xxl,
-    paddingLeft: spacing.md,
+  pwTimeline: {
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+    paddingLeft: spacing.xs,
   },
-  timelineItem: {
+  pwTimelineLineTrack: {
+    position: 'absolute',
+    left: spacing.xs + 13,
+    top: 30,
+    bottom: 10,
+    width: 3,
+    borderRadius: 1.5,
+    overflow: 'hidden',
+  },
+  pwTimelineItem: {
     flexDirection: 'row',
-    minHeight: 60,
+    minHeight: 64,
   },
-  timelineDotColumn: {
+  pwTimelineDotCol: {
     alignItems: 'center',
-    width: 20,
-    marginRight: spacing.md,
+    width: 30,
+    marginRight: spacing.sm,
+    zIndex: 1,
   },
-  timelineDot: {
-    width: 12,
-    height: 12,
+  pwTimelineIconWrap: {
+    width: 30,
+    height: 30,
     borderRadius: radii.full,
-    borderWidth: 2,
-    borderColor: colors.textMuted,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.surfaceCard,
+    borderWidth: 1,
+    borderColor: colors.accentBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  timelineDotFilled: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  timelineLine: {
-    width: 1,
+  pwTimelineContent: {
     flex: 1,
-    backgroundColor: colors.surfaceCardBorder,
-    marginVertical: 4,
+    paddingBottom: spacing.md,
+    paddingTop: 2,
   },
-  timelineContent: {
-    flex: 1,
-    paddingBottom: spacing.lg,
-  },
-  timelineLabel: {
+  pwTimelineLabel: {
     fontFamily: fonts.sans,
-    fontSize: typography.body.fontSize,
-    fontWeight: '600' as const,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '700' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.xs,
+    marginBottom: 2,
   },
-  timelineDesc: {
+  pwTimelineDesc: {
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 18,
+  },
+  pwTrustBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  pwTrustText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textSecondary,
+  },
+  floatingBadge: {
+    position: 'absolute',
+    top: -14,
+    left: -10,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  pwBottomLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.xs,
+  },
+  pwLinkDot: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
   },
   paywallHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    marginBottom: spacing.lg,
   },
   premiumBadge: {
     borderWidth: 1,
@@ -1001,34 +1047,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  trialTimeline: {
-    marginVertical: spacing.lg,
-    gap: spacing.md,
-  },
-  trialTimelineItem: {
-    backgroundColor: colors.surfaceCard,
-    borderWidth: 1,
-    borderColor: colors.surfaceCardBorder,
-    borderRadius: radii.md,
-    padding: spacing.md,
-  },
-  trialDay: {
-    fontFamily: fonts.sans,
-    fontSize: typography.caption.fontSize,
-    fontWeight: '600' as const,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  trialDesc: {
-    fontFamily: fonts.sans,
-    fontSize: typography.caption.fontSize,
-    color: colors.textSecondary,
-    lineHeight: 20,
-  },
   pricingCards: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginTop: spacing.md,
+    marginTop: spacing.xs,
   },
   pricingCard: {
     flex: 1,
@@ -1036,7 +1058,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.surfaceCardBorder,
     borderRadius: radii.md,
-    padding: spacing.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     alignItems: 'center',
   },
   pricingCardSelected: {
@@ -1098,34 +1121,6 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
-  discountSheet: {
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radii.xl,
-    padding: spacing.screenPadding,
-    alignItems: 'center',
-  },
-  sheetHandle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.textDisabled,
-    marginBottom: spacing.lg,
-  },
-  discountHeading: {
-    fontFamily: fonts.serif,
-    fontSize: typography.heading.fontSize,
-    fontWeight: '700' as const,
-    color: colors.textPrimary,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-  },
-  discountSub: {
-    fontFamily: fonts.sans,
-    fontSize: typography.body.fontSize,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
   discountPriceCard: {
     backgroundColor: colors.accentMuted,
     borderWidth: 1,
@@ -1134,6 +1129,7 @@ const styles = StyleSheet.create({
     padding: spacing.cardPadding,
     alignItems: 'center',
     width: '100%',
+    marginTop: spacing.lg,
     marginBottom: spacing.lg,
   },
   crossedPrice: {

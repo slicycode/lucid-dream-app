@@ -36,7 +36,7 @@ export function WelcomeScreen({ goNext }: WelcomeScreenProps) {
 
   return (
     <View style={styles.centeredContent}>
-      <GlassAsset source={glassAssets.crescentMoon} size={170} style={{ alignSelf: 'center', marginBottom: spacing.lg }} />
+      <GlassAsset source={glassAssets.crescentMoon} size={170} glowIntensity={2} style={{ alignSelf: 'center', marginBottom: spacing.lg }} />
       <Text style={styles.logoText}>Lucid</Text>
 
       {/* Both lines always rendered to reserve layout space — no shift */}

@@ -9,4 +9,6 @@ export const glassAssets = {
   clock: require('../assets/icons/clock-removebg.png'),
   feather: require('../assets/icons/feather-removebg.png'),
   spiral: require('../assets/icons/spiral-removebg.png'),
+  bell: require('../assets/icons/bell-removebg.png'),
+  gift: require('../assets/icons/gift-removebg.png')
 } as const;
