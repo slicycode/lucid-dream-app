@@ -2,4 +2,8 @@ node_modules
 .env
 .expo
 docs/*
+!docs/index.html
+!docs/privacy/
+!docs/terms/
+!docs/support/
 progress.txt

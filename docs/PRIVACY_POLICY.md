@@ -3,7 +3,7 @@
 **Lucid — Dream Journal & AI Interpretation**
 **Effective Date:** March 23, 2026
 **Developer:** slicycode
-**Contact:** slicycode.dev@gmail.com
+**Contact:** julesdeparispro@gmail.com
 
 ---
 
@@ -112,7 +112,7 @@ We may update this Privacy Policy from time to time. The updated version will be
 
 Since we do not collect or store your personal data on any server, there is nothing to request deletion of. Your data lives on your device and can be erased by deleting the App.
 
-If you have questions about this Privacy Policy, contact us at **slicycode.dev@gmail.com**.
+If you have questions about this Privacy Policy, contact us at **julesdeparispro@gmail.com**.
 
 ---
 

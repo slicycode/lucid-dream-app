@@ -450,17 +450,17 @@ export default function SettingsScreen() {
         {renderNavRow(
           <Shield size={18} color={colors.textSecondary} />,
           'Privacy Policy',
-          () => Linking.openURL('https://example.com/privacy'),
+          () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/'),
         )}
         {renderNavRow(
           <FileQuestion size={18} color={colors.textSecondary} />,
           'Terms of Service',
-          () => Linking.openURL('https://example.com/terms'),
+          () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/'),
         )}
         {renderNavRow(
           <HelpCircle size={18} color={colors.textSecondary} />,
           'Help & Support',
-          () => Linking.openURL('https://example.com/support'),
+          () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/support/'),
         )}
         <View style={styles.versionRow}>
           <Info size={14} color={colors.textDisabled} />
