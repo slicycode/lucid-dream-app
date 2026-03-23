@@ -83,7 +83,7 @@ export default function DreamDictionaryScreen() {
 
       {!isPremium ? (
         <View style={styles.lockContainer}>
-          <GlassAsset source={glassAssets.key} size={120} />
+          <GlassAsset source={glassAssets.book} size={144} />
           <Text style={styles.lockTitle}>Premium Feature</Text>
           <Text style={styles.lockSubtext}>
             Unlock the full dream symbol reference with Premium — 80+ symbols, offline, no ads.
@@ -297,6 +297,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: spacing.xxl * 2,
     paddingHorizontal: spacing.screenPadding,
   },
   lockTitle: {
@@ -305,7 +306,6 @@ const styles = StyleSheet.create({
     fontWeight: '700' as const,
     color: colors.textPrimary,
     textAlign: 'center',
-    marginTop: spacing.lg,
     marginBottom: spacing.sm,
   },
   lockSubtext: {

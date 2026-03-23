@@ -444,7 +444,7 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         </View>
 
-        <GlassAsset source={glassAssets.key} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
+        <GlassAsset source={glassAssets.diamond} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
         <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginBottom: spacing.xs }]}>
           How does your free{'\n'}trial work?
@@ -950,10 +950,10 @@ const styles = StyleSheet.create({
   },
   pwTimelineLineTrack: {
     position: 'absolute',
-    left: spacing.xs + 13,
-    top: 30,
+    left: spacing.xs + 10,
+    top: 20,
     bottom: 10,
-    width: 3,
+    width: 10,
     borderRadius: 1.5,
     overflow: 'hidden',
   },

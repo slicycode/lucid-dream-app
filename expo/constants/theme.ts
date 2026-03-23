@@ -36,6 +36,13 @@ export const colors = {
     Joyful: '#7A8B5E',
     Sad: '#5E6B7A',
     Neutral: '#555555',
+    Nostalgic: '#7A6B8B',
+    Angry: '#8B5E5E',
+    Lonely: '#5E7A8B',
+    Euphoric: '#8B8A5E',
+    Eerie: '#5E6B6B',
+    Hopeful: '#6B8B6B',
+    Guilty: '#7A6B6B',
   } as Record<string, string>,
 } as const;
 

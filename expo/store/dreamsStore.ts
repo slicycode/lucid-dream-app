@@ -13,68 +13,6 @@ interface DreamStats {
   firstDreamDate: string;
 }
 
-const DUMMY_DREAMS: Dream[] = [
-  {
-    id: '1',
-    title: 'The Flooding House',
-    content:
-      "I was in a house I didn't recognize but it felt like home. Water started seeping through the floorboards, slowly at first, then faster. I kept moving upstairs but the water followed. I wasn't scared exactly — more like resigned.",
-    date: '2026-03-21',
-    loggedAt: '2026-03-21T07:15:00.000Z',
-    emotion: 'Anxious',
-    themes: ['Water', 'Lost'],
-    isLucid: false,
-    dreamType: 'dream',
-    rating: 3,
-    vividness: 4,
-    interpretation:
-      "The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.\n\nWater rising gradually is one of the most common dream symbols. It typically reflects emotions building up slowly — things you've been setting aside that are starting to demand attention.\n\nThe combination suggests you may be on the edge of an emotional or personal transition. Your subconscious is inviting you to explore these rising feelings rather than wait for them to overflow.",
-    symbols: ['Unfamiliar house', 'Rising water', 'Familiarity'],
-
-    isFirstPerson: true,
-    isForgotten: false,
-  },
-  {
-    id: '2',
-    title: 'Flying Over the City',
-    content:
-      "I was standing on the edge of a rooftop and I just stepped off. Instead of falling I started flying over the whole city. Everything looked tiny below me. I could feel the wind. Then I noticed I was being followed by a bird made of light.",
-    date: '2026-03-19',
-    loggedAt: '2026-03-19T06:48:00.000Z',
-    emotion: 'Exciting',
-    themes: ['Flying'],
-    isLucid: false,
-    dreamType: 'dream',
-    rating: 5,
-    vividness: 5,
-    interpretation: null,
-    symbols: [],
-
-    isFirstPerson: true,
-    isForgotten: false,
-  },
-  {
-    id: '3',
-    title: 'The Exam I Forgot',
-    content:
-      "I was back in school sitting down for an exam but I had no idea what subject it was. Everyone else was writing. I looked at the paper and the questions were in a language I couldn't read but somehow understood. I woke up before finishing.",
-    date: '2026-03-16',
-    loggedAt: '2026-03-16T08:02:00.000Z',
-    emotion: 'Confusing',
-    themes: ['School'],
-    isLucid: false,
-    dreamType: 'nightmare',
-    rating: 2,
-    vividness: 3,
-    interpretation:
-      "The exam dream is among the most universal dream archetypes. It often surfaces during periods when you feel tested or evaluated in waking life — not necessarily academically, but in any area where you feel unprepared.\n\nThe unreadable language you somehow understood points to intuitive knowledge — you know more than you think you do, even when the situation feels foreign.\n\nWaking before finishing suggests an unresolved situation in your life that you're processing subconsciously.",
-    symbols: ['Exam', 'Unknown language', 'School'],
-
-    isFirstPerson: true,
-    isForgotten: false,
-  },
-];
-
 function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -130,16 +68,16 @@ interface DreamsState {
 export const useDreamsStore = create<DreamsState>()(
   persist(
     (set, get) => ({
-      dreams: DUMMY_DREAMS,
+      dreams: [],
       weeklyDigest: null,
       stats: {
         currentStreak: 0,
         longestStreak: 0,
         lastDreamDate: '',
-        totalDreamsLogged: DUMMY_DREAMS.length,
-        totalInterpretations: DUMMY_DREAMS.filter((d) => d.interpretation).length,
+        totalDreamsLogged: 0,
+        totalInterpretations: 0,
         totalForgotten: 0,
-        firstDreamDate: DUMMY_DREAMS.length > 0 ? DUMMY_DREAMS[DUMMY_DREAMS.length - 1].date : '',
+        firstDreamDate: '',
       },
 
       addDream: (dream) =>

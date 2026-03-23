@@ -16,7 +16,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useDreamsStore } from '@/store/dreamsStore';
-import { EMOTIONS, THEMES, DreamType } from '@/types/dream';
+import { useSettingsStore } from '@/store/settingsStore';
+import { THEMES, DreamType } from '@/types/dream';
 import { isLikelyGibberish, MIN_DREAM_CONTENT_LENGTH } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
@@ -345,6 +346,7 @@ export default function NewDreamScreen() {
   const { date: paramDate } = useLocalSearchParams<{ date?: string }>();
   const insets = useSafeAreaInsets();
   const addDream = useDreamsStore((s) => s.addDream);
+  const customEmotionTags = useSettingsStore((s) => s.customEmotionTags);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -487,14 +489,14 @@ export default function NewDreamScreen() {
           <Text style={styles.sectionLabel}>How did this dream feel?</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tagScroll}>
             <View style={styles.tagsRow}>
-              {EMOTIONS.map((em) => (
+              {customEmotionTags.map((em) => (
                 <TouchableOpacity
                   key={em}
                   style={[styles.emotionTag, emotion === em && styles.emotionTagSelected]}
                   onPress={() => selectEmotion(em)}
                   activeOpacity={0.7}
                 >
-                  <View style={[styles.emotionColorDot, { backgroundColor: colors.emotions[em] }]} />
+                  <View style={[styles.emotionColorDot, { backgroundColor: colors.emotions[em] || colors.emotions.Neutral }]} />
                   <Text style={[styles.emotionTagText, emotion === em && styles.emotionTagTextSelected]}>{em}</Text>
                 </TouchableOpacity>
               ))}

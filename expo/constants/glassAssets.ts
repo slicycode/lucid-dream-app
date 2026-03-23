@@ -12,4 +12,6 @@ export const glassAssets = {
   bell: require('../assets/icons/bell-removebg.png'),
   gift: require('../assets/icons/gift-removebg.png'),
   brain: require('../assets/icons/brain-removebg.png'),
+  diamond: require('../assets/icons/diamond-removebg.png'),
+  book: require('../assets/icons/book-removebg.png'),
 } as const;

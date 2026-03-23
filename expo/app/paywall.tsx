@@ -68,7 +68,7 @@ export default function PaywallScreen() {
           </TouchableOpacity>
         </View>
 
-        <GlassAsset source={glassAssets.key} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
+        <GlassAsset source={glassAssets.diamond} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
         {contextualDreamTitle ? (
           <>
@@ -91,7 +91,7 @@ export default function PaywallScreen() {
           <View style={styles.pwTimelineLineTrack}>
             <LinearGradient
               colors={[colors.accent, 'rgba(201, 168, 76, 0.25)', 'transparent']}
-              locations={[0, 0.55, 1]}
+              locations={[0, 0.75, 1]}
               style={StyleSheet.absoluteFill}
             />
           </View>
@@ -213,10 +213,10 @@ const styles = StyleSheet.create({
   },
   pwTimelineLineTrack: {
     position: 'absolute',
-    left: spacing.xs + 13,
-    top: 30,
+    left: spacing.xs + 10,
+    top: 20,
     bottom: 10,
-    width: 3,
+    width: 10,
     borderRadius: 1.5,
     overflow: 'hidden',
   },

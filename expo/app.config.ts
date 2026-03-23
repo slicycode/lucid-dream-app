@@ -39,6 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     isProduction ? ['expo-router', { origin: PRODUCTION_ORIGIN }] : 'expo-router',
     'expo-font',
     'expo-web-browser',
+    'expo-sharing',
     [
       '@sentry/react-native',
       { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT },

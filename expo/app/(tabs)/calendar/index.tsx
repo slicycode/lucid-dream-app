@@ -541,7 +541,6 @@ const styles = StyleSheet.create({
     borderColor: colors.surfaceCardBorder,
     borderRadius: radii.md,
     padding: spacing.cardPadding,
-    paddingTop: spacing.xl,
     gap: spacing.md,
     overflow: 'visible',
   },

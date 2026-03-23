@@ -226,7 +226,7 @@ export default function DreamDetailScreen() {
   const hasInterpretation = dream.interpretation !== null || interpretationVisible;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top - 32, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} testID="back-button">
           <ChevronLeft size={24} color={colors.textPrimary} />

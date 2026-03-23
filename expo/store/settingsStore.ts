@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { mmkvStorage } from './mmkv';
+import { DEFAULT_EMOTION_TAGS } from '@/types/dream';
 
 function getWeekStart(): string {
   const now = new Date();
@@ -29,6 +30,7 @@ interface SettingsState {
   lastFreeInterpretationWeekStart: string;
   premiumInterpretationsUsedToday: number;
   lastPremiumInterpretationDate: string;
+  customEmotionTags: string[];
 
   setMorningReminder: (enabled: boolean) => void;
   setMorningReminderTime: (time: string) => void;
@@ -37,6 +39,7 @@ interface SettingsState {
   setWbtb: (enabled: boolean) => void;
   setWbtbTime: (time: string) => void;
   setIsPremium: (val: boolean) => void;
+  setCustomEmotionTags: (tags: string[]) => void;
   useInterpretation: () => boolean;
   refundInterpretation: () => void;
   canInterpret: () => boolean;
@@ -56,6 +59,7 @@ export const useSettingsStore = create<SettingsState>()(
       lastFreeInterpretationWeekStart: '',
       premiumInterpretationsUsedToday: 0,
       lastPremiumInterpretationDate: '',
+      customEmotionTags: DEFAULT_EMOTION_TAGS,
 
       setMorningReminder: (morningReminderEnabled) => set({ morningReminderEnabled }),
       setMorningReminderTime: (morningReminderTime) => set({ morningReminderTime }),
@@ -64,6 +68,7 @@ export const useSettingsStore = create<SettingsState>()(
       setWbtb: (wbtbEnabled) => set({ wbtbEnabled }),
       setWbtbTime: (wbtbTime) => set({ wbtbTime }),
       setIsPremium: (isPremium) => set({ isPremium }),
+      setCustomEmotionTags: (customEmotionTags) => set({ customEmotionTags }),
 
       canInterpret: () => {
         const state = get();
@@ -115,6 +120,13 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'settings-store',
       storage: createJSONStorage(() => mmkvStorage),
+      version: 1,
+      migrate: (persisted: any, version: number) => {
+        if (version < 1) {
+          return { ...persisted, customEmotionTags: persisted.customEmotionTags ?? DEFAULT_EMOTION_TAGS };
+        }
+        return persisted;
+      },
     }
   )
 );

@@ -31,6 +31,8 @@ import {
   cancelRealityChecks,
   cancelAllNotifications,
 } from '@/services/notifications';
+// import { File, Paths } from 'expo-file-system';
+// import * as Sharing from 'expo-sharing';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
@@ -202,6 +204,48 @@ export default function SettingsScreen() {
     );
   }, []);
 
+  // const handleExportDreams = useCallback(async () => {
+  //   const allDreams = useDreamsStore.getState().dreams;
+  //   const exportable = allDreams
+  //     .filter((d) => !d.isForgotten)
+  //     .map(({ id, isForgotten, ...rest }) => rest);
+
+  //   if (exportable.length === 0) {
+  //     Alert.alert('No Dreams', 'There are no dreams to export.');
+  //     return;
+  //   }
+
+  //   try {
+  //     const jsonString = JSON.stringify(
+  //       { exportedAt: new Date().toISOString(), dreamCount: exportable.length, dreams: exportable },
+  //       null,
+  //       2
+  //     );
+  //     const fileName = `lucid-dreams-${new Date().toISOString().split('T')[0]}.json`;
+  //     const file = new File(Paths.cache, fileName);
+  //     file.write(jsonString);
+
+  //     const isAvailable = await Sharing.isAvailableAsync();
+  //     if (!isAvailable) {
+  //       Alert.alert('Error', 'Sharing is not available on this device.');
+  //       return;
+  //     }
+
+  //     await Sharing.shareAsync(file.uri, {
+  //       mimeType: 'application/json',
+  //       dialogTitle: 'Export Dreams',
+  //       UTI: 'public.json',
+  //     });
+
+  //     if (Platform.OS !== 'web') {
+  //       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  //     }
+  //   } catch (error) {
+  //     console.error('Export failed:', error);
+  //     Alert.alert('Export Failed', 'Something went wrong while exporting your dreams. Please try again.');
+  //   }
+  // }, []);
+
   const renderToggleRow = (
     icon: React.ReactNode,
     label: string,
@@ -289,7 +333,7 @@ export default function SettingsScreen() {
         {renderNavRow(
           <FileText size={18} color={colors.textSecondary} />,
           'Default Emotion Tags',
-          () => {},
+          () => router.push('/emotion-tags' as any),
           { value: 'Customize' }
         )}
 
@@ -353,12 +397,12 @@ export default function SettingsScreen() {
         )}
 
         <Text style={styles.sectionHeader}>DATA</Text>
-        {renderNavRow(
+        {/* {renderNavRow(
           <Download size={18} color={colors.textSecondary} />,
           'Export Dreams (JSON)',
-          isPremium ? () => {} : handleUpgrade,
+          isPremium ? handleExportDreams : handleUpgrade,
           { badge: isPremium ? undefined : 'PREMIUM' }
-        )}
+        )} */}
         {renderNavRow(
           <Trash2 size={18} color={colors.danger} />,
           'Reset All Data',
@@ -453,6 +497,7 @@ export default function SettingsScreen() {
                 themeVariant="dark"
                 textColor={colors.textPrimary}
                 minuteInterval={5}
+                style={{ alignSelf: 'center' }}
               />
             )}
           </Animated.View>
