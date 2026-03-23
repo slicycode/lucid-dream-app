@@ -1,12 +1,14 @@
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
 import { useDreamsStore } from '@/store/dreamsStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { generateWeeklyDigest } from '@/services/weeklyDigest';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
+import { ChevronDown, Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -59,8 +61,91 @@ export default function JournalScreen() {
   const allDreams = useDreamsStore((s) => s.dreams);
   const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const deleteDream = useDreamsStore((s) => s.deleteDream);
+  const weeklyDigest = useDreamsStore((s) => s.weeklyDigest);
+  const setWeeklyDigest = useDreamsStore((s) => s.setWeeklyDigest);
+  const isPremium = useSettingsStore((s) => s.isPremium);
   const name = useOnboardingStore((s) => s.name);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [digestLoading, setDigestLoading] = React.useState(false);
+  const [digestCollapsed, setDigestCollapsed] = useState(false);
+  const [digestContentHeight, setDigestContentHeight] = useState(0);
+  const digestHeight = useRef(new Animated.Value(1)).current;
+  const chevronRotation = useRef(new Animated.Value(0)).current;
+
+  const toggleDigest = useCallback(() => {
+    const toCollapsed = !digestCollapsed;
+    setDigestCollapsed(toCollapsed);
+    if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Animated.parallel([
+      Animated.spring(digestHeight, { toValue: toCollapsed ? 0 : 1, damping: 18, stiffness: 200, useNativeDriver: false }),
+      Animated.spring(chevronRotation, { toValue: toCollapsed ? 1 : 0, damping: 18, stiffness: 200, useNativeDriver: true }),
+    ]).start();
+  }, [digestCollapsed, digestHeight, chevronRotation]);
+
+  // Show digest card on Sunday (0) and Monday (1) only
+  const todayDow = new Date().getDay();
+  const isDigestDay = todayDow === 0 || todayDow === 1;
+
+  // Week key: Monday-based ISO date (Sunday uses previous Monday)
+  const currentWeekOf = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(now.getFullYear(), now.getMonth(), diff).toISOString().split('T')[0];
+  }, []);
+
+  // Track whether a digest was already generated this week to prevent API spam
+  // (e.g. user generates → deletes dream → creates another → would re-trigger)
+  const digestGeneratedThisSession = useRef(false);
+
+  // Auto-generate digest on Sunday/Monday if premium and not yet generated
+  useEffect(() => {
+    if (!isDigestDay || !isPremium || digestLoading) return;
+    if (weeklyDigest?.weekOf === currentWeekOf) return;
+    if (digestGeneratedThisSession.current) return;
+    const recentDreams = dreams.filter((d) => {
+      const diff = (Date.now() - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24);
+      return diff <= 7;
+    });
+    if (recentDreams.length === 0) return;
+
+    setDigestLoading(true);
+    digestGeneratedThisSession.current = true;
+    generateWeeklyDigest(
+      recentDreams.map((d) => ({ title: d.title, emotion: d.emotion, themes: d.themes, dreamType: d.dreamType })),
+      currentWeekOf
+    )
+      .then((result) => setWeeklyDigest({
+        summary: result.summary,
+        weekOf: currentWeekOf,
+        dreamCount: recentDreams.length,
+        generatedAt: new Date().toISOString(),
+      }))
+      .catch(() => {/* silently fail — digest is non-critical */})
+      .finally(() => setDigestLoading(false));
+  }, [isDigestDay, isPremium, currentWeekOf, weeklyDigest?.weekOf, dreams.length]);
+
+  // Digest freshness: how many dreams were logged since digest was generated
+  const digestIsStale = useMemo(() => {
+    if (!weeklyDigest || weeklyDigest.weekOf !== currentWeekOf) return false;
+    const currentCount = dreams.filter((d) => {
+      const diff = (Date.now() - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24);
+      return diff <= 7;
+    }).length;
+    return currentCount > (weeklyDigest.dreamCount ?? 0);
+  }, [weeklyDigest, currentWeekOf, dreams]);
+
+  const digestTimestamp = useMemo(() => {
+    if (!weeklyDigest?.generatedAt) return 'Generated earlier this week';
+    const gen = new Date(weeklyDigest.generatedAt);
+    if (isNaN(gen.getTime())) return 'Generated earlier this week';
+    const now = new Date();
+    const hoursAgo = Math.floor((now.getTime() - gen.getTime()) / (1000 * 60 * 60));
+    if (hoursAgo < 1) return 'Generated just now';
+    if (hoursAgo < 24) return `Generated ${hoursAgo}h ago`;
+    const daysAgo = Math.floor(hoursAgo / 24);
+    return `Generated ${daysAgo}d ago`;
+  }, [weeklyDigest?.generatedAt]);
 
   // Entrance animations
   const headerFade = useRef(new Animated.Value(0)).current;
@@ -222,6 +307,68 @@ export default function JournalScreen() {
           )}
         </Animated.View>
 
+        {isDigestDay && (
+          isPremium ? (
+            <View style={styles.digestCard}>
+              <TouchableOpacity
+                style={styles.digestHeader}
+                onPress={weeklyDigest?.weekOf === currentWeekOf && weeklyDigest.summary ? toggleDigest : undefined}
+                activeOpacity={0.7}
+              >
+                <Sparkles size={14} color={colors.accent} />
+                <Text style={styles.digestLabel}>This week in your dreams</Text>
+                {weeklyDigest?.weekOf === currentWeekOf && weeklyDigest.summary && (
+                  <Animated.View style={{
+                    marginLeft: 'auto',
+                    transform: [{ rotate: chevronRotation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-90deg'] }) }],
+                  }}>
+                    <ChevronDown size={16} color={colors.textMuted} />
+                  </Animated.View>
+                )}
+              </TouchableOpacity>
+              {digestLoading ? (
+                <Text style={styles.digestSummary}>Generating your weekly digest...</Text>
+              ) : weeklyDigest?.weekOf === currentWeekOf && weeklyDigest.summary ? (
+                <Animated.View style={{
+                  maxHeight: digestHeight.interpolate({ inputRange: [0, 1], outputRange: [0, 350] }),
+                  opacity: digestHeight,
+                  overflow: 'hidden',
+                }}>
+                  <Text style={styles.digestSummary}>{weeklyDigest.summary}</Text>
+                  <View style={styles.digestMeta}>
+                    <Text style={styles.digestMetaText}>
+                      {digestTimestamp}{weeklyDigest.dreamCount ? ` · Based on ${weeklyDigest.dreamCount} dream${weeklyDigest.dreamCount !== 1 ? 's' : ''}` : ''}
+                    </Text>
+                    {digestIsStale && (
+                      <Text style={styles.digestStaleText}>
+                        New dreams logged since this digest
+                      </Text>
+                    )}
+                  </View>
+                </Animated.View>
+              ) : weekCount > 0 ? (
+                <Text style={styles.digestSummary}>Your weekly digest will generate on Sunday based on this week's dreams.</Text>
+              ) : (
+                <Text style={styles.digestSummary}>Log at least one dream this week to get your digest.</Text>
+              )}
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[styles.digestCard, styles.digestCardLocked]}
+              onPress={() => router.push('/paywall' as any)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.digestHeader}>
+                <Sparkles size={14} color={colors.textMuted} />
+                <Text style={[styles.digestLabel, { color: colors.textMuted }]}>This week in your dreams</Text>
+              </View>
+              <Text style={[styles.digestSummary, { color: colors.textDisabled }]}>
+                Unlock your weekly AI dream digest with Premium.
+              </Text>
+            </TouchableOpacity>
+          )
+        )}
+
         {!hasDreamToday && (
           <TouchableOpacity
             style={styles.quickEntryCard}
@@ -229,6 +376,11 @@ export default function JournalScreen() {
             activeOpacity={0.7}
             testID="quick-entry"
           >
+            <GlassAsset
+              source={glassAssets.feather}
+              size={64}
+              style={styles.quickEntryGlassAsset}
+            />
             <Text style={styles.quickEntryTitle}>What did you dream about?</Text>
             <Text style={styles.quickEntrySubtext}>Dreams fade fast — capture yours now</Text>
           </TouchableOpacity>
@@ -419,6 +571,11 @@ const styles = StyleSheet.create({
     padding: spacing.cardPadding,
     marginBottom: spacing.sectionGap,
   },
+  quickEntryGlassAsset: {
+    position: 'absolute',
+    top: -24,
+    right: -12,
+  },
   quickEntryTitle: {
     fontFamily: fonts.serif,
     fontSize: typography.subheading.fontSize,
@@ -555,7 +712,6 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 100,
     gap: spacing.md,
   },
   emptyTitle: {
@@ -594,5 +750,53 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  digestCard: {
+    backgroundColor: 'rgba(201, 168, 76, 0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(201, 168, 76, 0.20)',
+    borderRadius: radii.md,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sectionGap,
+    marginTop: spacing.sm,
+  },
+  digestCardLocked: {
+    backgroundColor: colors.surfaceCard,
+    borderColor: colors.surfaceCardBorder,
+  },
+  digestHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  digestLabel: {
+    fontFamily: fonts.serif,
+    fontSize: typography.subheading.fontSize,
+    fontWeight: '500' as const,
+    color: colors.accent,
+  },
+  digestSummary: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textSecondary,
+    lineHeight: 22,
+  },
+  digestMeta: {
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(201, 168, 76, 0.15)',
+  },
+  digestMetaText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    color: colors.textDisabled,
+  },
+  digestStaleText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    color: colors.accent,
+    marginTop: 2,
   },
 });

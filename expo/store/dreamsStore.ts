@@ -30,6 +30,7 @@ const DUMMY_DREAMS: Dream[] = [
     interpretation:
       "The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.\n\nWater rising gradually is one of the most common dream symbols. It typically reflects emotions building up slowly — things you've been setting aside that are starting to demand attention.\n\nThe combination suggests you may be on the edge of an emotional or personal transition. Your subconscious is inviting you to explore these rising feelings rather than wait for them to overflow.",
     symbols: ['Unfamiliar house', 'Rising water', 'Familiarity'],
+    interpretationRating: null,
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -48,6 +49,7 @@ const DUMMY_DREAMS: Dream[] = [
     vividness: 5,
     interpretation: null,
     symbols: [],
+    interpretationRating: null,
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -67,6 +69,7 @@ const DUMMY_DREAMS: Dream[] = [
     interpretation:
       "The exam dream is among the most universal dream archetypes. It often surfaces during periods when you feel tested or evaluated in waking life — not necessarily academically, but in any area where you feel unprepared.\n\nThe unreadable language you somehow understood points to intuitive knowledge — you know more than you think you do, even when the situation feels foreign.\n\nWaking before finishing suggests an unresolved situation in your life that you're processing subconsciously.",
     symbols: ['Exam', 'Unknown language', 'School'],
+    interpretationRating: null,
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -104,21 +107,31 @@ function calculateStreak(dreams: Dream[], currentStreak: number, longestStreak: 
   };
 }
 
+interface WeeklyDigest {
+  summary: string;
+  weekOf: string;
+  dreamCount: number;
+  generatedAt: string;
+}
+
 interface DreamsState {
   dreams: Dream[];
   stats: DreamStats;
+  weeklyDigest: WeeklyDigest | null;
   addDream: (dream: Dream) => void;
   addForgotten: (date: string) => void;
   updateDream: (id: string, updates: Partial<Dream>) => void;
   deleteDream: (id: string) => void;
   getDreamsByDate: (date: string) => Dream[];
   refreshStreak: () => void;
+  setWeeklyDigest: (digest: WeeklyDigest) => void;
 }
 
 export const useDreamsStore = create<DreamsState>()(
   persist(
     (set, get) => ({
       dreams: DUMMY_DREAMS,
+      weeklyDigest: null,
       stats: {
         currentStreak: 0,
         longestStreak: 0,
@@ -162,6 +175,7 @@ export const useDreamsStore = create<DreamsState>()(
             vividness: null,
             interpretation: null,
             symbols: [],
+            interpretationRating: null,
             isFirstPerson: true,
             isForgotten: true,
           };
@@ -191,13 +205,31 @@ export const useDreamsStore = create<DreamsState>()(
         }),
 
       deleteDream: (id) =>
-        set((state) => ({
-          dreams: state.dreams.filter((d) => d.id !== id),
-          stats: {
-            ...state.stats,
-            totalDreamsLogged: Math.max(0, state.stats.totalDreamsLogged - 1),
-          },
-        })),
+        set((state) => {
+          const remaining = state.dreams.filter((d) => d.id !== id);
+
+          // If no dreams left from this week, clear the weekly digest
+          let weeklyDigest = state.weeklyDigest;
+          if (weeklyDigest) {
+            const now = Date.now();
+            const weekDreams = remaining.filter((d) => {
+              const diff = (now - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24);
+              return diff <= 7 && !d.isForgotten;
+            });
+            if (weekDreams.length === 0) {
+              weeklyDigest = null;
+            }
+          }
+
+          return {
+            dreams: remaining,
+            weeklyDigest,
+            stats: {
+              ...state.stats,
+              totalDreamsLogged: Math.max(0, state.stats.totalDreamsLogged - 1),
+            },
+          };
+        }),
 
       getDreamsByDate: (date) => get().dreams.filter((d) => d.date === date),
 
@@ -213,10 +245,12 @@ export const useDreamsStore = create<DreamsState>()(
           }
           return {};
         }),
+
+      setWeeklyDigest: (digest) => set({ weeklyDigest: digest }),
     }),
     {
       name: 'dreams-store',
-      version: 2,
+      version: 4,
       storage: createJSONStorage(() => mmkvStorage),
       migrate: (persisted: any, version: number) => {
         let data = persisted;
@@ -240,6 +274,20 @@ export const useDreamsStore = create<DreamsState>()(
             ...d,
             isFirstPerson: d.isFirstPerson ?? true,
           }));
+        }
+        if (version < 3) {
+          data.dreams = (data.dreams ?? []).map((d: any) => ({
+            ...d,
+            interpretationRating: d.interpretationRating ?? null,
+          }));
+          data.weeklyDigest = data.weeklyDigest ?? null;
+        }
+        if (version < 4 && data.weeklyDigest) {
+          data.weeklyDigest = {
+            ...data.weeklyDigest,
+            dreamCount: data.weeklyDigest.dreamCount ?? 0,
+            generatedAt: data.weeklyDigest.generatedAt ?? '',
+          };
         }
         return data;
       },

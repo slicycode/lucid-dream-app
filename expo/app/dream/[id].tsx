@@ -12,12 +12,14 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye } from 'lucide-react-native';
+import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye, ThumbsUp, ThumbsDown } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
-import { interpretDream } from '@/services/interpretation';
+import { interpretDream, MIN_DREAM_CONTENT_LENGTH, SHORT_DREAM_MESSAGE, isLikelyGibberish, GIBBERISH_DREAM_MESSAGE } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { GlassAsset } from '@/components/GlassAsset';
+import { glassAssets } from '@/constants/glassAssets';
 
 function highlightSymbols(text: string, symbols: string[]) {
   if (symbols.length === 0) return text;
@@ -50,13 +52,9 @@ export default function DreamDetailScreen() {
   const deleteDream = useDreamsStore((s) => s.deleteDream);
   const canInterpret = useSettingsStore((s) => s.canInterpret);
   const useInterpretation = useSettingsStore((s) => s.useInterpretation);
-
+  const refundInterpretation = useSettingsStore((s) => s.refundInterpretation);
 
   const dream = useMemo(() => dreams.find((d) => d.id === id), [dreams, id]);
-
-  // useEffect(() => {
-  //   if (dream) console.log('[Dream Detail]', JSON.stringify(dream, null, 2));
-  // }, [dream]);
 
   const [isInterpreting, setIsInterpreting] = useState(false);
   const [interpretationVisible, setInterpretationVisible] = useState(false);
@@ -81,8 +79,9 @@ export default function DreamDetailScreen() {
   }, [interpretationVisible, fadeAnim]);
 
   const handleUpgrade = useCallback(() => {
-    router.push('/paywall' as any);
-  }, [router]);
+    const titleParam = dream?.title ? `?dreamTitle=${encodeURIComponent(dream.title)}` : '';
+    router.push(`/paywall${titleParam}` as any);
+  }, [router, dream]);
 
   const isPremium = useSettingsStore((s) => s.isPremium);
 
@@ -100,6 +99,21 @@ export default function DreamDetailScreen() {
       return;
     }
     if (!dream) return;
+
+    const trimmedContent = dream.content.trim();
+    if (trimmedContent.length < MIN_DREAM_CONTENT_LENGTH || isLikelyGibberish(trimmedContent)) {
+      updateDream(dream.id, {
+        interpretation: trimmedContent.length < MIN_DREAM_CONTENT_LENGTH
+          ? SHORT_DREAM_MESSAGE
+          : GIBBERISH_DREAM_MESSAGE,
+        symbols: [],
+      });
+      setInterpretationVisible(true);
+      return;
+    }
+
+    // Decrement before API call to prevent spam
+    useInterpretation();
 
     setIsInterpreting(true);
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -123,9 +137,6 @@ export default function DreamDetailScreen() {
         isFirstPerson: dream.isFirstPerson,
       });
 
-      // Only decrement after successful API response
-      useInterpretation();
-
       pulseLoop.stop();
       pulseAnim.setValue(1);
       setIsInterpreting(false);
@@ -137,6 +148,9 @@ export default function DreamDetailScreen() {
       setInterpretationVisible(true);
       if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e: any) {
+      // Refund the interpretation on failure
+      refundInterpretation();
+
       pulseLoop.stop();
       pulseAnim.setValue(1);
       setIsInterpreting(false);
@@ -150,7 +164,7 @@ export default function DreamDetailScreen() {
         [{ text: 'OK' }]
       );
     }
-  }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, handleUpgrade]);
+  }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, refundInterpretation, handleUpgrade]);
 
   const handleInterpret = useCallback(() => {
     if (dream?.interpretation) {
@@ -287,7 +301,14 @@ export default function DreamDetailScreen() {
 
         <View style={styles.divider} />
 
-        {hasInterpretation ? (
+        {isInterpreting ? (
+          <View style={styles.interpretingContainer}>
+            <Animated.View style={[styles.interpretingPulse, { transform: [{ scale: pulseAnim }] }]}>
+              <GlassAsset source={glassAssets.eye} size={80} />
+            </Animated.View>
+            <Text style={styles.interpretingText}>Analyzing your dream...</Text>
+          </View>
+        ) : hasInterpretation ? (
           <Animated.View style={[styles.interpretSection, { opacity: dream.interpretation ? 1 : fadeAnim }]}>
             <View style={styles.interpHeader}>
               <Sparkles size={16} color={colors.accent} />
@@ -310,7 +331,24 @@ export default function DreamDetailScreen() {
               </>
             )}
             <Text style={styles.disclaimer}>For entertainment and self-reflection only. Not professional psychological advice.</Text>
-            {canInterpret() && (
+            <View style={styles.ratingRow}>
+              <Text style={styles.ratingLabel}>Was this helpful?</Text>
+              <TouchableOpacity
+                onPress={() => updateDream(dream.id, { interpretationRating: dream.interpretationRating === 'up' ? null : 'up' })}
+                style={styles.ratingButton}
+                activeOpacity={0.7}
+              >
+                <ThumbsUp size={18} color={dream.interpretationRating === 'up' ? colors.accent : colors.textDisabled} fill={dream.interpretationRating === 'up' ? colors.accentMuted : 'transparent'} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => updateDream(dream.id, { interpretationRating: dream.interpretationRating === 'down' ? null : 'down' })}
+                style={styles.ratingButton}
+                activeOpacity={0.7}
+              >
+                <ThumbsDown size={18} color={dream.interpretationRating === 'down' ? colors.textSecondary : colors.textDisabled} fill={dream.interpretationRating === 'down' ? colors.surfaceCard : 'transparent'} />
+              </TouchableOpacity>
+            </View>
+            {canInterpret() ? (
               <TouchableOpacity
                 style={styles.reinterpretCta}
                 onPress={handleInterpret}
@@ -319,15 +357,10 @@ export default function DreamDetailScreen() {
                 <Sparkles size={14} color={colors.accent} />
                 <Text style={styles.reinterpretCtaText}>Re-interpret</Text>
               </TouchableOpacity>
-            )}
+            ) : isPremium ? (
+              <Text style={styles.reinterpretLimitText}>Daily limit reached — come back tomorrow</Text>
+            ) : null}
           </Animated.View>
-        ) : isInterpreting ? (
-          <View style={styles.interpretingContainer}>
-            <Animated.View style={[styles.interpretingPulse, { transform: [{ scale: pulseAnim }] }]}>
-              <Sparkles size={20} color={colors.accent} />
-            </Animated.View>
-            <Text style={styles.interpretingText}>Analyzing your dream...</Text>
-          </View>
         ) : canInterpret() ? (
           <TouchableOpacity
             style={styles.interpretCta}
@@ -627,6 +660,13 @@ const styles = StyleSheet.create({
     fontWeight: '500' as const,
     color: colors.accent,
   },
+  reinterpretLimitText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+    textAlign: 'center' as const,
+    marginTop: spacing.lg,
+  },
   interpretDisabled: {
     borderRadius: radii.md,
     alignItems: 'center' as const,
@@ -654,5 +694,20 @@ const styles = StyleSheet.create({
     fontWeight: '600' as const,
     color: colors.accent,
     marginTop: spacing.xs,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+  ratingLabel: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textMuted,
+    flex: 1,
+  },
+  ratingButton: {
+    padding: spacing.sm,
   },
 });

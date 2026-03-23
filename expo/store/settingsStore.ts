@@ -13,9 +13,9 @@ function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-// Free: 3 interpretation per week. Premium: 10 per day (cost guardrail).
+// Free: 3 interpretation per week. Premium: 5 per day (cost guardrail).
 const FREE_WEEKLY_LIMIT = 3;
-const PREMIUM_DAILY_LIMIT = 10;
+const PREMIUM_DAILY_LIMIT = 5;
 
 interface SettingsState {
   morningReminderEnabled: boolean;
@@ -38,6 +38,7 @@ interface SettingsState {
   setWbtbTime: (time: string) => void;
   setIsPremium: (val: boolean) => void;
   useInterpretation: () => boolean;
+  refundInterpretation: () => void;
   canInterpret: () => boolean;
 }
 
@@ -74,6 +75,15 @@ export const useSettingsStore = create<SettingsState>()(
         const currentWeek = getWeekStart();
         if (state.lastFreeInterpretationWeekStart !== currentWeek) return true;
         return state.freeInterpretationsUsedThisWeek < FREE_WEEKLY_LIMIT;
+      },
+
+      refundInterpretation: () => {
+        const state = get();
+        if (state.isPremium) {
+          set({ premiumInterpretationsUsedToday: Math.max(0, state.premiumInterpretationsUsedToday - 1) });
+        } else {
+          set({ freeInterpretationsUsedThisWeek: Math.max(0, state.freeInterpretationsUsedThisWeek - 1) });
+        }
       },
 
       useInterpretation: () => {

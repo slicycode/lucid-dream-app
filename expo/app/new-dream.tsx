@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { EMOTIONS, THEMES, DreamType } from '@/types/dream';
+import { isLikelyGibberish, MIN_DREAM_CONTENT_LENGTH } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
 const SLIDER_STEPS = 5;
@@ -356,7 +357,9 @@ export default function NewDreamScreen() {
   const [isFirstPerson, setIsFirstPerson] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
-  const canSave = title.trim().length > 0 && content.trim().length > 0;
+  const contentTrimmed = content.trim();
+  const isGibberish = contentTrimmed.length >= MIN_DREAM_CONTENT_LENGTH && isLikelyGibberish(contentTrimmed);
+  const canSave = title.trim().length > 0 && contentTrimmed.length >= MIN_DREAM_CONTENT_LENGTH && !isGibberish;
 
   const handleSave = useCallback(() => {
     if (!canSave) return;
@@ -380,6 +383,7 @@ export default function NewDreamScreen() {
       isFirstPerson,
       interpretation: null,
       symbols: [],
+      interpretationRating: null,
       isForgotten: false,
     });
 
@@ -450,7 +454,13 @@ export default function NewDreamScreen() {
               maxLength={500}
               testID="dream-content-input"
             />
-            <Text style={styles.charCount}>{content.length}/500</Text>
+            <Text style={[styles.charCount, (isGibberish || (contentTrimmed.length > 0 && contentTrimmed.length < MIN_DREAM_CONTENT_LENGTH)) && { color: colors.danger }]}>
+              {isGibberish
+                ? 'Please describe your dream using real words'
+                : contentTrimmed.length > 0 && contentTrimmed.length < MIN_DREAM_CONTENT_LENGTH
+                  ? `${MIN_DREAM_CONTENT_LENGTH - contentTrimmed.length} more characters needed`
+                  : `${content.length}/500`}
+            </Text>
           </View>
 
           <DreamTypeToggle value={dreamType} onChange={setDreamType} />

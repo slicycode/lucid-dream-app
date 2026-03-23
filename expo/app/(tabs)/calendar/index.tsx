@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -70,11 +70,15 @@ export default function CalendarScreen() {
   }, [sheetAnim]);
 
   const handleDayPress = useCallback((dateKey: string, hasDreams: boolean) => {
+    if (dateKey === selectedDate) {
+      setSelectedDate(null);
+      return;
+    }
     setSelectedDate(dateKey);
     if (!hasDreams) {
       openSheet(dateKey);
     }
-  }, [openSheet]);
+  }, [openSheet, selectedDate]);
 
   const handleAddDream = useCallback(() => {
     const date = sheetDate!;
@@ -141,6 +145,11 @@ export default function CalendarScreen() {
     return dreamsByDate[selectedDate] || [];
   }, [selectedDate, dreamsByDate]);
 
+  const monthDreamCount = useMemo(() => {
+    const prefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    return Object.keys(dreamsByDate).filter((k) => k.startsWith(prefix)).length;
+  }, [dreamsByDate, currentYear, currentMonth]);
+
   const streak = useMemo(() => {
     let current = 0;
     let longest = 0;
@@ -189,12 +198,6 @@ export default function CalendarScreen() {
     });
     return Array.from(seen);
   }, [dreams]);
-
-  // Whether the currently viewed month has any logged dreams
-  const currentMonthHasDreams = useMemo(() => {
-    const prefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-    return Object.keys(dreamsByDate).some((k) => k.startsWith(prefix));
-  }, [dreamsByDate, currentYear, currentMonth]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -281,20 +284,20 @@ export default function CalendarScreen() {
               >
                 <View style={styles.dreamCardHeader}>
                   <View style={styles.dreamCardLeft}>
-                    <View
-                      style={[
-                        styles.emotionDot,
-                        { backgroundColor: colors.emotions[dream.emotion] || colors.emotions.Neutral },
-                      ]}
-                    />
                     <View style={styles.dreamCardInfo}>
                       <Text style={styles.dreamTitle}>{dream.title}</Text>
-                      <Text style={styles.dreamMeta}>{formatTime(dream.loggedAt)}</Text>
+                      <View style={styles.dreamCardMeta}>
+                        <View style={[styles.previewEmotionPill, { borderColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>
+                          <View style={[styles.previewEmotionDot, { backgroundColor: colors.emotions[dream.emotion] || colors.emotions.Neutral }]} />
+                          <Text style={[styles.previewEmotionText, { color: colors.emotions[dream.emotion] || colors.emotions.Neutral }]}>{dream.emotion}</Text>
+                        </View>
+                        <Text style={styles.dreamMeta}>{formatTime(dream.loggedAt)}</Text>
+                      </View>
                     </View>
                   </View>
                   {dream.interpretation && <Sparkles size={16} color={colors.accent} />}
                 </View>
-                <Text style={styles.dreamPreview} numberOfLines={2}>{dream.content}</Text>
+                <Text style={styles.dreamPreview} numberOfLines={1}>{dream.content}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -307,18 +310,21 @@ export default function CalendarScreen() {
           </View>
         ) : (
           <>
-            {!currentMonthHasDreams && (
-              <Text style={styles.emptyMonthText}>No dreams logged this month</Text>
-            )}
           <View style={styles.streakSection}>
-            <GlassAsset source={glassAssets.hourglass} size={80} style={styles.streakHourglass} />
+            <GlassAsset source={glassAssets.hourglass} size={96} style={styles.streakHourglass} />
+            <Text style={styles.streakMonthCount}>
+              {monthDreamCount > 0
+                ? `${monthDreamCount} dream${monthDreamCount !== 1 ? 's' : ''} this month`
+                : 'Start your dream journey'}
+            </Text>
+            <View style={styles.streakDivider} />
             <View style={styles.streakRow}>
               <Text style={styles.streakLabel}>Current streak</Text>
-              <Text style={styles.streakValue}>{streak.current} day{streak.current <= 1 ? '' : 's'}</Text>
+              <Text style={styles.streakValue}>{streak.current} day{streak.current !== 1 ? 's' : ''}</Text>
             </View>
             <View style={styles.streakRow}>
               <Text style={styles.streakLabel}>Longest streak</Text>
-              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest <= 1 ? '' : 's'}</Text>
+              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest !== 1 ? 's' : ''}</Text>
             </View>
           </View>
           </>
@@ -501,7 +507,32 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     color: colors.textSecondary,
     lineHeight: 20,
-    marginLeft: sizes.emotionDot + spacing.sm,
+    marginTop: spacing.xs,
+  },
+  dreamCardMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: 3,
+  },
+  previewEmotionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    gap: 4,
+  },
+  previewEmotionDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+  },
+  previewEmotionText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.tiny.fontSize,
+    fontWeight: '500' as const,
   },
   streakSection: {
     marginTop: spacing.xl,
@@ -516,8 +547,8 @@ const styles = StyleSheet.create({
   },
   streakHourglass: {
     position: 'absolute',
-    top: -52,
-    right: 0,
+    top: -32,
+    right: -12,
     transform: "rotate(45deg)",
   },
   streakRow: {
@@ -541,6 +572,17 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600' as const,
     color: colors.textSecondary,
+  },
+  streakMonthCount: {
+    fontFamily: fonts.serif,
+    fontSize: typography.heading.fontSize,
+    fontWeight: '700' as const,
+    color: colors.accent,
+  },
+  streakDivider: {
+    height: 1,
+    backgroundColor: colors.surfaceCardBorder,
+    marginVertical: spacing.xs,
   },
   forgottenCard: {
     flexDirection: 'row',

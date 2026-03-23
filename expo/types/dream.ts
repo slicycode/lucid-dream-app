@@ -15,6 +15,7 @@ export interface Dream {
   isFirstPerson: boolean;
   interpretation: string | null;
   symbols: string[];
+  interpretationRating: 'up' | 'down' | null;
   isForgotten: boolean;
 }
 

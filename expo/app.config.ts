@@ -1,5 +1,8 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
+const PRODUCTION_ORIGIN = 'https://lucid.app/';
+const isProduction = process.env.EXPO_ENV === 'production' || process.env.APP_VARIANT === 'production';
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Lucid',
@@ -30,9 +33,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   web: {
     favicon: './assets/images/favicon.png',
+    output: 'server',
   },
   plugins: [
-    ['expo-router', { origin: 'https://lucid.app/' }],
+    isProduction ? ['expo-router', { origin: PRODUCTION_ORIGIN }] : 'expo-router',
     'expo-font',
     'expo-web-browser',
     [
@@ -46,9 +50,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     revenueCatApiKeyIos: process.env.REVENUECAT_API_KEY_IOS,
     sentryDsn: process.env.SENTRY_DSN,
-    router: {
-      origin: 'https://lucid.app/',
-    },
+    router: isProduction ? { origin: PRODUCTION_ORIGIN } : undefined,
     eas: {
       projectId: '90293442-b8b8-4d05-a613-1305f2076caf',
     },

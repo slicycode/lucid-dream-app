@@ -4,7 +4,7 @@ import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Bell, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
@@ -21,6 +21,8 @@ export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
   const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
+  const { dreamTitle } = useLocalSearchParams<{ dreamTitle?: string }>();
+  const contextualDreamTitle = dreamTitle ? decodeURIComponent(dreamTitle) : null;
 
   const dismiss = () => router.back();
 
@@ -68,10 +70,21 @@ export default function PaywallScreen() {
 
         <GlassAsset source={glassAssets.key} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
-        <Text style={styles.heading}>
-          How does your free{'\n'}trial work?
-        </Text>
-        <Text style={styles.subtext}>No surprises. No pressure.</Text>
+        {contextualDreamTitle ? (
+          <>
+            <Text style={styles.heading}>
+              Your dream about{'\n'}"{contextualDreamTitle}"{'\n'}is waiting.
+            </Text>
+            <Text style={styles.subtext}>Unlock unlimited interpretations with Premium.</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.heading}>
+              How does your free{'\n'}trial work?
+            </Text>
+            <Text style={styles.subtext}>No surprises. No pressure.</Text>
+          </>
+        )}
 
         {/* Timeline */}
         <View style={styles.pwTimeline}>

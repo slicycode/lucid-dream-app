@@ -19,7 +19,7 @@ export function GlassAsset({ source, size, glowIntensity = 1, style }: GlassAsse
           width: size,
           height: size,
           shadowRadius: size * 0.3,
-          shadowOpacity: 0.15 * glowIntensity,
+          shadowOpacity: 0.25 * glowIntensity,
         },
         style,
       ]}

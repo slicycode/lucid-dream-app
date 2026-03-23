@@ -5,9 +5,10 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRouter } from 'expo-router';
 import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -94,6 +95,14 @@ export default function InsightsScreen() {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [dreams]);
 
+  const patternCounts = useMemo(() => {
+    const merged: { name: string; count: number; type: 'theme' | 'symbol' }[] = [
+      ...themeCounts.map(([name, count]) => ({ name, count, type: 'theme' as const })),
+      ...symbolCounts.map(([name, count]) => ({ name, count, type: 'symbol' as const })),
+    ];
+    return merged.sort((a, b) => b.count - a.count);
+  }, [themeCounts, symbolCounts]);
+
   const emotionTrends = useMemo(() => {
     const weeks: Record<string, Record<string, number>> = {};
     const now = new Date();
@@ -161,6 +170,8 @@ export default function InsightsScreen() {
 
   const maxWeekly = Math.max(...weeklyData, 1);
 
+  const [selectedBar, setSelectedBar] = useState<number | null>(null);
+
   // Entrance animations
   const contentFade = useRef(new Animated.Value(0)).current;
   const contentSlide = useRef(new Animated.Value(16)).current;
@@ -203,7 +214,7 @@ export default function InsightsScreen() {
               {stats.totalDreamsLogged} remembered · {stats.totalForgotten} forgotten
             </Text>
             <View style={styles.recallGlassAccent} pointerEvents="none">
-              <GlassAsset source={glassAssets.brain} size={56} glowIntensity={0.6} />
+              <GlassAsset source={glassAssets.brain} size={64} />
             </View>
           </View>
         </>
@@ -217,26 +228,61 @@ export default function InsightsScreen() {
           </Text>
           <Text style={styles.lowDataMessage}>Log a few more to see trends</Text>
           <View style={styles.freqLowDataAccent} pointerEvents="none">
-            <GlassAsset source={glassAssets.cloud} size={50} glowIntensity={0.5} />
+            <GlassAsset source={glassAssets.cloud} size={64} />
           </View>
         </View>
       ) : (
         <View style={[styles.chartCard, { overflow: 'hidden' }]}>
           <View style={styles.freqChartAccent} pointerEvents="none">
-            <GlassAsset source={glassAssets.cloud} size={44} glowIntensity={0.4} />
+            <GlassAsset source={glassAssets.cloud} size={64} />
           </View>
           <View style={styles.barChart}>
             {weeklyData.map((count, i) => (
-              <View key={i} style={styles.barColumn}>
-                <View style={styles.barContainer}>
+              <Pressable
+                key={i}
+                style={styles.barColumn}
+                onPress={() => setSelectedBar(selectedBar === i ? null : i)}
+              >
+                <Text style={[
+                  styles.barCount,
+                  selectedBar !== i && { opacity: 0 },
+                ]}>{count}</Text>
+                <View style={[
+                  styles.barContainer,
+                  selectedBar !== null && selectedBar !== i && { opacity: 0.35 },
+                ]}>
                   <View style={[styles.bar, { height: `${(count / maxWeekly) * 100}%` }]} />
                 </View>
-                <Text style={styles.barLabel}>W{i + 1}</Text>
-              </View>
+                <Text style={[
+                  styles.barLabel,
+                  selectedBar === i && styles.barLabelActive,
+                ]}>W{i + 1}</Text>
+              </Pressable>
             ))}
           </View>
         </View>
       )}
+
+      <Text style={styles.sectionTitle}>Dream Stats</Text>
+      <View style={styles.statsGrid}>
+        {[
+          { value: totalDreams, label: 'DREAMS' },
+          { value: streak, label: 'STREAK' },
+          { value: interpretedCount, label: 'INTERPRETED' },
+          { value: `${recallRate ?? 0}%`, label: 'RECALL' },
+        ].map((stat, i) => (
+          <Animated.View
+            key={stat.label}
+            style={[styles.statCard, {
+              opacity: statAnims[i],
+              transform: [{ translateY: statAnims[i].interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+            }]}
+          >
+            <Text style={styles.statNumber}>{stat.value}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </Animated.View>
+        ))}
+      </View>
 
       <Text style={styles.sectionTitle}>Most Common Emotions</Text>
       <View style={styles.chartCard}>
@@ -304,64 +350,29 @@ export default function InsightsScreen() {
       )}
 
       <View style={styles.sectionTitleRow}>
-        <Text style={styles.sectionTitleInRow}>Recurring Themes</Text>
+        <Text style={styles.sectionTitleInRow}>Recurring Patterns</Text>
       </View>
       <View style={styles.tagsContainer}>
-        {themeCounts.length >= 2 ? (
-          themeCounts.map(([theme, count]) => (
-            <View key={theme} style={[styles.themeTag, count >= 2 && styles.themeTagAccent]}>
-              <Text style={[styles.themeTagText, count >= 2 && styles.themeTagTextAccent]}>
-                {theme} ({count})
-              </Text>
-            </View>
-          ))
-        ) : themeCounts.length === 1 ? (
-          <Text style={styles.noDataText}>Patterns will appear as you log more dreams</Text>
-        ) : (
-          <Text style={styles.noDataText}>No themes recorded yet</Text>
-        )}
-      </View>
-
-      {symbolCounts.length >= 2 ? (
-        <>
-          <Text style={styles.sectionTitle}>Recurring Symbols</Text>
-          <View style={styles.tagsContainer}>
-            {symbolCounts.map(([symbol, count]) => (
-              <View key={symbol} style={[styles.symbolTag, count >= 2 && styles.symbolTagAccent]}>
+        {patternCounts.length >= 2 ? (
+          patternCounts.map(({ name, count, type }) =>
+            type === 'symbol' ? (
+              <View key={`symbol-${name}`} style={[styles.symbolTag, count >= 2 && styles.symbolTagAccent]}>
                 <Sparkles size={10} color={count >= 2 ? colors.accent : colors.textMuted} />
                 <Text style={[styles.symbolTagText, count >= 2 && styles.symbolTagTextAccent]}>
-                  {symbol} ({count})
+                  {name} ({count})
                 </Text>
               </View>
-            ))}
-          </View>
-        </>
-      ) : symbolCounts.length === 1 ? (
-        <>
-          <Text style={styles.sectionTitle}>Recurring Symbols</Text>
+            ) : (
+              <View key={`theme-${name}`} style={[styles.themeTag, count >= 2 && styles.themeTagAccent]}>
+                <Text style={[styles.themeTagText, count >= 2 && styles.themeTagTextAccent]}>
+                  {name} ({count})
+                </Text>
+              </View>
+            )
+          )
+        ) : (
           <Text style={styles.noDataText}>Patterns will appear as you log more dreams</Text>
-        </>
-      ) : null}
-
-      <Text style={styles.sectionTitle}>Dream Stats</Text>
-      <View style={styles.statsGrid}>
-        {[
-          { value: totalDreams, label: 'DREAMS' },
-          { value: streak, label: 'STREAK' },
-          { value: interpretedCount, label: 'INTERPRETED' },
-          { value: `${recallRate ?? 0}%`, label: 'RECALL' },
-        ].map((stat, i) => (
-          <Animated.View
-            key={stat.label}
-            style={[styles.statCard, {
-              opacity: statAnims[i],
-              transform: [{ translateY: statAnims[i].interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
-            }]}
-          >
-            <Text style={styles.statNumber}>{stat.value}</Text>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-          </Animated.View>
-        ))}
+        )}
       </View>
     </>
   );
@@ -457,6 +468,13 @@ export default function InsightsScreen() {
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
           <View style={styles.pageTitleRow}>
             <Text style={styles.pageTitle}>Insights</Text>
+            <TouchableOpacity
+              onPress={() => router.push('/dream-dictionary' as any)}
+              activeOpacity={0.7}
+              style={styles.dictionaryLink}
+            >
+              <Text style={styles.dictionaryLinkText}>Dictionary</Text>
+            </TouchableOpacity>
           </View>
           {renderContent()}
         </Animated.View>
@@ -505,7 +523,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-end',
-    height: 120,
+    height: 140,
+    zIndex: 1,
+    paddingRight: 64,
   },
   barColumn: {
     alignItems: 'center',
@@ -865,8 +885,20 @@ const styles = StyleSheet.create({
   },
   freqChartAccent: {
     position: 'absolute',
-    right: 12,
-    top: 12,
+    right: 8,
+    top: 0,
+    bottom: 0,
+  },
+  barCount: {
+    fontFamily: fonts.serif,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '600' as const,
+    color: colors.accent,
+    marginBottom: 4,
+  },
+  barLabelActive: {
+    color: colors.accent,
+    fontWeight: '600' as const,
   },
   sectionTitleRow: {
     flexDirection: 'row',
@@ -882,5 +914,15 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
+  },
+  dictionaryLink: {
+    paddingVertical: 4,
+    paddingHorizontal: 2,
+  },
+  dictionaryLinkText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500' as const,
+    color: colors.accent,
   },
 });

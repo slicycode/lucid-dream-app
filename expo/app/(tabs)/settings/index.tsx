@@ -16,7 +16,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock } from 'lucide-react-native';
+import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -367,6 +367,12 @@ export default function SettingsScreen() {
         )}
 
         <Text style={styles.sectionHeader}>ABOUT</Text>
+        {renderNavRow(
+          <BookOpen size={18} color={colors.textSecondary} />,
+          'Dream Dictionary',
+          () => router.push('/dream-dictionary' as any),
+          { badge: isPremium ? undefined : 'PREMIUM' }
+        )}
         {renderNavRow(
           <Shield size={18} color={colors.textSecondary} />,
           'Privacy Policy',
