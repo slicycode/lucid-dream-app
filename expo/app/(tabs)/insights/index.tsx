@@ -1,25 +1,23 @@
-import React, { useMemo, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Lock, TrendingUp, TrendingDown, Sparkles } from 'lucide-react-native';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
+import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { useRevenueCat } from '@/hooks/useRevenueCat';
-import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
+import { Droplets, Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function InsightsScreen() {
   const insets = useSafeAreaInsets();
-  const _router = useRouter();
   const allDreams = useDreamsStore((s) => s.dreams);
   const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const isPremium = useSettingsStore((s) => s.isPremium);
@@ -187,7 +185,7 @@ export default function InsightsScreen() {
           <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
           <View style={styles.recallCard}>
             <View style={styles.recallMain}>
-              <GlassAsset source={glassAssets.droplet} size={60} />
+              <Droplets size={24} color={colors.accent} />
               <Text style={styles.recallPercent}>{recallRate}%</Text>
               <View style={styles.recallTrend}>
                 {recallTrend > 0 ? (
@@ -317,10 +315,7 @@ export default function InsightsScreen() {
 
       {symbolCounts.length > 0 && (
         <>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-            <Text style={styles.sectionTitle}>Recurring Symbols</Text>
-            <GlassAsset source={glassAssets.spiral} size={50} />
-          </View>
+          <Text style={styles.sectionTitle}>Recurring Symbols</Text>
           <View style={styles.tagsContainer}>
             {symbolCounts.map(([symbol, count]) => (
               <View
@@ -363,27 +358,68 @@ export default function InsightsScreen() {
   if (!isPremium) {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.lockedPage}>
+        {/* Background skeleton preview */}
+        <View style={styles.scrollContent} pointerEvents="none">
           <Text style={styles.pageTitle}>Insights</Text>
-          <View style={styles.lockCenter}>
-            <GlassAsset source={glassAssets.key} size={80} style={{ marginBottom: spacing.md }} />
-            <Lock size={36} color={colors.accent} />
-            <Text style={styles.lockTitle}>Unlock Your Dream Insights</Text>
-            <Text style={styles.lockSubtext}>
-              See your dream patterns, emotion trends, recurring symbols, and recall rate with Premium.
-            </Text>
-            <TouchableOpacity
-              style={styles.lockCta}
-              onPress={async () => {
-                if (!monthlyPackage) return;
-                await purchasePackage(monthlyPackage);
-              }}
-              activeOpacity={0.8}
-              disabled={rcLoading}
-            >
-              <Text style={styles.lockCtaText}>{rcLoading ? 'Processing...' : 'Start Free Trial'}</Text>
-            </TouchableOpacity>
+          <View style={{ opacity: 0.2 }}>
+            <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
+            <View style={styles.recallCard}>
+              <View style={styles.recallMain}>
+                <View style={styles.skeletonNumber} />
+                <View style={{ gap: 6 }}>
+                  <View style={styles.skeletonLine} />
+                  <View style={[styles.skeletonLine, { width: 60 }]} />
+                </View>
+              </View>
+              <View style={[styles.skeletonLine, { width: 160, marginTop: spacing.xs }]} />
+            </View>
+
+            <Text style={styles.sectionTitle}>Dream Frequency</Text>
+            <View style={styles.chartCard}>
+              <View style={styles.barChart}>
+                {[40, 65, 30, 85, 50, 20, 70].map((h, i) => (
+                  <View key={i} style={styles.barColumn}>
+                    <View style={styles.barContainer}>
+                      <View style={[styles.bar, { height: h }]} />
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            <Text style={styles.sectionTitle}>Dream Stats</Text>
+            <View style={styles.statsGrid}>
+              {[0, 1, 2, 3].map((i) => (
+                <View key={i} style={styles.statCard}>
+                  <View style={styles.skeletonNumber} />
+                  <View style={[styles.skeletonLine, { width: 56 }]} />
+                </View>
+              ))}
+            </View>
           </View>
+        </View>
+
+        {/* Dark overlay */}
+        <View style={styles.lockOverlay} pointerEvents="none" />
+
+        {/* Lock message — centered absolutely on top */}
+        <View style={styles.lockCenter}>
+          <GlassAsset source={glassAssets.key} size={120} />
+          <Text style={styles.lockTitle}>Unlock Your Dream Insights</Text>
+          <Text style={styles.lockSubtext}>
+            See your dream patterns, emotion trends, recurring symbols, and recall rate with Premium.
+          </Text>
+          <TouchableOpacity
+            style={styles.lockCta}
+            onPress={async () => {
+              if (!monthlyPackage) return;
+              await purchasePackage(monthlyPackage);
+            }}
+            activeOpacity={0.8}
+            disabled={rcLoading}
+          >
+            <Text style={styles.lockCtaText}>{rcLoading ? 'Processing...' : 'Start Free Trial'}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -393,10 +429,7 @@ export default function InsightsScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg }}>
-            <Text style={[styles.pageTitle, { marginBottom: 0 }]}>Insights</Text>
-            <GlassAsset source={glassAssets.spiral} size={80} />
-          </View>
+          <Text style={styles.pageTitle}>Insights</Text>
           {renderContent()}
         </Animated.View>
       </ScrollView>
@@ -666,11 +699,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
   },
+  lockOverlay: {
+    position: 'absolute' as const,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
   lockCenter: {
-    flex: 1,
+    position: 'absolute' as const,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 80,
+    paddingHorizontal: spacing.screenPadding,
+  },
+  previewSection: {
+    marginTop: spacing.sm,
+  },
+  skeletonNumber: {
+    width: 48,
+    height: 32,
+    borderRadius: radii.sm,
+    backgroundColor: colors.textMuted,
+    marginBottom: spacing.xs,
+  },
+  skeletonLine: {
+    width: 100,
+    height: 10,
+    borderRadius: radii.xs,
+    backgroundColor: colors.textMuted,
   },
   lockTitle: {
     fontFamily: fonts.serif,

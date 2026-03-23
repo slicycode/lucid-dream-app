@@ -286,11 +286,11 @@ export default function CalendarScreen() {
                 <GlassAsset source={glassAssets.hourglass} size={60} />
                 <Text style={styles.streakLabel}>Current streak</Text>
               </View>
-              <Text style={styles.streakValue}>{streak.current} days</Text>
+              <Text style={styles.streakValue}>{streak.current} day{streak.current === 1 ? '' : 's'}</Text>
             </View>
             <View style={styles.streakRow}>
               <Text style={styles.streakLabel}>Longest streak</Text>
-              <Text style={styles.streakValueMuted}>{streak.longest} days</Text>
+              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest === 1 ? '' : 's'}</Text>
             </View>
           </View>
         )}

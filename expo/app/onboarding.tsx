@@ -533,7 +533,7 @@ export default function OnboardingScreen() {
 
         <View style={styles.discountPriceCard}>
           <Text style={styles.crossedPrice}>$39.99/year</Text>
-          <Text style={styles.discountPrice}>$29.99 / year</Text>
+          <Text style={styles.discountPrice}>$24.99 / year</Text>
           <Text style={styles.discountTrial}>7-day free trial included</Text>
           <View style={styles.floatingBadge}>
             <View style={[styles.premiumBadge, { backgroundColor: colors.background }]}>
@@ -546,7 +546,7 @@ export default function OnboardingScreen() {
       <View style={[styles.bottomCta, { position: 'relative' as const }]}>
         <OnboardingButton title={rcLoading ? 'Processing...' : 'Claim This Offer'} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
 
-        <Text style={styles.paywallSmall}>7 days free, then $29.99/year ($2.49/mo). Cancel anytime.</Text>
+        <Text style={styles.paywallSmall}>7 days free, then $24.99/year ($2.08/mo). Cancel anytime.</Text>
 
         <View style={styles.pwBottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>

@@ -153,6 +153,7 @@ export default function JournalScreen() {
   }, []);
 
   const animateDelete = useCallback((id: string) => {
+    isSwiping.current = false;
     if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const anim = getDeleteAnim(id);
     Animated.timing(anim, {
@@ -282,7 +283,10 @@ export default function JournalScreen() {
                   if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   router.push(`/dream/${dream.id}`);
                 }}
-                onLongPress={() => handleDeleteDream(dream.id, dream.title)}
+                onLongPress={() => {
+                  if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  handleDeleteDream(dream.id, dream.title);
+                }}
                 activeOpacity={0.7}
                 testID={`dream-card-${dream.id}`}
               >

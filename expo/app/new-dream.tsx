@@ -18,8 +18,6 @@ import * as Haptics from 'expo-haptics';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { EMOTIONS, THEMES, DreamType } from '@/types/dream';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
-import { GlassAsset } from '@/components/GlassAsset';
-import { glassAssets } from '@/constants/glassAssets';
 
 const SLIDER_STEPS = 5;
 const THUMB_SIZE = 28;
@@ -403,9 +401,6 @@ export default function NewDreamScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top - 32 }]}>
-      <View style={{ position: 'absolute', top: insets.top - 20, right: 12, opacity: 0.3, zIndex: 0 }}>
-        <GlassAsset source={glassAssets.feather} size={80} glowIntensity={0.5} />
-      </View>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} testID="cancel-button">
           <Text style={styles.cancelText}>Cancel</Text>

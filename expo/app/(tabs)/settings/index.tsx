@@ -13,11 +13,10 @@ import {
   Linking,
   Animated,
 } from 'react-native';
-import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock } from 'lucide-react-native';
+import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -32,8 +31,6 @@ import {
   cancelAllNotifications,
 } from '@/services/notifications';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
-import { GlassAsset } from '@/components/GlassAsset';
-import { glassAssets } from '@/constants/glassAssets';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
 
@@ -278,7 +275,7 @@ export default function SettingsScreen() {
 
         <Text style={styles.sectionHeader}>JOURNALING</Text>
         {renderToggleRow(
-          <ExpoImage source={glassAssets.clock} style={{ width: 36, height: 36 }} contentFit="contain" />,
+          <Clock size={18} color={colors.textSecondary} />,
           'Morning Reminder',
           settings.morningReminderEnabled,
           handleMorningReminderToggle,
@@ -315,24 +312,24 @@ export default function SettingsScreen() {
           handleRestore,
         )}
 
-        <View style={styles.devToggle}>
-          {renderToggleRow(
-            <Crown size={18} color={colors.accent} />,
-            'Premium (Dev Toggle)',
-            isPremium,
-            settings.setIsPremium,
-          )}
-        </View>
+        {__DEV__ && (
+          <View style={styles.devToggle}>
+            {renderToggleRow(
+              <Crown size={18} color={colors.accent} />,
+              'Premium (Dev Toggle)',
+              isPremium,
+              settings.setIsPremium,
+            )}
+          </View>
+        )}
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.lg, marginBottom: spacing.md }}>
-          <GlassAsset source={glassAssets.eye} size={80} />
-          <Text style={[styles.sectionHeader, { marginTop: 0, marginBottom: 0 }]}>
-            LUCID DREAMING
-            <Text style={styles.sectionBadge}> PREMIUM</Text>
-          </Text>
-        </View>
+        <View style={styles.sectionDivider} />
+        <Text style={styles.sectionHeader}>
+          LUCID DREAMING
+          <Text style={styles.sectionBadge}> PREMIUM</Text>
+        </Text>
         {renderToggleRow(
-          <ExpoImage source={glassAssets.hand} style={{ width: 36, height: 36 }} contentFit="contain" />,
+          <Scan size={18} color={colors.textSecondary} />,
           'Reality Check Reminders',
           settings.realityCheckEnabled && isPremium,
           (val) => isPremium ? handleRealityCheckToggle(val) : handleUpgrade(),
@@ -343,7 +340,7 @@ export default function SettingsScreen() {
           },
         )}
         {renderToggleRow(
-          <ExpoImage source={glassAssets.clock} style={{ width: 36, height: 36 }} contentFit="contain" />,
+          <AlarmClock size={18} color={colors.textSecondary} />,
           'WBTB Alarm',
           settings.wbtbEnabled && isPremium,
           handleWbtbToggle,
@@ -681,6 +678,11 @@ const styles = StyleSheet.create({
   devToggle: {
     opacity: 0.6,
     marginTop: spacing.xs,
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: colors.surfaceCardBorder,
+    marginTop: spacing.lg,
   },
   versionRow: {
     flexDirection: 'row',
