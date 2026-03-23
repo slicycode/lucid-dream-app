@@ -1,9 +1,9 @@
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
-import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useRouter } from 'expo-router';
 import { Droplets, Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
@@ -21,7 +21,7 @@ export default function InsightsScreen() {
   const allDreams = useDreamsStore((s) => s.dreams);
   const dreams = useMemo(() => allDreams.filter((d) => !d.isForgotten), [allDreams]);
   const isPremium = useSettingsStore((s) => s.isPremium);
-  const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
+  const router = useRouter();
 
   const emotionCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -411,14 +411,10 @@ export default function InsightsScreen() {
           </Text>
           <TouchableOpacity
             style={styles.lockCta}
-            onPress={async () => {
-              if (!monthlyPackage) return;
-              await purchasePackage(monthlyPackage);
-            }}
+            onPress={() => router.push('/paywall' as any)}
             activeOpacity={0.8}
-            disabled={rcLoading}
           >
-            <Text style={styles.lockCtaText}>{rcLoading ? 'Processing...' : 'Start Free Trial'}</Text>
+            <Text style={styles.lockCtaText}>Start Free Trial</Text>
           </TouchableOpacity>
         </View>
       </View>

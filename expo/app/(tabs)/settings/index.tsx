@@ -22,6 +22,7 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { useRouter } from 'expo-router';
 import {
   requestPermissions,
   scheduleMorningReminder,
@@ -55,10 +56,11 @@ function formatTime(time: string): string {
 type PickerTarget = 'morning' | 'wbtb' | 'reality' | null;
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore();
   const isPremium = settings.isPremium;
-  const { monthlyPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
+  const { isLoading: rcLoading, restorePurchases } = useRevenueCat();
 
   const [activePicker, setActivePicker] = useState<PickerTarget>(null);
   const sheetAnim = useRef(new Animated.Value(0)).current;
@@ -102,10 +104,9 @@ export default function SettingsScreen() {
     : activePicker === 'wbtb' ? settings.wbtbTime
     : '07:00';
 
-  const handleUpgrade = useCallback(async () => {
-    if (!monthlyPackage) return;
-    await purchasePackage(monthlyPackage);
-  }, [monthlyPackage, purchasePackage]);
+  const handleUpgrade = useCallback(() => {
+    router.push('/paywall' as any);
+  }, [router]);
 
   const handleRestore = useCallback(async () => {
     await restorePurchases();

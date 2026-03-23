@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { useRevenueCat } from '@/hooks/useRevenueCat';
+
 import { interpretDream } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
@@ -50,7 +50,7 @@ export default function DreamDetailScreen() {
   const deleteDream = useDreamsStore((s) => s.deleteDream);
   const canInterpret = useSettingsStore((s) => s.canInterpret);
   const useInterpretation = useSettingsStore((s) => s.useInterpretation);
-  const { monthlyPackage, isLoading: rcLoading, purchasePackage } = useRevenueCat();
+
 
   const dream = useMemo(() => dreams.find((d) => d.id === id), [dreams, id]);
 
@@ -80,10 +80,9 @@ export default function DreamDetailScreen() {
     }
   }, [interpretationVisible, fadeAnim]);
 
-  const handleUpgrade = useCallback(async () => {
-    if (!monthlyPackage) return;
-    await purchasePackage(monthlyPackage);
-  }, [monthlyPackage, purchasePackage]);
+  const handleUpgrade = useCallback(() => {
+    router.push('/paywall' as any);
+  }, [router]);
 
   const isPremium = useSettingsStore((s) => s.isPremium);
 
@@ -96,14 +95,7 @@ export default function DreamDetailScreen() {
           [{ text: 'OK' }]
         );
       } else {
-        Alert.alert(
-          'Free Limit Reached',
-          'You\'ve used your free interpretation this week. Upgrade to Premium for more interpretations.',
-          [
-            { text: 'Maybe Later', style: 'cancel' },
-            { text: 'Upgrade', onPress: handleUpgrade },
-          ]
-        );
+        handleUpgrade();
       }
       return;
     }
