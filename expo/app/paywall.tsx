@@ -3,6 +3,7 @@ import OnboardingButton from '@/components/OnboardingButton';
 import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, spacing, typography } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { scheduleTrialReminder } from '@/services/notifications';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Bell, ShieldCheck, Sparkles, X } from 'lucide-react-native';
@@ -33,7 +34,10 @@ export default function PaywallScreen() {
       return;
     }
     const success = await purchasePackage(pkg);
-    if (success) dismiss();
+    if (success) {
+      void scheduleTrialReminder();
+      dismiss();
+    }
   };
 
   const handleRestore = async () => {

@@ -11,6 +11,7 @@ import { glassAssets } from '@/constants/glassAssets';
 import { matchOnboardingInterpretation } from '@/constants/onboardingInterpretations';
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { scheduleTrialReminder } from '@/services/notifications';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -148,7 +149,10 @@ export default function OnboardingScreen() {
       return;
     }
     const success = await purchasePackage(pkg);
-    if (success) finishOnboarding();
+    if (success) {
+      void scheduleTrialReminder();
+      finishOnboarding();
+    }
   }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding]);
 
   const handleDiscountPurchase = useCallback(async () => {
@@ -157,7 +161,10 @@ export default function OnboardingScreen() {
       return;
     }
     const success = await purchasePackage(annualPackage);
-    if (success) finishOnboarding();
+    if (success) {
+      void scheduleTrialReminder();
+      finishOnboarding();
+    }
   }, [annualPackage, purchasePackage, finishOnboarding]);
 
   const handleRestore = useCallback(async () => {

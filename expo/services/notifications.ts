@@ -161,6 +161,40 @@ export async function cancelWbtbAlarm() {
   await Notifications.cancelScheduledNotificationAsync(WBTB_ALARM_ID);
 }
 
+// --- Trial Reminder ---
+// One-shot notification on Day 5 of a 7-day trial
+
+const TRIAL_REMINDER_ID = 'trial-reminder';
+
+export async function scheduleTrialReminder() {
+  await cancelTrialReminder();
+
+  const triggerDate = new Date();
+  triggerDate.setDate(triggerDate.getDate() + 5);
+  triggerDate.setHours(10, 0, 0, 0);
+
+  await Notifications.scheduleNotificationAsync({
+    identifier: TRIAL_REMINDER_ID,
+    content: {
+      title: 'Your free trial ends in 2 days',
+      body: "Just a heads up — your Lucid trial wraps up soon. Cancel anytime in Settings if you'd like.",
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: triggerDate,
+    },
+  });
+}
+
+export async function cancelTrialReminder() {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(TRIAL_REMINDER_ID);
+  } catch {
+    // Notification may not exist yet
+  }
+}
+
 // --- Cancel all ---
 
 export async function cancelAllNotifications() {
