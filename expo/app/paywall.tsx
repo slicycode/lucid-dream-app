@@ -58,7 +58,7 @@ export default function PaywallScreen() {
   ];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.paywallHeader}>
           <TouchableOpacity onPress={dismiss} style={styles.dismissButton}>

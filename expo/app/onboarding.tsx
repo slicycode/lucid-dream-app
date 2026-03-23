@@ -14,6 +14,7 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as StoreReview from 'expo-store-review';
 import { useRouter } from 'expo-router';
 import { Bell, ChevronLeft, Lock, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -88,6 +89,12 @@ export default function OnboardingScreen() {
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
     }
   }, [step, pulseAnim, progressAnim, fadeAnim]);
+
+  useEffect(() => {
+    if (step === 12) {
+      void StoreReview.requestReview();
+    }
+  }, [step]);
 
   const goToStep = useCallback((nextStep: number) => {
     const isForward = nextStep > step;
