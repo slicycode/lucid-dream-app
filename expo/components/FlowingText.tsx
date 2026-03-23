@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { Animated, Text, View, StyleSheet, Platform, TextStyle, StyleProp } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Text, StyleSheet, Platform, TextStyle, StyleProp } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 interface FlowingTextProps {
@@ -16,7 +16,7 @@ interface FlowingTextProps {
  * Renders text word-by-word with a fade-in-up micro-animation.
  * Each word appears sequentially like water flowing — premium feel.
  */
-function FlowingTextInner({
+export function FlowingText({
   text,
   style,
   wordDelay = 55,
@@ -25,16 +25,23 @@ function FlowingTextInner({
   onComplete,
 }: FlowingTextProps) {
   const words = text.split(' ');
-  const anims = useRef(words.map(() => new Animated.Value(0))).current;
+  const anims = useRef<Animated.Value[]>([]);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  // Rebuild anim values when text changes
+  if (anims.current.length !== words.length) {
+    anims.current = words.map(() => new Animated.Value(0));
+  }
 
   useEffect(() => {
-    anims.forEach((a) => a.setValue(0));
+    anims.current.forEach((a) => a.setValue(0));
 
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     words.forEach((_, i) => {
       const timer = setTimeout(() => {
-        Animated.spring(anims[i], {
+        Animated.spring(anims.current[i], {
           toValue: 1,
           damping: 20,
           stiffness: 300,
@@ -42,14 +49,17 @@ function FlowingTextInner({
           useNativeDriver: true,
         }).start();
 
-        // Subtle haptic every 4th word for tactile rhythm
-        if (haptic && i % 4 === 0 && Platform.OS !== 'web') {
-          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+        // Haptic delayed ~60ms so it lands when the spring reaches
+        // visible opacity (~0.3), not when it starts from 0
+        if (haptic && i % 2 === 0 && Platform.OS !== 'web') {
+          setTimeout(() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+          }, 700);
         }
 
-        // Notify completion after last word
-        if (i === words.length - 1 && onComplete) {
-          setTimeout(onComplete, 250);
+        // Notify completion after last word's spring settles
+        if (i === words.length - 1 && onCompleteRef.current) {
+          setTimeout(() => onCompleteRef.current?.(), 500);
         }
       }, initialDelay + i * wordDelay);
 
@@ -57,7 +67,7 @@ function FlowingTextInner({
     });
 
     return () => timers.forEach(clearTimeout);
-  }, [text]);
+  }, [text, wordDelay, initialDelay, haptic]);
 
   return (
     <Text style={[styles.container, style]}>
@@ -65,10 +75,10 @@ function FlowingTextInner({
         <Animated.Text
           key={`${word}-${i}`}
           style={{
-            opacity: anims[i],
+            opacity: anims.current[i],
             transform: [
               {
-                translateY: anims[i].interpolate({
+                translateY: anims.current[i].interpolate({
                   inputRange: [0, 1],
                   outputRange: [8, 0],
                 }),
@@ -83,8 +93,6 @@ function FlowingTextInner({
     </Text>
   );
 }
-
-export const FlowingText = memo(FlowingTextInner);
 
 const styles = StyleSheet.create({
   container: {

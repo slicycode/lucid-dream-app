@@ -14,6 +14,8 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { ChevronLeft, ChevronRight, Sparkles, Plus, X } from 'lucide-react-native';
+import { GlassAsset } from '@/components/GlassAsset';
+import { glassAssets } from '@/constants/glassAssets';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 
@@ -280,7 +282,10 @@ export default function CalendarScreen() {
         ) : (
           <View style={styles.streakSection}>
             <View style={styles.streakRow}>
-              <Text style={styles.streakLabel}>Current streak</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <GlassAsset source={glassAssets.hourglass} size={60} />
+                <Text style={styles.streakLabel}>Current streak</Text>
+              </View>
               <Text style={styles.streakValue}>{streak.current} days</Text>
             </View>
             <View style={styles.streakRow}>

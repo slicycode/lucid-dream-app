@@ -4,6 +4,8 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
+import { GlassAsset } from '@/components/GlassAsset';
+import { glassAssets } from '@/constants/glassAssets';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Alert,
@@ -346,7 +348,7 @@ export default function JournalScreen() {
 
         {dreams.length === 0 && (
           <View style={styles.emptyState}>
-            <Moon size={48} color={colors.textDisabled} />
+            <GlassAsset source={glassAssets.crescentMoon} size={120} />
             <Text style={styles.emptyTitle}>Your dream journal is empty</Text>
             <Text style={styles.emptySubtext}>Tap the + button to log your first dream</Text>
           </View>

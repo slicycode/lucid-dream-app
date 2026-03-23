@@ -13,10 +13,11 @@ import {
   Linking,
   Animated,
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Bell, FileText, Crown, RefreshCw, Brain, Moon, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock } from 'lucide-react-native';
+import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -31,6 +32,8 @@ import {
   cancelAllNotifications,
 } from '@/services/notifications';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
+import { GlassAsset } from '@/components/GlassAsset';
+import { glassAssets } from '@/constants/glassAssets';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
 
@@ -275,7 +278,7 @@ export default function SettingsScreen() {
 
         <Text style={styles.sectionHeader}>JOURNALING</Text>
         {renderToggleRow(
-          <Bell size={18} color={colors.textSecondary} />,
+          <ExpoImage source={glassAssets.clock} style={{ width: 36, height: 36 }} contentFit="contain" />,
           'Morning Reminder',
           settings.morningReminderEnabled,
           handleMorningReminderToggle,
@@ -321,12 +324,15 @@ export default function SettingsScreen() {
           )}
         </View>
 
-        <Text style={styles.sectionHeader}>
-          LUCID DREAMING
-          <Text style={styles.sectionBadge}> PREMIUM</Text>
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.lg, marginBottom: spacing.md }}>
+          <GlassAsset source={glassAssets.eye} size={80} />
+          <Text style={[styles.sectionHeader, { marginTop: 0, marginBottom: 0 }]}>
+            LUCID DREAMING
+            <Text style={styles.sectionBadge}> PREMIUM</Text>
+          </Text>
+        </View>
         {renderToggleRow(
-          <Brain size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
+          <ExpoImage source={glassAssets.hand} style={{ width: 36, height: 36 }} contentFit="contain" />,
           'Reality Check Reminders',
           settings.realityCheckEnabled && isPremium,
           (val) => isPremium ? handleRealityCheckToggle(val) : handleUpgrade(),
@@ -337,7 +343,7 @@ export default function SettingsScreen() {
           },
         )}
         {renderToggleRow(
-          <Moon size={18} color={isPremium ? colors.textSecondary : colors.textDisabled} />,
+          <ExpoImage source={glassAssets.clock} style={{ width: 36, height: 36 }} contentFit="contain" />,
           'WBTB Alarm',
           settings.wbtbEnabled && isPremium,
           handleWbtbToggle,

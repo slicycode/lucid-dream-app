@@ -1,29 +1,32 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { FlowingText } from '@/components/FlowingText';
+import { GlassAsset } from '@/components/GlassAsset';
+import { FeaturePreviewScreen } from '@/components/onboarding/FeaturePreviewScreen';
+import { NotificationScreen } from '@/components/onboarding/NotificationScreen';
+import { PainPointScreen } from '@/components/onboarding/PainPointScreen';
+import { QuizScreen } from '@/components/onboarding/QuizScreen';
+import { WelcomeScreen } from '@/components/onboarding/WelcomeScreen';
+import OnboardingButton from '@/components/OnboardingButton';
+import { StaggerChildren } from '@/components/StaggerChildren';
+import { glassAssets } from '@/constants/glassAssets';
+import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { useOnboardingStore } from '@/store/onboardingStore';
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import { ChevronLeft, Lock, Star, X } from 'lucide-react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  View,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
-  StyleSheet,
-  ScrollView,
   TouchableOpacity,
-  Animated,
-  Platform,
-  KeyboardAvoidingView,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
-import { ChevronLeft, Lock, Sparkles, Repeat, Moon, Calendar, Star, X } from 'lucide-react-native';
-import { useOnboardingStore } from '@/store/onboardingStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
-import { useRevenueCat } from '@/hooks/useRevenueCat';
-import { requestPermissions, scheduleMorningReminder } from '@/services/notifications';
-import OnboardingButton from '@/components/OnboardingButton';
-import QuizOptionCard from '@/components/QuizOptionCard';
-import ProgressBar from '@/components/ProgressBar';
-import { FlowingText } from '@/components/FlowingText';
-import { StaggerChildren } from '@/components/StaggerChildren';
 
 const HARDCODED_INTERPRETATION = `The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.
 
@@ -56,15 +59,9 @@ export default function OnboardingScreen() {
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [processingTexts, setProcessingTexts] = useState<number>(0);
   const ctaFadeAnim = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     setCurrentStepInStore(step);
   }, [step, setCurrentStepInStore]);
-
-  // Initial CTA fade-in for welcome screen
-  useEffect(() => {
-    Animated.timing(ctaFadeAnim, { toValue: 1, duration: 500, delay: 2400, useNativeDriver: true }).start();
-  }, []);
 
   useEffect(() => {
     if (step === 11) {
@@ -178,16 +175,94 @@ export default function OnboardingScreen() {
 
   const renderStep = () => {
     switch (step) {
-      case 0: return renderWelcome();
+      case 0: return <WelcomeScreen goNext={goNext} />;
       case 1: return renderNameInput();
-      case 2: return renderDreamFrequency();
-      case 3: return renderDreamDetail();
-      case 4: return renderMainGoals();
-      case 5: return renderPainPoint();
-      case 6: return renderJournalExperience();
-      case 7: return renderRecurringDreams();
-      case 8: return renderFeaturePreview();
-      case 9: return renderNotificationPermission();
+      case 2: return (
+        <QuizScreen
+          progress={{ current: 1, total: 5 }}
+          heading="How often do you remember your dreams?"
+          options={[
+            { key: 'every_morning', title: 'Every morning', sub: 'I usually wake up with a dream fresh in my mind' },
+            { key: 'few_times_week', title: 'A few times a week', sub: "Some mornings I remember, some I don't" },
+            { key: 'once_twice_month', title: 'Once or twice a month', sub: 'Dreams come and go' },
+            { key: 'rarely', title: 'Rarely', sub: 'I almost never remember what I dreamed' },
+          ]}
+          selected={localFrequency}
+          onSelect={setLocalFrequency}
+          goNext={goNext}
+          ctaFadeAnim={ctaFadeAnim}
+        />
+      );
+      case 3: return (
+        <QuizScreen
+          progress={{ current: 2, total: 5 }}
+          heading="When you remember a dream, how detailed is it?"
+          options={[
+            { key: 'vague', title: 'Vague feelings', sub: 'More of a mood than a memory' },
+            { key: 'fragments', title: 'Fragments', sub: 'Flashes of scenes, faces, places' },
+            { key: 'partial', title: 'Partial stories', sub: 'I remember a rough sequence of events' },
+            { key: 'full', title: 'Full narratives', sub: 'I could describe them in detail' },
+          ]}
+          selected={localDetail}
+          onSelect={setLocalDetail}
+          goNext={goNext}
+          ctaFadeAnim={ctaFadeAnim}
+        />
+      );
+      case 4: return (
+        <QuizScreen
+          progress={{ current: 3, total: 5 }}
+          heading="What interests you most?"
+          subtext="Select all that apply"
+          options={[
+            { key: 'meanings', title: 'Understanding dream meanings', sub: 'Decode the symbols and messages in your dreams' },
+            { key: 'lucid', title: 'Lucid dreaming', sub: 'Learn to become aware and take control inside your dreams' },
+            { key: 'patterns', title: 'Tracking patterns', sub: 'See recurring themes, emotions, and symbols over time' },
+            { key: 'journaling', title: 'Just journaling', sub: 'A private space to record my dreams before they fade' },
+          ]}
+          selected={localGoals}
+          onSelect={(key) => toggleGoal(key)}
+          multiSelect
+          goNext={goNext}
+          ctaFadeAnim={ctaFadeAnim}
+        />
+      );
+      case 5: return <PainPointScreen goNext={goNext} />;
+      case 6: return (
+        <QuizScreen
+          progress={{ current: 4, total: 5 }}
+          heading="Have you kept a dream journal before?"
+          options={[
+            { key: 'never', title: 'Never', sub: 'This is my first time' },
+            { key: 'tried', title: "Tried but didn't stick", sub: 'Started once or twice but fell off' },
+            { key: 'paper', title: 'Paper journal', sub: "I've used a physical notebook" },
+            { key: 'app', title: 'Another app', sub: "I've tried a different dream journal app" },
+            { key: 'active', title: 'Active journaler', sub: 'I currently log my dreams regularly' },
+          ]}
+          selected={localJournalExp}
+          onSelect={setLocalJournalExp}
+          goNext={goNext}
+          ctaFadeAnim={ctaFadeAnim}
+        />
+      );
+      case 7: return (
+        <QuizScreen
+          progress={{ current: 5, total: 5 }}
+          heading="Do you experience recurring dreams or nightmares?"
+          options={[
+            { key: 'recurring', title: 'Recurring dreams', sub: 'The same dream keeps coming back' },
+            { key: 'nightmares', title: 'Nightmares', sub: 'I have disturbing dreams that wake me up' },
+            { key: 'both', title: 'Both', sub: 'Recurring themes and nightmares' },
+            { key: 'neither', title: 'Neither', sub: 'My dreams are mostly unique each time' },
+          ]}
+          selected={localRecurring}
+          onSelect={setLocalRecurring}
+          goNext={goNext}
+          ctaFadeAnim={ctaFadeAnim}
+        />
+      );
+      case 8: return <FeaturePreviewScreen goNext={goNext} ctaFadeAnim={ctaFadeAnim} />;
+      case 9: return <NotificationScreen goNext={goNext} />;
       case 10: return renderFirstDream();
       case 11: return renderProcessing();
       case 12: return renderInterpretation();
@@ -198,37 +273,6 @@ export default function OnboardingScreen() {
       default: return null;
     }
   };
-
-  const renderWelcome = () => (
-    <View style={styles.centeredContent}>
-      <Text style={styles.logoText}>Lucid</Text>
-      <View style={styles.welcomeTextBlock}>
-        <FlowingText
-          text="Your dreams have meaning."
-          style={styles.welcomeHeading}
-          wordDelay={70}
-          initialDelay={400}
-          haptic
-        />
-        <FlowingText
-          text="Let's decode them."
-          style={[styles.welcomeHeading, { color: colors.accent }]}
-          wordDelay={80}
-          initialDelay={1200}
-          haptic
-        />
-      </View>
-      <FlowingText
-        text="Private. No account needed. Your dreams stay on your device."
-        style={styles.privacyText}
-        wordDelay={40}
-        initialDelay={2000}
-      />
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Get Started" onPress={goNext} />
-      </Animated.View>
-    </View>
-  );
 
   const renderNameInput = () => (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -256,258 +300,6 @@ export default function OnboardingScreen() {
         <OnboardingButton title="Continue" onPress={goNext} disabled={localName.trim().length === 0} />
       </View>
     </KeyboardAvoidingView>
-  );
-
-  const renderDreamFrequency = () => (
-    <View style={styles.flex}>
-      <ProgressBar current={1} total={5} />
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.stepHeading}>How often do you remember your dreams?</Text>
-        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
-          {[
-            { key: 'every_morning', title: 'Every morning', sub: 'I usually wake up with a dream fresh in my mind' },
-            { key: 'few_times_week', title: 'A few times a week', sub: "Some mornings I remember, some I don't" },
-            { key: 'once_twice_month', title: 'Once or twice a month', sub: 'Dreams come and go' },
-            { key: 'rarely', title: 'Rarely', sub: 'I almost never remember what I dreamed' },
-          ].map((opt) => (
-            <QuizOptionCard
-              key={opt.key}
-              title={opt.title}
-              subtitle={opt.sub}
-              selected={localFrequency === opt.key}
-              onPress={() => setLocalFrequency(opt.key)}
-            />
-          ))}
-        </StaggerChildren>
-      </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={!localFrequency} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderDreamDetail = () => (
-    <View style={styles.flex}>
-      <ProgressBar current={2} total={5} />
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.stepHeading}>When you remember a dream, how detailed is it?</Text>
-        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
-          {[
-            { key: 'vague', title: 'Vague feelings', sub: 'More of a mood than a memory' },
-            { key: 'fragments', title: 'Fragments', sub: 'Flashes of scenes, faces, places' },
-            { key: 'partial', title: 'Partial stories', sub: 'I remember a rough sequence of events' },
-            { key: 'full', title: 'Full narratives', sub: 'I could describe them in detail' },
-          ].map((opt) => (
-            <QuizOptionCard
-              key={opt.key}
-              title={opt.title}
-              subtitle={opt.sub}
-              selected={localDetail === opt.key}
-              onPress={() => setLocalDetail(opt.key)}
-            />
-          ))}
-        </StaggerChildren>
-      </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={!localDetail} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderMainGoals = () => (
-    <View style={styles.flex}>
-      <ProgressBar current={3} total={5} />
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.stepHeading}>What interests you most?</Text>
-        <Text style={styles.stepSubtext}>Select all that apply</Text>
-        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
-          {[
-            { key: 'meanings', title: 'Understanding dream meanings', sub: 'Decode the symbols and messages in your dreams' },
-            { key: 'lucid', title: 'Lucid dreaming', sub: 'Learn to become aware and take control inside your dreams' },
-            { key: 'patterns', title: 'Tracking patterns', sub: 'See recurring themes, emotions, and symbols over time' },
-            { key: 'journaling', title: 'Just journaling', sub: 'A private space to record my dreams before they fade' },
-          ].map((opt) => (
-            <QuizOptionCard
-              key={opt.key}
-              title={opt.title}
-              subtitle={opt.sub}
-              selected={localGoals.includes(opt.key)}
-              onPress={() => toggleGoal(opt.key)}
-            />
-          ))}
-        </StaggerChildren>
-      </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={localGoals.length === 0} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderPainPoint = () => (
-    <View style={styles.centeredContent}>
-      <View style={styles.painPointBlock}>
-        <FlowingText
-          text="Most dreams are forgotten"
-          style={styles.painPointText}
-          wordDelay={80}
-          initialDelay={300}
-          haptic
-        />
-        <FlowingText
-          text="within 5 minutes"
-          style={styles.painPointAccent}
-          wordDelay={100}
-          initialDelay={1400}
-          haptic
-        />
-        <FlowingText
-          text="of waking up."
-          style={styles.painPointText}
-          wordDelay={90}
-          initialDelay={2200}
-          haptic
-        />
-      </View>
-      <FlowingText
-        text="People who journal their dreams recall 3x more within two weeks."
-        style={styles.painPointSub}
-        wordDelay={45}
-        initialDelay={3200}
-      />
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderJournalExperience = () => (
-    <View style={styles.flex}>
-      <ProgressBar current={4} total={5} />
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.stepHeading}>Have you kept a dream journal before?</Text>
-        <StaggerChildren stagger={60} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
-          {[
-            { key: 'never', title: 'Never', sub: 'This is my first time' },
-            { key: 'tried', title: "Tried but didn't stick", sub: 'Started once or twice but fell off' },
-            { key: 'paper', title: 'Paper journal', sub: "I've used a physical notebook" },
-            { key: 'app', title: 'Another app', sub: "I've tried a different dream journal app" },
-            { key: 'active', title: 'Active journaler', sub: 'I currently log my dreams regularly' },
-          ].map((opt) => (
-            <QuizOptionCard
-              key={opt.key}
-              title={opt.title}
-              subtitle={opt.sub}
-              selected={localJournalExp === opt.key}
-              onPress={() => setLocalJournalExp(opt.key)}
-            />
-          ))}
-        </StaggerChildren>
-      </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={!localJournalExp} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderRecurringDreams = () => (
-    <View style={styles.flex}>
-      <ProgressBar current={5} total={5} />
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.stepHeading}>Do you experience recurring dreams or nightmares?</Text>
-        <StaggerChildren stagger={70} initialDelay={150} style={styles.optionsContainer} triggerKey={step}>
-          {[
-            { key: 'recurring', title: 'Recurring dreams', sub: 'The same dream keeps coming back' },
-            { key: 'nightmares', title: 'Nightmares', sub: 'I have disturbing dreams that wake me up' },
-            { key: 'both', title: 'Both', sub: 'Recurring themes and nightmares' },
-            { key: 'neither', title: 'Neither', sub: 'My dreams are mostly unique each time' },
-          ].map((opt) => (
-            <QuizOptionCard
-              key={opt.key}
-              title={opt.title}
-              subtitle={opt.sub}
-              selected={localRecurring === opt.key}
-              onPress={() => setLocalRecurring(opt.key)}
-            />
-          ))}
-        </StaggerChildren>
-      </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={!localRecurring} />
-      </Animated.View>
-    </View>
-  );
-
-  const renderFeaturePreview = () => {
-    const features = [
-      { icon: <Sparkles size={22} color={colors.accent} />, title: 'AI Dream Interpretation', desc: 'Understand what your dreams mean with personalized AI analysis' },
-      { icon: <Repeat size={22} color={colors.accent} />, title: 'Pattern Detection', desc: 'Discover recurring symbols, emotions, and themes across your dreams' },
-      { icon: <Moon size={22} color={colors.accent} />, title: 'Lucid Dreaming Tools', desc: 'Reality checks, WBTB timers, and techniques to dream consciously' },
-      { icon: <Calendar size={22} color={colors.accent} />, title: 'Dream Calendar', desc: 'See your complete dream history at a glance, color-coded by mood' },
-    ];
-
-    return (
-      <View style={styles.flex}>
-        <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <Text style={styles.stepHeading}>Here's what Lucid can do for you</Text>
-          <Text style={styles.stepSubtext}>Personalized to your dream profile</Text>
-          <StaggerChildren stagger={100} initialDelay={200} distance={16} style={styles.optionsContainer} triggerKey={step}>
-            {features.map((f, i) => (
-              <View key={i} style={styles.featureCard}>
-                <View style={styles.featureIcon}>{f.icon}</View>
-                <View style={styles.featureText}>
-                  <Text style={styles.featureTitle}>{f.title}</Text>
-                  <Text style={styles.featureDesc}>{f.desc}</Text>
-                </View>
-              </View>
-            ))}
-          </StaggerChildren>
-        </ScrollView>
-        <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-          <OnboardingButton title="Continue" onPress={goNext} />
-        </Animated.View>
-      </View>
-    );
-  };
-
-  const handleEnableReminders = useCallback(async () => {
-    const granted = await requestPermissions();
-    if (granted) {
-      useSettingsStore.getState().setMorningReminder(true);
-      await scheduleMorningReminder('07:00');
-    }
-    goNext();
-  }, [goNext]);
-
-  const renderNotificationPermission = () => (
-    <View style={styles.centeredContent}>
-      <FlowingText
-        text="Never lose a dream again"
-        style={styles.stepHeading}
-        wordDelay={80}
-        initialDelay={200}
-        haptic
-      />
-      <View style={styles.notifTextBlock}>
-        <FlowingText
-          text="Journaling within 5 minutes of waking triples dream recall."
-          style={styles.notifBody}
-          wordDelay={45}
-          initialDelay={800}
-        />
-        <FlowingText
-          text="We'll send a gentle morning reminder to help you capture your dreams before they fade."
-          style={[styles.notifBody, { marginTop: spacing.md }]}
-          wordDelay={40}
-          initialDelay={1800}
-        />
-      </View>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Enable Reminders" onPress={handleEnableReminders} />
-        <TouchableOpacity onPress={goNext} style={styles.skipLink} testID="skip-button">
-          <Text style={styles.skipText}>Maybe later</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
   );
 
   const renderFirstDream = () => (
@@ -547,8 +339,8 @@ export default function OnboardingScreen() {
 
     return (
       <View style={styles.processingContainer}>
-        <Animated.View style={[styles.pulseCircle, { transform: [{ scale: pulseAnim }] }]}>
-          <View style={styles.pulseInner} />
+        <Animated.View style={{ transform: [{ scale: pulseAnim }], marginBottom: spacing.xl }}>
+          <GlassAsset source={glassAssets.eye} size={120} />
         </Animated.View>
         <Text style={styles.processingTitle}>Analyzing your dream...</Text>
         <View style={styles.processingSteps}>
@@ -677,6 +469,7 @@ export default function OnboardingScreen() {
             <X size={20} color={colors.textMuted} />
           </TouchableOpacity>
         </View>
+        <GlassAsset source={glassAssets.key} size={160} style={{ alignSelf: 'center', marginBottom: spacing.lg }} />
         <Text style={[styles.stepHeading, { textAlign: 'center' as const }]}>Unlock the full power of your dreams.</Text>
         <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>Start your free trial today.</Text>
 

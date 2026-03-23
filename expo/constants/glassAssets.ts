@@ -1,0 +1,12 @@
+export const glassAssets = {
+  crescentMoon: require('../assets/icons/crescent_moon-removebg.png'),
+  eye: require('../assets/icons/eye-removebg.png'),
+  key: require('../assets/icons/key-removebg.png'),
+  cloud: require('../assets/icons/cloud-removebg.png'),
+  droplet: require('../assets/icons/droplet-removebg.png'),
+  hourglass: require('../assets/icons/hourglass-removebg.png'),
+  hand: require('../assets/icons/hand-removebg.png'),
+  clock: require('../assets/icons/clock-removebg.png'),
+  feather: require('../assets/icons/feather-removebg.png'),
+  spiral: require('../assets/icons/spiral-removebg.png'),
+} as const;

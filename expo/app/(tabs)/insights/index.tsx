@@ -10,6 +10,8 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Lock, TrendingUp, TrendingDown, Sparkles } from 'lucide-react-native';
+import { GlassAsset } from '@/components/GlassAsset';
+import { glassAssets } from '@/constants/glassAssets';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
@@ -185,6 +187,7 @@ export default function InsightsScreen() {
           <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
           <View style={styles.recallCard}>
             <View style={styles.recallMain}>
+              <GlassAsset source={glassAssets.droplet} size={60} />
               <Text style={styles.recallPercent}>{recallRate}%</Text>
               <View style={styles.recallTrend}>
                 {recallTrend > 0 ? (
@@ -314,7 +317,10 @@ export default function InsightsScreen() {
 
       {symbolCounts.length > 0 && (
         <>
-          <Text style={styles.sectionTitle}>Recurring Symbols</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+            <Text style={styles.sectionTitle}>Recurring Symbols</Text>
+            <GlassAsset source={glassAssets.spiral} size={50} />
+          </View>
           <View style={styles.tagsContainer}>
             {symbolCounts.map(([symbol, count]) => (
               <View
@@ -360,6 +366,7 @@ export default function InsightsScreen() {
         <View style={styles.lockedPage}>
           <Text style={styles.pageTitle}>Insights</Text>
           <View style={styles.lockCenter}>
+            <GlassAsset source={glassAssets.key} size={80} style={{ marginBottom: spacing.md }} />
             <Lock size={36} color={colors.accent} />
             <Text style={styles.lockTitle}>Unlock Your Dream Insights</Text>
             <Text style={styles.lockSubtext}>
@@ -386,7 +393,10 @@ export default function InsightsScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
-          <Text style={styles.pageTitle}>Insights</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg }}>
+            <Text style={[styles.pageTitle, { marginBottom: 0 }]}>Insights</Text>
+            <GlassAsset source={glassAssets.spiral} size={80} />
+          </View>
           {renderContent()}
         </Animated.View>
       </ScrollView>
