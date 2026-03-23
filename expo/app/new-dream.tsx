@@ -383,7 +383,6 @@ export default function NewDreamScreen() {
       isFirstPerson,
       interpretation: null,
       symbols: [],
-      interpretationRating: null,
       isForgotten: false,
     });
 

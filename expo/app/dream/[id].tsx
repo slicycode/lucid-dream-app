@@ -12,7 +12,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye, ThumbsUp, ThumbsDown } from 'lucide-react-native';
+import { ChevronLeft, MoreHorizontal, Sparkles, Moon, Skull, Star, Eye } from 'lucide-react-native';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
@@ -331,23 +331,6 @@ export default function DreamDetailScreen() {
               </>
             )}
             <Text style={styles.disclaimer}>For entertainment and self-reflection only. Not professional psychological advice.</Text>
-            <View style={styles.ratingRow}>
-              <Text style={styles.ratingLabel}>Was this helpful?</Text>
-              <TouchableOpacity
-                onPress={() => updateDream(dream.id, { interpretationRating: dream.interpretationRating === 'up' ? null : 'up' })}
-                style={styles.ratingButton}
-                activeOpacity={0.7}
-              >
-                <ThumbsUp size={18} color={dream.interpretationRating === 'up' ? colors.accent : colors.textDisabled} fill={dream.interpretationRating === 'up' ? colors.accentMuted : 'transparent'} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => updateDream(dream.id, { interpretationRating: dream.interpretationRating === 'down' ? null : 'down' })}
-                style={styles.ratingButton}
-                activeOpacity={0.7}
-              >
-                <ThumbsDown size={18} color={dream.interpretationRating === 'down' ? colors.textSecondary : colors.textDisabled} fill={dream.interpretationRating === 'down' ? colors.surfaceCard : 'transparent'} />
-              </TouchableOpacity>
-            </View>
             {canInterpret() ? (
               <TouchableOpacity
                 style={styles.reinterpretCta}
@@ -358,7 +341,14 @@ export default function DreamDetailScreen() {
                 <Text style={styles.reinterpretCtaText}>Re-interpret</Text>
               </TouchableOpacity>
             ) : isPremium ? (
-              <Text style={styles.reinterpretLimitText}>Daily limit reached — come back tomorrow</Text>
+              <View style={styles.interpretDisabled}>
+                <View style={styles.interpretDisabledRow}>
+                  <Sparkles size={16} color={colors.textDisabled} />
+                  <Text style={styles.interpretDisabledText}>
+                    {isPremium ? 'Daily limit reached — come back tomorrow' : 'Free interpretation used this week'}
+                  </Text>
+                </View>
+              </View>
             ) : null}
           </Animated.View>
         ) : canInterpret() ? (
@@ -611,6 +601,7 @@ const styles = StyleSheet.create({
     fontSize: typography.tiny.fontSize,
     color: colors.textDisabled,
     marginTop: spacing.lg,
+    marginBottom: spacing.lg,
     lineHeight: 16,
   },
   interpretingContainer: {
@@ -694,20 +685,5 @@ const styles = StyleSheet.create({
     fontWeight: '600' as const,
     color: colors.accent,
     marginTop: spacing.xs,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.md,
-  },
-  ratingLabel: {
-    fontFamily: fonts.sans,
-    fontSize: typography.caption.fontSize,
-    color: colors.textMuted,
-    flex: 1,
-  },
-  ratingButton: {
-    padding: spacing.sm,
   },
 });

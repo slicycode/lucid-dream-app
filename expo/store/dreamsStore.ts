@@ -30,7 +30,7 @@ const DUMMY_DREAMS: Dream[] = [
     interpretation:
       "The unfamiliar house that felt familiar often represents aspects of yourself you haven't fully explored yet — rooms you haven't entered, potential you sense but haven't accessed.\n\nWater rising gradually is one of the most common dream symbols. It typically reflects emotions building up slowly — things you've been setting aside that are starting to demand attention.\n\nThe combination suggests you may be on the edge of an emotional or personal transition. Your subconscious is inviting you to explore these rising feelings rather than wait for them to overflow.",
     symbols: ['Unfamiliar house', 'Rising water', 'Familiarity'],
-    interpretationRating: null,
+
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -49,7 +49,7 @@ const DUMMY_DREAMS: Dream[] = [
     vividness: 5,
     interpretation: null,
     symbols: [],
-    interpretationRating: null,
+
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -69,7 +69,7 @@ const DUMMY_DREAMS: Dream[] = [
     interpretation:
       "The exam dream is among the most universal dream archetypes. It often surfaces during periods when you feel tested or evaluated in waking life — not necessarily academically, but in any area where you feel unprepared.\n\nThe unreadable language you somehow understood points to intuitive knowledge — you know more than you think you do, even when the situation feels foreign.\n\nWaking before finishing suggests an unresolved situation in your life that you're processing subconsciously.",
     symbols: ['Exam', 'Unknown language', 'School'],
-    interpretationRating: null,
+
     isFirstPerson: true,
     isForgotten: false,
   },
@@ -175,7 +175,7 @@ export const useDreamsStore = create<DreamsState>()(
             vividness: null,
             interpretation: null,
             symbols: [],
-            interpretationRating: null,
+        
             isFirstPerson: true,
             isForgotten: true,
           };
@@ -278,7 +278,7 @@ export const useDreamsStore = create<DreamsState>()(
         if (version < 3) {
           data.dreams = (data.dreams ?? []).map((d: any) => ({
             ...d,
-            interpretationRating: d.interpretationRating ?? null,
+
           }));
           data.weeklyDigest = data.weeklyDigest ?? null;
         }
