@@ -10,6 +10,7 @@ import { ChevronDown, Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-re
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Animated,
@@ -24,25 +25,9 @@ import {
 import { Swipeable } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'Today';
-  if (diff === 1) return 'Last night';
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
 function formatTime(isoStr: string): string {
   const d = new Date(isoStr);
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
 function getWeekDreamCount(dreams: { date: string }[]): number {
@@ -57,6 +42,7 @@ function getTodayString(): string {
 }
 
 export default function JournalScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const allDreams = useDreamsStore((s) => s.dreams);
@@ -139,16 +125,16 @@ export default function JournalScreen() {
   }, [weeklyDigest, currentWeekOf, dreams]);
 
   const digestTimestamp = useMemo(() => {
-    if (!weeklyDigest?.generatedAt) return 'Generated earlier this week';
+    if (!weeklyDigest?.generatedAt) return t('journal.generatedEarlierThisWeek');
     const gen = new Date(weeklyDigest.generatedAt);
-    if (isNaN(gen.getTime())) return 'Generated earlier this week';
+    if (isNaN(gen.getTime())) return t('journal.generatedEarlierThisWeek');
     const now = new Date();
     const hoursAgo = Math.floor((now.getTime() - gen.getTime()) / (1000 * 60 * 60));
-    if (hoursAgo < 1) return 'Generated just now';
-    if (hoursAgo < 24) return `Generated ${hoursAgo}h ago`;
+    if (hoursAgo < 1) return t('journal.generatedJustNow');
+    if (hoursAgo < 24) return t('journal.generatedHoursAgo', { n: hoursAgo });
     const daysAgo = Math.floor(hoursAgo / 24);
-    return `Generated ${daysAgo}d ago`;
-  }, [weeklyDigest?.generatedAt]);
+    return t('journal.generatedDaysAgo', { n: daysAgo });
+  }, [weeklyDigest?.generatedAt, t]);
 
   // Entrance animations
   const headerFade = useRef(new Animated.Value(0)).current;
@@ -224,8 +210,24 @@ export default function JournalScreen() {
 
   const today = useMemo(() => {
     const d = new Date();
-    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase();
+    return d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase();
   }, []);
+
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('journal.goodMorning');
+    if (hour < 18) return t('journal.goodAfternoon');
+    return t('journal.goodEvening');
+  }, [t]);
+
+  const formatDate = useCallback((dateStr: string): string => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+    if (diff === 0) return t('journal.today');
+    if (diff === 1) return t('journal.lastNight');
+    return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  }, [t]);
 
   const weekCount = useMemo(() => getWeekDreamCount(dreams), [dreams]);
   const hasDreamToday = useMemo(() => dreams.some((d) => d.date === getTodayString()), [dreams]);
@@ -262,22 +264,22 @@ export default function JournalScreen() {
 
   const handleDeleteDream = useCallback((id: string, title: string) => {
     Alert.alert(
-      'Delete Dream',
-      `Are you sure you want to delete "${title}"?`,
+      t('journal.deleteDreamTitle'),
+      t('journal.deleteDreamMessage', { title }),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
           onPress: () => swipeableRefs.current.get(id)?.close(),
         },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => animateDelete(id),
         },
       ]
     );
-  }, [animateDelete]);
+  }, [animateDelete, t]);
 
   const renderDeleteAction = useCallback(
     (progress: Animated.AnimatedInterpolation<number>) => {
@@ -310,9 +312,9 @@ export default function JournalScreen() {
       >
         <Animated.View style={{ opacity: headerFade, transform: [{ translateY: headerSlide }] }}>
           <Text style={styles.dateLabel}>{today}</Text>
-          <Text style={styles.greeting}>{getGreeting()}, {name || 'Dreamer'}.</Text>
+          <Text style={styles.greeting}>{greeting}, {name || 'Dreamer'}.</Text>
           {weekCount > 0 && (
-            <Text style={styles.weekStat}>{weekCount} dream{weekCount !== 1 ? 's' : ''} this week</Text>
+            <Text style={styles.weekStat}>{t('journal.dreamsThisWeek', { count: weekCount })}</Text>
           )}
         </Animated.View>
 
@@ -325,7 +327,7 @@ export default function JournalScreen() {
                 activeOpacity={0.7}
               >
                 <Sparkles size={14} color={colors.accent} />
-                <Text style={styles.digestLabel}>This week in your dreams</Text>
+                <Text style={styles.digestLabel}>{t('journal.weeklyDigestTitle')}</Text>
                 {weeklyDigest?.weekOf === currentWeekOf && weeklyDigest.summary && (
                   <Animated.View style={{
                     marginLeft: 'auto',
@@ -336,7 +338,7 @@ export default function JournalScreen() {
                 )}
               </TouchableOpacity>
               {digestLoading ? (
-                <Text style={styles.digestSummary}>Generating your weekly digest...</Text>
+                <Text style={styles.digestSummary}>{t('journal.generatingDigest')}</Text>
               ) : weeklyDigest?.weekOf === currentWeekOf && weeklyDigest.summary ? (
                 <Animated.View style={{
                   maxHeight: digestHeight.interpolate({ inputRange: [0, 1], outputRange: [0, 350] }),
@@ -346,19 +348,19 @@ export default function JournalScreen() {
                   <Text style={styles.digestSummary}>{weeklyDigest.summary}</Text>
                   <View style={styles.digestMeta}>
                     <Text style={styles.digestMetaText}>
-                      {digestTimestamp}{weeklyDigest.dreamCount ? ` · Based on ${weeklyDigest.dreamCount} dream${weeklyDigest.dreamCount !== 1 ? 's' : ''}` : ''}
+                      {digestTimestamp}{weeklyDigest.dreamCount ? ` · ${t('journal.basedOnDreams', { count: weeklyDigest.dreamCount })}` : ''}
                     </Text>
                     {digestIsStale && (
                       <Text style={styles.digestStaleText}>
-                        New dreams logged since this digest
+                        {t('journal.digestStale')}
                       </Text>
                     )}
                   </View>
                 </Animated.View>
               ) : weekCount > 0 ? (
-                <Text style={styles.digestSummary}>Your weekly digest will generate on Sunday based on this week's dreams.</Text>
+                <Text style={styles.digestSummary}>{t('journal.digestGeneratesOnSunday')}</Text>
               ) : (
-                <Text style={styles.digestSummary}>Log at least one dream this week to get your digest.</Text>
+                <Text style={styles.digestSummary}>{t('journal.digestLogMore')}</Text>
               )}
             </View>
           ) : (
@@ -369,10 +371,10 @@ export default function JournalScreen() {
             >
               <View style={styles.digestHeader}>
                 <Sparkles size={14} color={colors.textMuted} />
-                <Text style={[styles.digestLabel, { color: colors.textMuted }]}>This week in your dreams</Text>
+                <Text style={[styles.digestLabel, { color: colors.textMuted }]}>{t('journal.weeklyDigestTitle')}</Text>
               </View>
               <Text style={[styles.digestSummary, { color: colors.textDisabled }]}>
-                Unlock your weekly AI dream digest with Premium.
+                {t('journal.digestPremiumLock')}
               </Text>
             </TouchableOpacity>
           )
@@ -390,14 +392,14 @@ export default function JournalScreen() {
               size={64}
               style={styles.quickEntryGlassAsset}
             />
-            <Text style={styles.quickEntryTitle}>What did you dream about?</Text>
-            <Text style={styles.quickEntrySubtext}>Dreams fade fast — capture yours now</Text>
+            <Text style={styles.quickEntryTitle}>{t('journal.quickEntryTitle')}</Text>
+            <Text style={styles.quickEntrySubtext}>{t('journal.quickEntrySubtext')}</Text>
           </TouchableOpacity>
         )}
 
         {dreams.length > 0 && (
           <>
-            <Text style={styles.sectionLabel}>RECENT DREAMS</Text>
+            <Text style={styles.sectionLabel}>{t('journal.recentDreams')}</Text>
             {dreams.map((dream) => {
               const deleteAnim = getDeleteAnim(dream.id);
               const entryAnim = getCardAnim(dream.id);
@@ -477,30 +479,30 @@ export default function JournalScreen() {
                   {dream.dreamType === 'nightmare' ? (
                     <View style={styles.nightmarePill}>
                       <Skull size={10} color={colors.danger} />
-                      <Text style={styles.nightmarePillText}>Nightmare</Text>
+                      <Text style={styles.nightmarePillText}>{t('journal.pillNightmare')}</Text>
                     </View>
                   ) : (
                     <View style={styles.dreamPill}>
                       <Moon size={10} color={colors.textSecondary} />
-                      <Text style={styles.dreamPillText}>Dream</Text>
+                      <Text style={styles.dreamPillText}>{t('journal.pillDream')}</Text>
                     </View>
                   )}
                   {dream.isLucid && (
                     <View style={styles.lucidPill}>
                       <Moon size={10} color={colors.accent} />
-                      <Text style={styles.lucidPillText}>Lucid</Text>
+                      <Text style={styles.lucidPillText}>{t('journal.pillLucid')}</Text>
                     </View>
                   )}
                   {!dream.isFirstPerson ? (
                     <View style={styles.observerPill}>
                       <Eye size={10} color={colors.textSecondary} />
-                      <Text style={styles.observerPillText}>Observer</Text>
+                      <Text style={styles.observerPillText}>{t('journal.pillObserver')}</Text>
                     </View>
                   ) : (
                     <View style={styles.observerPill}>
                       <Eye size={10} color={colors.accent} />
-                      <Text style={[styles.observerPillText, { color: colors.accent }]}>First person</Text>
-                      </View> 
+                      <Text style={[styles.observerPillText, { color: colors.accent }]}>{t('journal.pillFirstPerson')}</Text>
+                      </View>
                   )}
                 </View>
               </TouchableOpacity>
@@ -514,8 +516,8 @@ export default function JournalScreen() {
         {dreams.length === 0 && (
           <View style={styles.emptyState}>
             <GlassAsset source={glassAssets.crescentMoon} size={120} />
-            <Text style={styles.emptyTitle}>Your dream journal is empty</Text>
-            <Text style={styles.emptySubtext}>Tap the + button to log your first dream</Text>
+            <Text style={styles.emptyTitle}>{t('journal.emptyTitle')}</Text>
+            <Text style={styles.emptySubtext}>{t('journal.emptySubtext')}</Text>
           </View>
         )}
       </ScrollView>

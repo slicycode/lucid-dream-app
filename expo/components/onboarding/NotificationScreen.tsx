@@ -9,12 +9,14 @@ import { requestPermissions, scheduleMorningReminder } from '@/services/notifica
 import { spacing } from '@/constants/theme';
 import { trackEvent } from '@/services/analytics';
 import { styles } from './styles';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationScreenProps {
   goNext: () => void;
 }
 
 export function NotificationScreen({ goNext }: NotificationScreenProps) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState(0);
   const bellRotation = useRef(new Animated.Value(0)).current;
   const body1Opacity = useRef(new Animated.Value(0)).current;
@@ -67,7 +69,7 @@ export function NotificationScreen({ goNext }: NotificationScreenProps) {
         <GlassAsset source={glassAssets.bell} size={140} />
       </Animated.View>
       <FlowingText
-        text="Never lose a dream again"
+        text={t('onboarding.notifications.title')}
         style={[styles.stepHeading, { textAlign: 'center' }]}
         wordDelay={80}
         haptic
@@ -76,17 +78,17 @@ export function NotificationScreen({ goNext }: NotificationScreenProps) {
 
       <View style={styles.notifTextBlock}>
         <Animated.Text style={[styles.notifBody, { opacity: body1Opacity }]}>
-          Journaling within 5 minutes of waking triples dream recall.
+          {t('onboarding.notifications.body1')}
         </Animated.Text>
         <Animated.Text style={[styles.notifBody, { marginTop: spacing.md, opacity: body2Opacity }]}>
-          We'll send a gentle morning reminder to help you capture your dreams before they fade.
+          {t('onboarding.notifications.body2')}
         </Animated.Text>
       </View>
 
       <Animated.View style={[styles.bottomCta, { opacity: ctaFade }]}>
-        <OnboardingButton title="Enable Reminders" onPress={handleEnableReminders} />
+        <OnboardingButton title={t('onboarding.notifications.cta')} onPress={handleEnableReminders} />
         <TouchableOpacity onPress={() => { trackEvent('onboarding_notifications_completed', { notifications_enabled: false }); goNext(); }} style={styles.skipLink} testID="skip-button">
-          <Text style={styles.skipText}>Maybe later</Text>
+          <Text style={styles.skipText}>{t('onboarding.notifications.skipCta')}</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>

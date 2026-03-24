@@ -21,6 +21,7 @@ import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/th
 import { trackEvent } from '@/services/analytics';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
+import { useTranslation } from 'react-i18next';
 
 function highlightSymbols(text: string, symbols: string[]) {
   if (symbols.length === 0) return text;
@@ -45,6 +46,7 @@ function highlightSymbols(text: string, symbols: string[]) {
 }
 
 export default function DreamDetailScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -92,9 +94,9 @@ export default function DreamDetailScreen() {
       trackEvent('interpretation_limit_hit', { is_premium: isPremium });
       if (isPremium) {
         Alert.alert(
-          'Daily Limit Reached',
-          'You\'ve used all 10 interpretations for today. Come back tomorrow!',
-          [{ text: 'OK' }]
+          t('dreamDetail.limitReachedTitle'),
+          t('dreamDetail.limitReachedMessage'),
+          [{ text: t('common.ok') }]
         );
       } else {
         handleUpgrade();
@@ -174,11 +176,9 @@ export default function DreamDetailScreen() {
 
       const isOffline = e?.message?.includes('Network') || e?.message?.includes('fetch');
       Alert.alert(
-        isOffline ? 'No Connection' : 'Interpretation Failed',
-        isOffline
-          ? 'Please check your internet connection and try again.'
-          : 'Something went wrong. Please try again.',
-        [{ text: 'OK' }]
+        isOffline ? t('dreamDetail.noConnectionTitle') : t('dreamDetail.interpretFailedTitle'),
+        isOffline ? t('dreamDetail.noConnectionMessage') : t('dreamDetail.interpretFailedMessage'),
+        [{ text: t('common.ok') }]
       );
     }
   }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, refundInterpretation, handleUpgrade]);
@@ -186,11 +186,11 @@ export default function DreamDetailScreen() {
   const handleInterpret = useCallback(() => {
     if (dream?.interpretation) {
       Alert.alert(
-        'Re-interpret this dream?',
-        `This will replace the current interpretation and use one of your ${isPremium ? 'daily' : 'weekly'} interpretations.`,
+        t('dreamDetail.reinterpretTitle'),
+        t('dreamDetail.reinterpretMessage', { period: isPremium ? t('dreamDetail.reinterpretPeriodDaily') : t('dreamDetail.reinterpretPeriodWeekly') }),
         [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Re-interpret', onPress: () => void doInterpret() },
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('common.reinterpret'), onPress: () => void doInterpret() },
         ]
       );
     } else {
@@ -200,12 +200,12 @@ export default function DreamDetailScreen() {
 
   const handleMenu = useCallback(() => {
     Alert.alert(
-      'Are you sure you want to delete this dream?',
+      t('dreamDetail.deleteTitle'),
       undefined,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
             if (dream) {
@@ -228,19 +228,19 @@ export default function DreamDetailScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>Dream not found</Text>
+          <Text style={styles.notFoundText}>{t('dreamDetail.dreamNotFound')}</Text>
         </View>
       </View>
     );
   }
 
   const date = new Date(dream.loggedAt);
-  const formattedDate = date.toLocaleDateString('en-US', {
+  const formattedDate = date.toLocaleDateString([], {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
   });
-  const formattedTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const formattedTime = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const hasInterpretation = dream.interpretation !== null || interpretationVisible;
 
   return (
@@ -269,19 +269,19 @@ export default function DreamDetailScreen() {
             {dream.dreamType === 'nightmare' && (
               <View style={styles.nightmareBadge}>
                 <Skull size={12} color={colors.danger} />
-                <Text style={styles.nightmareText}>Nightmare</Text>
+                <Text style={styles.nightmareText}>{t('dreamDetail.nightmare')}</Text>
               </View>
             )}
             {dream.isLucid && (
               <View style={styles.lucidBadge}>
                 <Moon size={12} color={colors.accent} />
-                <Text style={styles.lucidText}>Lucid</Text>
+                <Text style={styles.lucidText}>{t('dreamDetail.lucid')}</Text>
               </View>
             )}
             <View style={styles.observerBadge}>
               <Eye size={12} color={dream.isFirstPerson === false ? colors.accent : colors.textSecondary} />
               <Text style={[styles.observerText, dream.isFirstPerson === false && { color: colors.accent }]}>
-                {dream.isFirstPerson === false ? 'Observer' : 'First person'}
+                {dream.isFirstPerson === false ? t('dreamDetail.observer') : t('dreamDetail.firstPerson')}
               </Text>
             </View>
           </View>
@@ -324,20 +324,20 @@ export default function DreamDetailScreen() {
             <Animated.View style={[styles.interpretingPulse, { transform: [{ scale: pulseAnim }] }]}>
               <GlassAsset source={glassAssets.eye} size={80} />
             </Animated.View>
-            <Text style={styles.interpretingText}>Analyzing your dream...</Text>
+            <Text style={styles.interpretingText}>{t('dreamDetail.analyzingDream')}</Text>
           </View>
         ) : hasInterpretation ? (
           <Animated.View style={[styles.interpretSection, { opacity: dream.interpretation ? 1 : fadeAnim }]}>
             <View style={styles.interpHeader}>
               <Sparkles size={16} color={colors.accent} />
-              <Text style={styles.interpLabel}>AI Interpretation</Text>
+              <Text style={styles.interpLabel}>{t('dreamDetail.aiInterpretation')}</Text>
             </View>
             <Text style={styles.interpText}>
               {highlightSymbols(dream.interpretation ?? '', dream.symbols)}
             </Text>
             {dream.symbols.length > 0 && (
               <>
-                <Text style={styles.symbolsLabel}>Key Symbols</Text>
+                <Text style={styles.symbolsLabel}>{t('dreamDetail.keySymbols')}</Text>
                 <View style={styles.symbolsRow}>
                   {dream.symbols.map((s) => (
                     <View key={s} style={styles.symbolTag}>
@@ -348,7 +348,7 @@ export default function DreamDetailScreen() {
                 </View>
               </>
             )}
-            <Text style={styles.disclaimer}>For entertainment and self-reflection only. Not professional psychological advice.</Text>
+            <Text style={styles.disclaimer}>{t('dreamDetail.disclaimer')}</Text>
             {canInterpret() ? (
               <TouchableOpacity
                 style={styles.reinterpretCta}
@@ -356,14 +356,14 @@ export default function DreamDetailScreen() {
                 activeOpacity={0.7}
               >
                 <Sparkles size={14} color={colors.accent} />
-                <Text style={styles.reinterpretCtaText}>Re-interpret</Text>
+                <Text style={styles.reinterpretCtaText}>{t('common.reinterpret')}</Text>
               </TouchableOpacity>
             ) : isPremium ? (
               <View style={styles.interpretDisabled}>
                 <View style={styles.interpretDisabledRow}>
                   <Sparkles size={16} color={colors.textDisabled} />
                   <Text style={styles.interpretDisabledText}>
-                    {isPremium ? 'Daily limit reached — come back tomorrow' : 'Free interpretation used this week'}
+                    {isPremium ? t('dreamDetail.dailyLimitReached') : t('dreamDetail.freeInterpretationUsed')}
                   </Text>
                 </View>
               </View>
@@ -377,19 +377,19 @@ export default function DreamDetailScreen() {
             testID="interpret-button"
           >
             <Sparkles size={18} color={colors.ctaAccentText} />
-            <Text style={styles.interpretCtaText}>Interpret this dream</Text>
+            <Text style={styles.interpretCtaText}>{t('dreamDetail.interpretThisDream')}</Text>
           </TouchableOpacity>
         ) : (
           <View style={styles.interpretDisabled}>
             <View style={styles.interpretDisabledRow}>
               <Sparkles size={16} color={colors.textDisabled} />
               <Text style={styles.interpretDisabledText}>
-                {isPremium ? 'Daily limit reached — come back tomorrow' : 'Free interpretation used this week'}
+                {isPremium ? t('dreamDetail.dailyLimitReached') : t('dreamDetail.freeInterpretationUsed')}
               </Text>
             </View>
             {!isPremium && (
               <TouchableOpacity onPress={handleUpgrade} activeOpacity={0.7}>
-                <Text style={styles.upgradeLink}>Upgrade to Premium</Text>
+                <Text style={styles.upgradeLink}>{t('dreamDetail.upgradeToPremium')}</Text>
               </TouchableOpacity>
             )}
           </View>

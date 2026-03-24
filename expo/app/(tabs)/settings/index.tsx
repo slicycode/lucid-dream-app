@@ -38,6 +38,7 @@ import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 import { resetAnalytics, trackEvent, trackScreen } from '@/services/analytics';
+import { useTranslation } from 'react-i18next';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
 
@@ -67,6 +68,7 @@ export default function SettingsScreen() {
   const settings = useSettingsStore();
   const isPremium = settings.isPremium;
   const { isLoading: rcLoading, restorePurchases } = useRevenueCat();
+  const { t } = useTranslation();
 
   useFocusEffect(useCallback(() => { trackScreen('Settings'); }, []));
 
@@ -103,9 +105,9 @@ export default function SettingsScreen() {
     }).start(() => setActivePicker(null));
   }, [sheetAnim]);
 
-  const pickerTitle = activePicker === 'morning' ? 'Morning Reminder'
-    : activePicker === 'wbtb' ? 'WBTB Alarm'
-    : activePicker === 'reality' ? 'Reality Check Frequency'
+  const pickerTitle = activePicker === 'morning' ? t('settings.morningReminder')
+    : activePicker === 'wbtb' ? t('settings.wbtbAlarm')
+    : activePicker === 'reality' ? t('settings.realityCheckReminders')
     : '';
 
   const pickerTime = activePicker === 'morning' ? settings.morningReminderTime
@@ -124,9 +126,9 @@ export default function SettingsScreen() {
     if (enabled) {
       const granted = await requestPermissions();
       if (!granted) {
-        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use reminders.', [
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
-          { text: 'Cancel', style: 'cancel' },
+        Alert.alert(t('settings.notificationsDisabledTitle'), t('settings.notificationsDisabledMessage'), [
+          { text: t('common.openSettings'), onPress: () => Linking.openSettings() },
+          { text: t('common.cancel'), style: 'cancel' },
         ]);
         return;
       }
@@ -143,9 +145,9 @@ export default function SettingsScreen() {
     if (enabled) {
       const granted = await requestPermissions();
       if (!granted) {
-        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use reminders.', [
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
-          { text: 'Cancel', style: 'cancel' },
+        Alert.alert(t('settings.notificationsDisabledTitle'), t('settings.notificationsDisabledMessage'), [
+          { text: t('common.openSettings'), onPress: () => Linking.openSettings() },
+          { text: t('common.cancel'), style: 'cancel' },
         ]);
         return;
       }
@@ -174,9 +176,9 @@ export default function SettingsScreen() {
     if (enabled) {
       const granted = await requestPermissions();
       if (!granted) {
-        Alert.alert('Notifications Disabled', 'Enable notifications in your device Settings to use the WBTB alarm.', [
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
-          { text: 'Cancel', style: 'cancel' },
+        Alert.alert(t('settings.notificationsDisabledTitle'), t('settings.notificationsDisabledWbtb'), [
+          { text: t('common.openSettings'), onPress: () => Linking.openSettings() },
+          { text: t('common.cancel'), style: 'cancel' },
         ]);
         return;
       }
@@ -205,12 +207,12 @@ export default function SettingsScreen() {
 
   const handleResetData = useCallback(() => {
     Alert.alert(
-      'Reset All Data',
-      'This will delete all dreams, settings, and progress. This cannot be undone.',
+      t('settings.resetDataTitle'),
+      t('settings.resetDataMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Reset Everything',
+          text: t('settings.resetEverything'),
           style: 'destructive',
           onPress: () => {
             if (Platform.OS !== 'web') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -238,7 +240,7 @@ export default function SettingsScreen() {
     trackEvent('export_dreams_tapped', { dream_count: exportable.length });
 
     if (exportable.length === 0) {
-      Alert.alert('No Dreams', 'There are no dreams to export.');
+      Alert.alert(t('settings.noDreamsTitle'), t('settings.noDreamsMessage'));
       return;
     }
 
@@ -254,13 +256,13 @@ export default function SettingsScreen() {
 
       const isAvailable = await Sharing.isAvailableAsync();
       if (!isAvailable) {
-        Alert.alert('Error', 'Sharing is not available on this device.');
+        Alert.alert(t('settings.sharingError'), t('settings.sharingUnavailable'));
         return;
       }
 
       await Sharing.shareAsync(file.uri, {
         mimeType: 'application/json',
-        dialogTitle: 'Export Dreams',
+        dialogTitle: t('settings.exportDreamsShare'),
         UTI: 'public.json',
       });
 
@@ -269,7 +271,7 @@ export default function SettingsScreen() {
       }
     } catch (error) {
       console.error('Export failed:', error);
-      Alert.alert('Export Failed', 'Something went wrong while exporting your dreams. Please try again.');
+      Alert.alert(t('settings.exportFailedTitle'), t('settings.exportFailedMessage'));
     }
   }, []);
 
@@ -343,44 +345,44 @@ export default function SettingsScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
-        <Text style={styles.pageTitle}>Settings</Text>
+        <Text style={styles.pageTitle}>{t('settings.title')}</Text>
 
-        <Text style={styles.sectionHeader}>JOURNALING</Text>
+        <Text style={styles.sectionHeader}>{t('settings.sectionJournaling')}</Text>
         {renderToggleRow(
           <Clock size={18} color={colors.textSecondary} />,
-          'Morning Reminder',
+          t('settings.morningReminder'),
           settings.morningReminderEnabled,
           handleMorningReminderToggle,
           {
-            subtitle: 'Get reminded to log your dreams',
+            subtitle: t('settings.morningReminderSub'),
             timeValue: formatTime(settings.morningReminderTime),
             onTimeTap: () => openPicker('morning'),
           },
         )}
         {renderNavRow(
           <FileText size={18} color={colors.textSecondary} />,
-          'Default Emotion Tags',
+          t('settings.defaultEmotionTags'),
           () => router.push('/emotion-tags' as any),
-          { value: 'Customize' }
+          { value: t('settings.customize') }
         )}
 
-        <Text style={styles.sectionHeader}>PREMIUM</Text>
+        <Text style={styles.sectionHeader}>{t('settings.sectionPremium')}</Text>
         {!isPremium ? (
           renderNavRow(
             <Crown size={18} color={colors.accent} />,
-            rcLoading ? 'Processing...' : 'Upgrade to Premium',
+            rcLoading ? t('common.processing') : t('settings.upgradePremium'),
             handleUpgrade,
             { accent: true }
           )
         ) : (
           <View style={styles.premiumActive}>
             <Crown size={18} color={colors.accent} />
-            <Text style={styles.premiumActiveText}>Premium Active</Text>
+            <Text style={styles.premiumActiveText}>{t('settings.premiumActive')}</Text>
           </View>
         )}
         {renderNavRow(
           <RefreshCw size={18} color={colors.textSecondary} />,
-          rcLoading ? 'Restoring...' : 'Restore Purchases',
+          rcLoading ? t('common.restoring') : t('common.restorePurchases'),
           handleRestore,
         )}
 
@@ -388,7 +390,7 @@ export default function SettingsScreen() {
           <View style={styles.devToggle}>
             {renderToggleRow(
               <Crown size={18} color={colors.accent} />,
-              'Premium (Dev Toggle)',
+              t('settings.premiumDevToggle'),
               isPremium,
               settings.setIsPremium,
             )}
@@ -397,86 +399,86 @@ export default function SettingsScreen() {
 
         <View style={styles.sectionDivider} />
         <Text style={styles.sectionHeader}>
-          LUCID DREAMING
-          <Text style={styles.sectionBadge}> PREMIUM</Text>
+          {t('settings.sectionLucidDreaming')}
+          <Text style={styles.sectionBadge}> {t('settings.sectionPremiumBadge')}</Text>
         </Text>
         {renderToggleRow(
           <Scan size={18} color={colors.textSecondary} />,
-          'Reality Check Reminders',
+          t('settings.realityCheckReminders'),
           settings.realityCheckEnabled && isPremium,
           (val) => isPremium ? handleRealityCheckToggle(val) : handleUpgrade(),
           {
-            subtitle: isPremium ? 'Periodic "Am I dreaming?" prompts' : undefined,
-            timeValue: `Every ${settings.realityCheckFrequency}`,
+            subtitle: isPremium ? t('settings.realityCheckSub') : undefined,
+            timeValue: t('settings.everyInterval', { interval: settings.realityCheckFrequency }),
             onTimeTap: () => openPicker('reality'),
           },
         )}
         {renderToggleRow(
           <AlarmClock size={18} color={colors.textSecondary} />,
-          'WBTB Alarm',
+          t('settings.wbtbAlarm'),
           settings.wbtbEnabled && isPremium,
           handleWbtbToggle,
           {
-            subtitle: isPremium ? 'Wake Back to Bed technique alarm' : undefined,
+            subtitle: isPremium ? t('settings.wbtbAlarmSub') : undefined,
             timeValue: formatTime(settings.wbtbTime),
             onTimeTap: () => openPicker('wbtb'),
           },
         )}
 
-        <Text style={styles.sectionHeader}>DATA</Text>
+        <Text style={styles.sectionHeader}>{t('settings.sectionData')}</Text>
         {renderNavRow(
           <Download size={18} color={colors.textSecondary} />,
-          'Export Dreams (JSON)',
+          t('settings.exportDreams'),
           isPremium ? handleExportDreams : handleUpgrade,
-          { badge: isPremium ? undefined : 'PREMIUM' }
+          { badge: isPremium ? undefined : t('settings.sectionPremiumBadge') }
         )}
          {__DEV__ && (
           <>
             {renderNavRow(
               <Trash2 size={18} color={colors.danger} />,
-              'Reset All Data',
+              t('settings.resetAllData'),
               handleResetData,
               { danger: true }
             )}
             {renderNavRow(
               <Download size={18} color={colors.textSecondary} />,
-              'Seed 10 Dreams',
-              () => { seedDreams(); Alert.alert('Done', 'Seeded 10 dreams'); },
+              t('settings.seed10Dreams'),
+              () => { seedDreams(); Alert.alert(t('common.done'), t('settings.seededDreams')); },
             )}
             {renderNavRow(
               <Trash2 size={18} color={colors.danger} />,
-              'Remove Seed Dreams',
-              () => { removeSeedDreams(); Alert.alert('Done', 'Removed seed dreams'); },
+              t('settings.removeSeedDreams'),
+              () => { removeSeedDreams(); Alert.alert(t('common.done'), t('settings.removedSeedDreams')); },
               { danger: true }
             )}
           </>
         )}
 
-        <Text style={styles.sectionHeader}>ABOUT</Text>
+        <Text style={styles.sectionHeader}>{t('settings.sectionAbout')}</Text>
         {renderNavRow(
           <BookOpen size={18} color={colors.textSecondary} />,
-          'Dream Dictionary',
+          t('settings.dreamDictionary'),
           () => router.push('/dream-dictionary' as any),
-          { badge: isPremium ? undefined : 'PREMIUM' }
+          { badge: isPremium ? undefined : t('settings.sectionPremiumBadge') }
         )}
         {renderNavRow(
           <Shield size={18} color={colors.textSecondary} />,
-          'Privacy Policy',
+          t('settings.privacyPolicy'),
           () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/'),
         )}
         {renderNavRow(
           <FileQuestion size={18} color={colors.textSecondary} />,
-          'Terms of Service',
+          t('settings.termsOfService'),
           () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/'),
         )}
         {renderNavRow(
           <HelpCircle size={18} color={colors.textSecondary} />,
-          'Help & Support',
+          t('settings.helpSupport'),
           () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/support/'),
         )}
         <View style={styles.versionRow}>
           <Info size={14} color={colors.textDisabled} />
-          <Text style={styles.versionText}>Version 1.0.0</Text>
+          <Text style={styles.versionText}>{t('settings.version', { version: '1.0.0' })}</Text>
         </View>
         </Animated.View>
       </ScrollView>
@@ -500,13 +502,13 @@ export default function SettingsScreen() {
             <View style={styles.sheetHeader}>
               <Text style={styles.sheetTitle}>{pickerTitle}</Text>
               <TouchableOpacity onPress={handlePickerDone} activeOpacity={0.7}>
-                <Text style={styles.sheetDone}>Done</Text>
+                <Text style={styles.sheetDone}>{t('settings.done')}</Text>
               </TouchableOpacity>
             </View>
 
             {activePicker === 'reality' ? (
               <View style={styles.freqContent}>
-                <Text style={styles.freqLabel}>How often should we remind you?</Text>
+                <Text style={styles.freqLabel}>{t('settings.howOftenRemind')}</Text>
                 <View style={styles.freqRow}>
                   {REALITY_CHECK_OPTIONS.map((opt) => (
                     <TouchableOpacity
@@ -524,7 +526,7 @@ export default function SettingsScreen() {
                           settings.realityCheckFrequency === opt && styles.freqPillTextActive,
                         ]}
                       >
-                        Every {opt}
+                        {t('settings.everyInterval', { interval: opt })}
                       </Text>
                     </TouchableOpacity>
                   ))}

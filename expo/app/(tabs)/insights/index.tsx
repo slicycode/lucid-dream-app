@@ -5,6 +5,7 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { trackScreen } from '@/services/analytics';
+import { useTranslation } from 'react-i18next';
 import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -173,6 +174,7 @@ export default function InsightsScreen() {
 
   const maxWeekly = Math.max(...weeklyData, 1);
 
+  const { t } = useTranslation();
   const [selectedBar, setSelectedBar] = useState<number | null>(null);
 
   // Entrance animations
@@ -196,7 +198,7 @@ export default function InsightsScreen() {
     <>
       {recallRate !== null && (
         <>
-          <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
+          <Text style={styles.sectionTitle}>{t('insights.dreamRecallRate')}</Text>
           <View style={[styles.recallCard, styles.recallCardHero]}>
             <View style={styles.recallMain}>
               <Text style={styles.recallPercent}>{recallRate}%</Text>
@@ -208,13 +210,13 @@ export default function InsightsScreen() {
                 ) : null}
                 {recallTrend !== 0 && (
                   <Text style={[styles.recallTrendText, { color: recallTrend > 0 ? colors.success : colors.danger }]}>
-                    {recallTrend > 0 ? 'Improving' : 'Declining'}
+                    {recallTrend > 0 ? t('insights.improving') : t('insights.declining')}
                   </Text>
                 )}
               </View>
             </View>
             <Text style={styles.recallSub}>
-              {stats.totalDreamsLogged} remembered · {stats.totalForgotten} forgotten
+              {stats.totalDreamsLogged} {t('insights.remembered')} · {stats.totalForgotten} {t('insights.forgotten')}
             </Text>
             <View style={styles.recallGlassAccent} pointerEvents="none">
               <GlassAsset source={glassAssets.brain} size={64} />
@@ -223,13 +225,13 @@ export default function InsightsScreen() {
         </>
       )}
 
-      <Text style={styles.sectionTitle}>Dream Frequency</Text>
+      <Text style={styles.sectionTitle}>{t('insights.dreamFrequency')}</Text>
       {totalDreams < 3 ? (
         <View style={[styles.chartCard, { overflow: 'hidden' }]}>
           <Text style={styles.lowDataCount}>
-            {totalDreams} dream{totalDreams === 1 ? '' : 's'} logged
+            {t('insights.dreamsLogged', { count: totalDreams })}
           </Text>
-          <Text style={styles.lowDataMessage}>Log a few more to see trends</Text>
+          <Text style={styles.lowDataMessage}>{t('insights.logMoreForTrends')}</Text>
           <View style={styles.freqLowDataAccent} pointerEvents="none">
             <GlassAsset source={glassAssets.cloud} size={64} />
           </View>
@@ -266,13 +268,13 @@ export default function InsightsScreen() {
         </View>
       )}
 
-      <Text style={styles.sectionTitle}>Dream Stats</Text>
+      <Text style={styles.sectionTitle}>{t('insights.dreamStats')}</Text>
       <View style={styles.statsGrid}>
         {[
-          { value: totalDreams, label: 'DREAMS' },
-          { value: streak, label: 'STREAK' },
-          { value: interpretedCount, label: 'INTERPRETED' },
-          { value: `${recallRate ?? 0}%`, label: 'RECALL' },
+          { value: totalDreams, label: t('insights.statDreams') },
+          { value: streak, label: t('insights.statStreak') },
+          { value: interpretedCount, label: t('insights.statInterpreted') },
+          { value: `${recallRate ?? 0}%`, label: t('insights.statRecall') },
         ].map((stat, i) => (
           <Animated.View
             key={stat.label}
@@ -287,7 +289,7 @@ export default function InsightsScreen() {
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Most Common Emotions</Text>
+      <Text style={styles.sectionTitle}>{t('insights.mostCommonEmotions')}</Text>
       <View style={styles.chartCard}>
         {emotionCounts.map(([emotion, count]) => (
           <View key={emotion} style={styles.emotionRow}>
@@ -307,13 +309,13 @@ export default function InsightsScreen() {
           </View>
         ))}
         {emotionCounts.length === 0 && (
-          <Text style={styles.noDataText}>No dreams logged yet</Text>
+          <Text style={styles.noDataText}>{t('insights.noDataYet')}</Text>
         )}
       </View>
 
       {emotionTrends.length > 0 && totalDreams >= 5 && (
         <>
-          <Text style={styles.sectionTitle}>Emotion Trends</Text>
+          <Text style={styles.sectionTitle}>{t('insights.emotionTrends')}</Text>
           <View style={styles.chartCard}>
             <View style={styles.trendChart}>
               {['W1', 'W2', 'W3', 'W4'].map((wk, wi) => (
@@ -353,7 +355,7 @@ export default function InsightsScreen() {
       )}
 
       <View style={styles.sectionTitleRow}>
-        <Text style={styles.sectionTitleInRow}>Recurring Patterns</Text>
+        <Text style={styles.sectionTitleInRow}>{t('insights.recurringPatterns')}</Text>
       </View>
       <View style={styles.tagsContainer}>
         {patternCounts.length >= 2 ? (
@@ -374,7 +376,7 @@ export default function InsightsScreen() {
             )
           )
         ) : (
-          <Text style={styles.noDataText}>Patterns will appear as you log more dreams</Text>
+          <Text style={styles.noDataText}>{t('insights.patternsWillAppear')}</Text>
         )}
       </View>
     </>
@@ -385,9 +387,9 @@ export default function InsightsScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {/* Background skeleton preview */}
         <View style={styles.scrollContent} pointerEvents="none">
-          <Text style={[styles.pageTitle, { marginBottom: spacing.lg }]}>Insights</Text>
+          <Text style={[styles.pageTitle, { marginBottom: spacing.lg }]}>{t('insights.title')}</Text>
           <View style={{ opacity: 0.2 }}>
-            <Text style={styles.sectionTitle}>Dream Recall Rate</Text>
+            <Text style={styles.sectionTitle}>{t('insights.dreamRecallRate')}</Text>
             <View style={styles.recallCard}>
               <View style={styles.recallMain}>
                 <View style={styles.skeletonNumber} />
@@ -399,7 +401,7 @@ export default function InsightsScreen() {
               <View style={[styles.skeletonLine, { width: 160, marginTop: spacing.xs }]} />
             </View>
 
-            <Text style={styles.sectionTitle}>Dream Frequency</Text>
+            <Text style={styles.sectionTitle}>{t('insights.dreamFrequency')}</Text>
             <View style={styles.chartCard}>
               <View style={styles.barChart}>
                 {[40, 65, 30, 85, 50, 20, 70].map((h, i) => (
@@ -412,7 +414,7 @@ export default function InsightsScreen() {
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>Dream Stats</Text>
+            <Text style={styles.sectionTitle}>{t('insights.dreamStats')}</Text>
             <View style={styles.statsGrid}>
               {[0, 1, 2, 3].map((i) => (
                 <View key={i} style={styles.statCard}>
@@ -430,16 +432,14 @@ export default function InsightsScreen() {
         {/* Lock message — centered absolutely on top */}
         <View style={styles.lockCenter}>
           <GlassAsset source={glassAssets.key} size={120} />
-          <Text style={styles.lockTitle}>Unlock Your Dream Insights</Text>
-          <Text style={styles.lockSubtext}>
-            See your dream patterns, emotion trends, recurring symbols, and recall rate with Premium.
-          </Text>
+          <Text style={styles.lockTitle}>{t('insights.lockTitle')}</Text>
+          <Text style={styles.lockSubtext}>{t('insights.lockSubtext')}</Text>
           <TouchableOpacity
             style={styles.lockCta}
             onPress={() => router.push('/paywall?source=insights' as any)}
             activeOpacity={0.8}
           >
-            <Text style={styles.lockCtaText}>Start Free Trial</Text>
+            <Text style={styles.lockCtaText}>{t('paywall.startFreeTrial')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -451,14 +451,14 @@ export default function InsightsScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.zeroStateContainer}>
           <GlassAsset source={glassAssets.hand} size={140} />
-          <Text style={styles.zeroStateTitle}>Your insights are waiting</Text>
-          <Text style={styles.zeroStateSub}>Log your first dream to start seeing patterns</Text>
+          <Text style={styles.zeroStateTitle}>{t('insights.insightsWaiting')}</Text>
+          <Text style={styles.zeroStateSub}>{t('insights.logFirstDream')}</Text>
           <TouchableOpacity
             style={styles.zeroStateCta}
             onPress={() => router.push('/new-dream' as any)}
             activeOpacity={0.8}
           >
-            <Text style={styles.zeroStateCtaText}>Log a Dream</Text>
+            <Text style={styles.zeroStateCtaText}>{t('insights.logADream')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -470,13 +470,13 @@ export default function InsightsScreen() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: contentFade, transform: [{ translateY: contentSlide }] }}>
           <View style={styles.pageTitleRow}>
-            <Text style={styles.pageTitle}>Insights</Text>
+            <Text style={styles.pageTitle}>{t('insights.title')}</Text>
             <TouchableOpacity
               onPress={() => router.push('/dream-dictionary' as any)}
               activeOpacity={0.7}
               style={styles.dictionaryLink}
             >
-              <Text style={styles.dictionaryLinkText}>Dictionary</Text>
+              <Text style={styles.dictionaryLinkText}>{t('insights.dictionary')}</Text>
             </TouchableOpacity>
           </View>
           {renderContent()}

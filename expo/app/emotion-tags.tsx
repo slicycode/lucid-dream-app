@@ -16,8 +16,10 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { ALL_EMOTION_TAGS, DEFAULT_EMOTION_TAGS } from '@/types/dream';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 import { trackEvent } from '@/services/analytics';
+import { useTranslation } from 'react-i18next';
 
 export default function EmotionTagsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const customEmotionTags = useSettingsStore((s) => s.customEmotionTags);
@@ -29,7 +31,7 @@ export default function EmotionTagsScreen() {
     const isEnabled = customEmotionTags.includes(tag);
     if (isEnabled) {
       if (customEmotionTags.length <= 2) {
-        Alert.alert('Minimum Tags', 'You need at least 2 emotion tags enabled.');
+        Alert.alert(t('emotionTags.minimumTagsTitle'), t('emotionTags.minimumTagsMessage'));
         return;
       }
       const removed = customEmotionTags.filter((t) => t !== tag);
@@ -57,7 +59,7 @@ export default function EmotionTagsScreen() {
         <TouchableOpacity onPress={() => router.back()} hitSlop={12} activeOpacity={0.7}>
           <ChevronLeft size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Emotion Tags</Text>
+        <Text style={styles.headerTitle}>{t('emotionTags.title')}</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -66,9 +68,7 @@ export default function EmotionTagsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + spacing.xxl }]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.description}>
-          Choose which emotions appear on the dream entry form. You can enable or disable tags — at least 2 must remain active.
-        </Text>
+        <Text style={styles.description}>{t('emotionTags.description')}</Text>
 
         {ALL_EMOTION_TAGS.map((tag) => {
           const isEnabled = customEmotionTags.includes(tag);
@@ -97,7 +97,7 @@ export default function EmotionTagsScreen() {
 
         <TouchableOpacity style={styles.resetButton} onPress={handleReset} activeOpacity={0.7}>
           <RotateCcw size={14} color={colors.textMuted} />
-          <Text style={styles.resetText}>Reset to Defaults</Text>
+          <Text style={styles.resetText}>{t('emotionTags.resetToDefaults')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

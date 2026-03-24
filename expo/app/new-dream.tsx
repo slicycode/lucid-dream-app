@@ -21,6 +21,7 @@ import { THEMES, DreamType } from '@/types/dream';
 import { isLikelyGibberish, MIN_DREAM_CONTENT_LENGTH } from '@/services/interpretation';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 import { trackEvent } from '@/services/analytics';
+import { useTranslation } from 'react-i18next';
 
 const SLIDER_STEPS = 5;
 const THUMB_SIZE = 28;
@@ -264,6 +265,7 @@ function DreamTypeToggle({
   value: DreamType;
   onChange: (v: DreamType) => void;
 }) {
+  const { t } = useTranslation();
   const slideAnim = useRef(new Animated.Value(value === 'nightmare' ? 1 : 0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -321,7 +323,7 @@ function DreamTypeToggle({
               value === type && (type === 'nightmare' ? styles.dreamTypeNightmareTextSelected : styles.dreamTypeTextSelected),
             ]}
           >
-            {type === 'dream' ? 'Dream' : 'Nightmare'}
+            {type === 'dream' ? t('newDream.typeDream') : t('newDream.typeNightmare')}
           </Text>
         </TouchableOpacity>
       ))}
@@ -329,25 +331,26 @@ function DreamTypeToggle({
   );
 }
 
-function formatDatePill(dateStr: string | undefined): string {
-  if (!dateStr) return 'Last night';
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const todayKey = today.toISOString().split('T')[0];
-  const yesterdayKey = yesterday.toISOString().split('T')[0];
-  if (dateStr === todayKey) return 'Last night';
-  if (dateStr === yesterdayKey) return 'Last night';
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
 export default function NewDreamScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { date: paramDate } = useLocalSearchParams<{ date?: string }>();
   const insets = useSafeAreaInsets();
   const addDream = useDreamsStore((s) => s.addDream);
   const customEmotionTags = useSettingsStore((s) => s.customEmotionTags);
+
+  const formatDatePill = useCallback((dateStr: string | undefined): string => {
+    if (!dateStr) return t('newDream.lastNight');
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const todayKey = today.toISOString().split('T')[0];
+    const yesterdayKey = yesterday.toISOString().split('T')[0];
+    if (dateStr === todayKey) return t('newDream.lastNight');
+    if (dateStr === yesterdayKey) return t('newDream.lastNight');
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  }, [t]);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -420,11 +423,11 @@ export default function NewDreamScreen() {
     <View style={[styles.container, { paddingTop: insets.top - 32 }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} testID="cancel-button">
-          <Text style={styles.cancelText}>Cancel</Text>
+          <Text style={styles.cancelText}>{t('newDream.cancel')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{title.trim() || 'New Dream'}</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>{title.trim() || t('newDream.title')}</Text>
         <TouchableOpacity onPress={handleSave} disabled={!canSave} testID="save-button">
-          <Text style={[styles.saveText, !canSave && styles.saveTextDisabled]}>Save</Text>
+          <Text style={[styles.saveText, !canSave && styles.saveTextDisabled]}>{t('newDream.save')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -447,7 +450,7 @@ export default function NewDreamScreen() {
               style={styles.titleInput}
               value={title}
               onChangeText={setTitle}
-              placeholder="Give your dream a title..."
+              placeholder={t('newDream.titlePlaceholder')}
               placeholderTextColor={colors.textMuted}
               maxLength={30}
               testID="dream-title-input"
@@ -460,7 +463,7 @@ export default function NewDreamScreen() {
               style={styles.contentInput}
               value={content}
               onChangeText={setContent}
-              placeholder="Describe your dream in as much detail as you can remember..."
+              placeholder={t('newDream.contentPlaceholder')}
               placeholderTextColor={colors.textMuted}
               multiline
               textAlignVertical="top"
@@ -469,36 +472,36 @@ export default function NewDreamScreen() {
             />
             <Text style={[styles.charCount, (isGibberish || (contentTrimmed.length > 0 && contentTrimmed.length < MIN_DREAM_CONTENT_LENGTH)) && { color: colors.danger }]}>
               {isGibberish
-                ? 'Please describe your dream using real words'
+                ? t('newDream.gibberishWarning')
                 : contentTrimmed.length > 0 && contentTrimmed.length < MIN_DREAM_CONTENT_LENGTH
-                  ? `${MIN_DREAM_CONTENT_LENGTH - contentTrimmed.length} more characters needed`
+                  ? t('newDream.charsNeeded', { count: MIN_DREAM_CONTENT_LENGTH - contentTrimmed.length })
                   : `${content.length}/500`}
             </Text>
           </View>
 
           <DreamTypeToggle value={dreamType} onChange={setDreamType} />
 
-          <Text style={styles.sectionLabel}>How was this dream?</Text>
+          <Text style={styles.sectionLabel}>{t('newDream.typeQuestion')}</Text>
           <SnapSlider
             value={rating}
             onValueChange={setRating}
             onSlidingStart={() => setScrollEnabled(false)}
             onSlidingEnd={() => setScrollEnabled(true)}
-            leftLabel="Very bad"
-            rightLabel="Very good"
+            leftLabel={t('newDream.veryBad')}
+            rightLabel={t('newDream.veryGood')}
           />
 
-          <Text style={styles.sectionLabel}>How vivid was it?</Text>
+          <Text style={styles.sectionLabel}>{t('newDream.vividnessQuestion')}</Text>
           <SnapSlider
             value={vividness}
             onValueChange={setVividness}
             onSlidingStart={() => setScrollEnabled(false)}
             onSlidingEnd={() => setScrollEnabled(true)}
-            leftLabel="Very vague"
-            rightLabel="Very vivid"
+            leftLabel={t('newDream.veryVague')}
+            rightLabel={t('newDream.veryVivid')}
           />
 
-          <Text style={styles.sectionLabel}>How did this dream feel?</Text>
+          <Text style={styles.sectionLabel}>{t('newDream.emotionQuestion')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tagScroll}>
             <View style={styles.tagsRow}>
               {customEmotionTags.map((em) => (
@@ -515,7 +518,7 @@ export default function NewDreamScreen() {
             </View>
           </ScrollView>
 
-          <Text style={styles.sectionLabel}>Dream themes</Text>
+          <Text style={styles.sectionLabel}>{t('newDream.themesLabel')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tagScroll}>
             <View style={styles.tagsRow}>
               {THEMES.map((theme) => (
@@ -532,7 +535,7 @@ export default function NewDreamScreen() {
           </ScrollView>
 
           <View style={styles.lucidRow}>
-            <Text style={styles.lucidLabel}>Was this a lucid dream?</Text>
+            <Text style={styles.lucidLabel}>{t('newDream.lucidQuestion')}</Text>
             <Switch
               value={isLucid}
               onValueChange={(val) => {
@@ -545,7 +548,7 @@ export default function NewDreamScreen() {
           </View>
 
           <View style={[styles.lucidRow, { marginTop: spacing.sm }]}>
-            <Text style={styles.lucidLabel}>Were you in this dream?</Text>
+            <Text style={styles.lucidLabel}>{t('newDream.perspectiveQuestion')}</Text>
             <Switch
               value={isFirstPerson}
               onValueChange={(val) => {

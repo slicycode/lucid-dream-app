@@ -6,12 +6,14 @@ import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { spacing } from '@/constants/theme';
 import { styles } from './styles';
+import { useTranslation } from 'react-i18next';
 
 interface PainPointScreenProps {
   goNext: () => void;
 }
 
 export function PainPointScreen({ goNext }: PainPointScreenProps) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState(0);
   const line2Opacity = useRef(new Animated.Value(0)).current;
   const line3Opacity = useRef(new Animated.Value(0)).current;
@@ -45,7 +47,7 @@ export function PainPointScreen({ goNext }: PainPointScreenProps) {
 
       <View style={styles.painPointBlock}>
         <FlowingText
-          text="Most dreams are forgotten"
+          text={t('onboarding.painPoint.line1')}
           style={styles.painPointText}
           wordDelay={80}
           haptic
@@ -54,7 +56,7 @@ export function PainPointScreen({ goNext }: PainPointScreenProps) {
         <Animated.View style={{ opacity: line2Opacity }}>
           {phase >= 1 ? (
             <FlowingText
-              text="within 5 minutes"
+              text={t('onboarding.painPoint.line2')}
               style={styles.painPointAccent}
               wordDelay={100}
               initialDelay={150}
@@ -62,32 +64,30 @@ export function PainPointScreen({ goNext }: PainPointScreenProps) {
               onComplete={() => setPhase(2)}
             />
           ) : (
-            <Text style={[styles.painPointAccent, { opacity: 0 }]}>within 5 minutes</Text>
+            <Text style={[styles.painPointAccent, { opacity: 0 }]}>{t('onboarding.painPoint.line2')}</Text>
           )}
         </Animated.View>
         <Animated.View style={{ opacity: line3Opacity }}>
           {phase >= 2 ? (
             <FlowingText
-              text="of waking up."
+              text={t('onboarding.painPoint.line3')}
               style={styles.painPointText}
               wordDelay={90}
               haptic
               onComplete={() => setPhase(3)}
             />
           ) : (
-            <Text style={[styles.painPointText, { opacity: 0 }]}>of waking up.</Text>
+            <Text style={[styles.painPointText, { opacity: 0 }]}>{t('onboarding.painPoint.line3')}</Text>
           )}
         </Animated.View>
       </View>
 
       <Animated.View style={{ opacity: subOpacity }}>
-        <Text style={styles.painPointSub}>
-          People who journal their dreams recall 3x more within two weeks.
-        </Text>
+        <Text style={styles.painPointSub}>{t('onboarding.painPoint.stat')}</Text>
       </Animated.View>
 
       <Animated.View style={[styles.bottomCta, { opacity: ctaFade }]}>
-        <OnboardingButton title="Continue" onPress={goNext} />
+        <OnboardingButton title={t('onboarding.painPoint.cta')} onPress={goNext} />
       </Animated.View>
     </View>
   );

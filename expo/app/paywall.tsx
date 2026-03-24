@@ -17,8 +17,10 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export default function PaywallScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
@@ -62,18 +64,18 @@ export default function PaywallScreen() {
   const trialTimelineSteps = [
     {
       icon: <Sparkles size={15} color={colors.accent} />,
-      label: 'Today',
-      desc: 'Unlock everything — unlimited interpretations, patterns, lucid dreaming tools & more.',
+      label: t('paywall.timelineToday'),
+      desc: t('paywall.timelineTodayDesc'),
     },
     {
       icon: <Bell size={15} color={colors.accent} />,
-      label: 'Day 5',
-      desc: "We'll remind you before your trial ends.",
+      label: t('paywall.timelineDay5'),
+      desc: t('paywall.timelineDay5Desc'),
     },
     {
       icon: <ShieldCheck size={15} color={colors.accent} />,
-      label: 'Day 7',
-      desc: 'Subscription begins — cancel anytime in a few taps.',
+      label: t('paywall.timelineDay7'),
+      desc: t('paywall.timelineDay7Desc'),
     },
   ];
 
@@ -90,17 +92,13 @@ export default function PaywallScreen() {
 
         {contextualDreamTitle ? (
           <>
-            <Text style={styles.heading}>
-              Your dream about{'\n'}"{contextualDreamTitle}"{'\n'}is waiting.
-            </Text>
-            <Text style={styles.subtext}>Unlock unlimited interpretations with Premium.</Text>
+            <Text style={styles.heading}>{t('paywall.contextualHeading', { title: contextualDreamTitle })}</Text>
+            <Text style={styles.subtext}>{t('paywall.contextualSubtext')}</Text>
           </>
         ) : (
           <>
-            <Text style={styles.heading}>
-              How does your free trial work?
-            </Text>
-            <Text style={styles.subtext}>No surprises. No pressure.</Text>
+            <Text style={styles.heading}>{t('paywall.genericHeading')}</Text>
+            <Text style={styles.subtext}>{t('paywall.genericSubtext')}</Text>
           </>
         )}
 
@@ -134,11 +132,11 @@ export default function PaywallScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.popularBadge}>
-              <Text style={styles.popularBadgeText}>POPULAR</Text>
+              <Text style={styles.popularBadgeText}>{t('paywall.popular')}</Text>
             </View>
-            <Text style={styles.pricingPrice}>$9.99 / mo</Text>
+            <Text style={styles.pricingPrice}>{t('paywall.monthlyPrice')}</Text>
             <Text style={[styles.pricingTrial, selectedPlan === 'monthly' ? { color: colors.accent } : { color: colors.textSecondary }]}>
-              7-day free trial
+              {t('paywall.freeTrial')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -146,10 +144,10 @@ export default function PaywallScreen() {
             onPress={() => { setSelectedPlan('yearly'); trackEvent('paywall_plan_selected', { plan: 'yearly', source: paywallSource }); }}
             activeOpacity={0.7}
           >
-            <Text style={styles.pricingPrice}>$39.99 / yr</Text>
-            <Text style={styles.pricingTrial}>7-day free trial</Text>
+            <Text style={styles.pricingPrice}>{t('paywall.yearlyPrice')}</Text>
+            <Text style={styles.pricingTrial}>{t('paywall.freeTrial')}</Text>
             <View style={styles.saveBadge}>
-              <Text style={styles.saveBadgeText}>Save 67%</Text>
+              <Text style={styles.saveBadgeText}>{t('paywall.save67')}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -157,25 +155,23 @@ export default function PaywallScreen() {
 
       <View style={styles.bottomCta}>
         <OnboardingButton
-          title={rcLoading ? 'Processing...' : 'Start Free Trial'}
+          title={rcLoading ? t('paywall.processing') : t('paywall.startFreeTrial')}
           variant="accent"
           onPress={handlePurchase}
           disabled={rcLoading}
         />
 
         <Text style={styles.paywallSmall}>
-          {selectedPlan === 'monthly'
-            ? '7 days free, then $9.99/month. Cancel anytime.'
-            : '7 days free, then $39.99/year ($3.33/mo). Cancel anytime.'}
+          {selectedPlan === 'monthly' ? t('paywall.monthlyTerms') : t('paywall.yearlyTerms')}
         </Text>
 
         <View style={styles.pwBottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
-            <Text style={styles.linkText}>Restore Purchases</Text>
+            <Text style={styles.linkText}>{t('paywall.restorePurchases')}</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
           <TouchableOpacity onPress={dismiss}>
-            <Text style={styles.linkText}>Maybe Later</Text>
+            <Text style={styles.linkText}>{t('paywall.maybeLater')}</Text>
           </TouchableOpacity>
         </View>
       </View>

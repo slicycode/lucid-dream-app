@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -21,8 +22,6 @@ import { useDreamsStore } from '@/store/dreamsStore';
 import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/theme';
 import { trackEvent, trackScreen } from '@/services/analytics';
 
-const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
@@ -37,10 +36,11 @@ function formatDateKey(year: number, month: number, day: number): string {
 }
 
 function formatTime(isoStr: string): string {
-  return new Date(isoStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return new Date(isoStr).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
 export default function CalendarScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const dreams = useDreamsStore((s) => s.dreams);
@@ -120,7 +120,7 @@ export default function CalendarScreen() {
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
-  const monthLabel = new Date(currentYear, currentMonth).toLocaleDateString('en-US', {
+  const monthLabel = new Date(currentYear, currentMonth).toLocaleDateString([], {
     month: 'long',
     year: 'numeric',
   });
@@ -218,7 +218,7 @@ export default function CalendarScreen() {
         </View>
 
         <View style={styles.daysHeader}>
-          {DAYS_OF_WEEK.map((day) => (
+          {(t('calendar.daysOfWeek', { returnObjects: true }) as string[]).map((day) => (
             <View key={day} style={styles.dayHeaderCell}>
               <Text style={styles.dayHeaderText}>{day}</Text>
             </View>
@@ -310,7 +310,7 @@ export default function CalendarScreen() {
           <View style={styles.selectedSection}>
             <View style={styles.forgottenCard}>
               <X size={16} color={colors.textDisabled} />
-              <Text style={styles.forgottenText}>You marked this night as forgotten</Text>
+              <Text style={styles.forgottenText}>{t('calendar.forgottenNight')}</Text>
             </View>
           </View>
         ) : (
@@ -319,17 +319,17 @@ export default function CalendarScreen() {
             <GlassAsset source={glassAssets.hourglass} size={96} style={styles.streakHourglass} />
             <Text style={styles.streakMonthCount}>
               {monthDreamCount > 0
-                ? `${monthDreamCount} dream${monthDreamCount !== 1 ? 's' : ''} this month`
-                : 'Start your dream journey'}
+                ? t('calendar.dreamsThisMonth', { count: monthDreamCount })
+                : t('calendar.startJourney')}
             </Text>
             <View style={styles.streakDivider} />
             <View style={styles.streakRow}>
-              <Text style={styles.streakLabel}>Current streak</Text>
-              <Text style={styles.streakValue}>{streak.current} day{streak.current !== 1 ? 's' : ''}</Text>
+              <Text style={styles.streakLabel}>{t('calendar.currentStreak')}</Text>
+              <Text style={styles.streakValue}>{t('calendar.days', { count: streak.current })}</Text>
             </View>
             <View style={styles.streakRow}>
-              <Text style={styles.streakLabel}>Longest streak</Text>
-              <Text style={styles.streakValueMuted}>{streak.longest} day{streak.longest !== 1 ? 's' : ''}</Text>
+              <Text style={styles.streakLabel}>{t('calendar.longestStreak')}</Text>
+              <Text style={styles.streakValueMuted}>{t('calendar.days', { count: streak.longest })}</Text>
             </View>
           </View>
           </>
@@ -351,22 +351,22 @@ export default function CalendarScreen() {
             ]}
           >
             <View style={styles.sheetHandle} />
-            <Text style={styles.sheetTitle}>No dream logged</Text>
-            <Text style={styles.sheetSubtitle}>What happened that night?</Text>
+            <Text style={styles.sheetTitle}>{t('calendar.noLoggedTitle')}</Text>
+            <Text style={styles.sheetSubtitle}>{t('calendar.noLoggedSubtitle')}</Text>
 
             <TouchableOpacity style={styles.sheetOption} onPress={handleAddDream} activeOpacity={0.7}>
               <Plus size={18} color={colors.accent} />
               <View>
-                <Text style={styles.sheetOptionLabel}>Add a dream</Text>
-                <Text style={styles.sheetOptionSub}>Log a dream for this night</Text>
+                <Text style={styles.sheetOptionLabel}>{t('calendar.addDream')}</Text>
+                <Text style={styles.sheetOptionSub}>{t('calendar.addDreamSub')}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.sheetOption} onPress={handleForgot} activeOpacity={0.7}>
               <X size={18} color={colors.textMuted} />
               <View>
-                <Text style={styles.sheetOptionLabel}>I forgot</Text>
-                <Text style={styles.sheetOptionSub}>Mark this night — helps track recall rate</Text>
+                <Text style={styles.sheetOptionLabel}>{t('calendar.iForgot')}</Text>
+                <Text style={styles.sheetOptionSub}>{t('calendar.iForgotSub')}</Text>
               </View>
             </TouchableOpacity>
           </Animated.View>

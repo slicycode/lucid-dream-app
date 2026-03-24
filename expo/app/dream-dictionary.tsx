@@ -15,6 +15,7 @@ import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { DREAM_DICTIONARY, DictionaryEntry } from '@/constants/dreamDictionary';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -41,6 +42,7 @@ function buildFlatList(entries: DictionaryEntry[]): { items: ListItem[]; stickyI
 }
 
 export default function DreamDictionaryScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const isPremium = useSettingsStore((s) => s.isPremium);
@@ -75,7 +77,7 @@ export default function DreamDictionaryScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Dream Dictionary</Text>
+        <Text style={styles.title}>{t('dreamDictionary.title')}</Text>
         <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
           <X size={22} color={colors.textMuted} />
         </TouchableOpacity>
@@ -84,16 +86,14 @@ export default function DreamDictionaryScreen() {
       {!isPremium ? (
         <View style={styles.lockContainer}>
           <GlassAsset source={glassAssets.book} size={144} />
-          <Text style={styles.lockTitle}>Premium Feature</Text>
-          <Text style={styles.lockSubtext}>
-            Unlock the full dream symbol reference with Premium — 80+ symbols, offline, no ads.
-          </Text>
+          <Text style={styles.lockTitle}>{t('dreamDictionary.lockTitle')}</Text>
+          <Text style={styles.lockSubtext}>{t('dreamDictionary.lockSubtext')}</Text>
           <TouchableOpacity
             style={styles.lockCta}
             onPress={() => router.push('/paywall?source=dictionary' as any)}
             activeOpacity={0.8}
           >
-            <Text style={styles.lockCtaText}>Start Free Trial</Text>
+            <Text style={styles.lockCtaText}>{t('dreamDictionary.startFreeTrial')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -103,7 +103,7 @@ export default function DreamDictionaryScreen() {
             <Search size={16} color={colors.textMuted} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search symbols..."
+              placeholder={t('dreamDictionary.searchPlaceholder')}
               placeholderTextColor={colors.textDisabled}
               value={query}
               onChangeText={setQuery}
