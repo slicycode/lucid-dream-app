@@ -15,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   splash: {
     image: './assets/images/splash-icon.png',
     resizeMode: 'contain',
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   },
   ios: {
     supportsTablet: false,
@@ -44,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
-      backgroundColor: '#000000',
+      backgroundColor: '#121212',
     },
     package: 'com.slicycode.lucid',
   },
