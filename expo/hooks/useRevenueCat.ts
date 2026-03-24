@@ -43,6 +43,7 @@ function syncPremiumStatus(customerInfo: CustomerInfo) {
 
 export function useRevenueCat() {
   const [offerings, setOfferings] = useState<PurchasesOffering | null>(null);
+  const [discountOffering, setDiscountOffering] = useState<PurchasesOffering | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const isPremium = useSettingsStore((s) => s.isPremium);
 
@@ -54,6 +55,9 @@ export function useRevenueCat() {
         const offeringsResult = await Purchases.getOfferings();
         if (offeringsResult.current) {
           setOfferings(offeringsResult.current);
+        }
+        if (offeringsResult.all['discount']) {
+          setDiscountOffering(offeringsResult.all['discount']);
         }
 
         const customerInfo = await Purchases.getCustomerInfo();
@@ -130,10 +134,17 @@ export function useRevenueCat() {
     (p) => p.identifier === '$rc_annual'
   ) ?? null;
 
+  const discountAnnualPackage = discountOffering?.availablePackages.find(
+    (p) => p.packageType === 'ANNUAL'
+  ) ?? discountOffering?.availablePackages.find(
+    (p) => p.identifier === '$rc_annual'
+  ) ?? null;
+
   return {
     offerings,
     monthlyPackage,
     annualPackage,
+    discountAnnualPackage,
     isPremium,
     isLoading,
     purchasePackage,
