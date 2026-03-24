@@ -5,7 +5,7 @@ const posthogApiKey = Constants.expoConfig?.extra?.posthogApiKey;
 
 export const posthog = posthogApiKey
   ? new PostHog(posthogApiKey, {
-      host: 'https://us.i.posthog.com',
+      host: 'https://eu.i.posthog.com',
       captureAppLifecycleEvents: true,
     })
   : null;

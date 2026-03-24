@@ -61,6 +61,10 @@ export default function OnboardingScreen() {
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [processingTexts, setProcessingTexts] = useState<number>(0);
   const ctaFadeAnim = useRef(new Animated.Value(0)).current;
+  const interpDividerAnim = useRef(new Animated.Value(0)).current;
+  const interpSymbolsAnim = useRef(new Animated.Value(0)).current;
+  const interpPremiumAnim = useRef(new Animated.Value(0)).current;
+  const interpCtaAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     setCurrentStepInStore(step);
     const screenEvents: Record<number, string> = {
@@ -101,9 +105,11 @@ export default function OnboardingScreen() {
       const t4 = setTimeout(() => {
         Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
           setStep(12);
-          ctaFadeAnim.setValue(0);
+          interpDividerAnim.setValue(0);
+          interpSymbolsAnim.setValue(0);
+          interpPremiumAnim.setValue(0);
+          interpCtaAnim.setValue(0);
           Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
-          Animated.timing(ctaFadeAnim, { toValue: 1, duration: 400, delay: 2000, useNativeDriver: true }).start();
         });
       }, 4200);
 
@@ -363,7 +369,7 @@ export default function OnboardingScreen() {
     </KeyboardAvoidingView>
   );
 
-  const dreamCharsNeeded = Math.max(0, 20 - localDreamText.length);
+
   const renderFirstDream = () => (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top + 44}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
@@ -387,7 +393,7 @@ export default function OnboardingScreen() {
       </ScrollView>
       <View style={styles.bottomCta}>
         <OnboardingButton
-          title={localDreamText.length < dreamCharsNeeded ? "Write a few words" : "Interpret My Dream"}
+          title={localDreamText.length < 20 ? "Write a few words" : "Interpret My Dream"}
           variant="accent"
           onPress={goNext}
           disabled={localDreamText.length < 20}
@@ -436,6 +442,24 @@ export default function OnboardingScreen() {
     );
   };
 
+  const onInterpretationFlowComplete = useCallback(() => {
+    const stagger = 200;
+    const spring = (anim: Animated.Value, delay: number) =>
+      Animated.spring(anim, { toValue: 1, damping: 20, stiffness: 260, mass: 0.9, delay, useNativeDriver: true });
+
+    Animated.stagger(stagger, [
+      spring(interpDividerAnim, 0),
+      spring(interpSymbolsAnim, 0),
+      spring(interpPremiumAnim, 0),
+      spring(interpCtaAnim, 0),
+    ]).start();
+  }, [interpDividerAnim, interpSymbolsAnim, interpPremiumAnim, interpCtaAnim]);
+
+  const interpFadeSlide = (anim: Animated.Value) => ({
+    opacity: anim,
+    transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+  });
+
   const renderInterpretation = () => (
     <View style={styles.flex}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -445,24 +469,31 @@ export default function OnboardingScreen() {
           style={styles.interpretationText}
           wordDelay={35}
           haptic
+          onComplete={onInterpretationFlowComplete}
         />
-        <View style={styles.divider} />
-        <Text style={styles.symbolsLabel}>Key symbols</Text>
-        <StaggerChildren stagger={120} initialDelay={3000} style={styles.tagsRow} triggerKey={step}>
-          {matchedInterpretation.symbols.map((s) => (
-            <View key={s} style={styles.symbolTag}>
-              <Text style={styles.symbolTagText}>{s}</Text>
-            </View>
-          ))}
-        </StaggerChildren>
-        <View style={styles.premiumCard}>
-          <Lock size={14} color={colors.accent} />
-          <Text style={styles.premiumCardText}>
-            Your first interpretation is free. Unlock unlimited interpretations with Premium.
-          </Text>
-        </View>
+        <Animated.View style={interpFadeSlide(interpDividerAnim)}>
+          <View style={styles.divider} />
+        </Animated.View>
+        <Animated.View style={interpFadeSlide(interpSymbolsAnim)}>
+          <Text style={styles.symbolsLabel}>Key symbols</Text>
+          <StaggerChildren stagger={120} initialDelay={200} style={styles.tagsRow} triggerKey={step}>
+            {matchedInterpretation.symbols.map((s) => (
+              <View key={s} style={styles.symbolTag}>
+                <Text style={styles.symbolTagText}>{s}</Text>
+              </View>
+            ))}
+          </StaggerChildren>
+        </Animated.View>
+        <Animated.View style={interpFadeSlide(interpPremiumAnim)}>
+          <View style={styles.premiumCard}>
+            <Lock size={14} color={colors.accent} />
+            <Text style={styles.premiumCardText}>
+              Your first interpretation is free. Unlock unlimited interpretations with Premium.
+            </Text>
+          </View>
+        </Animated.View>
       </ScrollView>
-      <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
+      <Animated.View style={[styles.bottomCta, interpFadeSlide(interpCtaAnim)]}>
         <OnboardingButton title="Continue" onPress={goNext} />
       </Animated.View>
     </View>

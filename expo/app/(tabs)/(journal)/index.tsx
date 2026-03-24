@@ -1,14 +1,14 @@
-import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
-import { trackScreen } from '@/services/analytics';
-import { useDreamsStore } from '@/store/dreamsStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { useOnboardingStore } from '@/store/onboardingStore';
-import { generateWeeklyDigest } from '@/services/weeklyDigest';
-import * as Haptics from 'expo-haptics';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { ChevronDown, Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
+import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
+import { trackScreen } from '@/services/analytics';
+import { generateWeeklyDigest } from '@/services/weeklyDigest';
+import { useDreamsStore } from '@/store/dreamsStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import * as Haptics from 'expo-haptics';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { ChevronDown, Eye, Moon, Plus, Skull, Sparkles, Trash2 } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,7 +55,6 @@ export default function JournalScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [digestLoading, setDigestLoading] = React.useState(false);
   const [digestCollapsed, setDigestCollapsed] = useState(false);
-  const [digestContentHeight, setDigestContentHeight] = useState(0);
   const digestHeight = useRef(new Animated.Value(1)).current;
 
   useFocusEffect(useCallback(() => { trackScreen('Journal'); }, []));
