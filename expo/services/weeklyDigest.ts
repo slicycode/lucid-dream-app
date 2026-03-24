@@ -11,12 +11,13 @@ interface WeeklyDigestResult {
 
 export async function generateWeeklyDigest(
   dreams: WeeklyDreamInput[],
-  weekOf: string
+  weekOf: string,
+  locale?: string
 ): Promise<WeeklyDigestResult> {
   const response = await fetch('/api/weekly-summary', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dreams, weekOf }),
+    body: JSON.stringify({ dreams, weekOf, locale }),
   });
 
   if (!response.ok) {

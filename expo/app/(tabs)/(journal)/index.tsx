@@ -42,7 +42,7 @@ function getTodayString(): string {
 }
 
 export default function JournalScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const allDreams = useDreamsStore((s) => s.dreams);
@@ -102,7 +102,8 @@ export default function JournalScreen() {
     digestGeneratedThisSession.current = true;
     generateWeeklyDigest(
       recentDreams.map((d) => ({ title: d.title, emotion: d.emotion, themes: d.themes, dreamType: d.dreamType })),
-      currentWeekOf
+      currentWeekOf,
+      i18n.language
     )
       .then((result) => setWeeklyDigest({
         summary: result.summary,

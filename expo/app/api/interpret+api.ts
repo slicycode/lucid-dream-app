@@ -1,6 +1,22 @@
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
 
-const SYSTEM_PROMPT = `You are a dream interpreter with the voice of a wise,
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  fr: 'French',
+  de: 'German',
+  es: 'Spanish',
+  'pt-BR': 'Brazilian Portuguese',
+  ja: 'Japanese',
+  ko: 'Korean',
+};
+
+function buildSystemPrompt(locale?: string): string {
+  const lang = LANGUAGE_NAMES[locale ?? 'en'] ?? 'English';
+  const langInstruction = lang !== 'English'
+    ? `\n\nIMPORTANT: You MUST write your ENTIRE response in ${lang}. The dream text may be in ${lang} or another language — always respond in ${lang}.`
+    : '';
+
+  return `You are a dream interpreter with the voice of a wise,
 gently curious friend — not a therapist, not a mystic, not a textbook. You
 speak plainly but with depth. You notice things the dreamer missed.
 
@@ -20,7 +36,8 @@ Interpret the dream below:
 - Tone: warm, direct, a little poetic. Use "you" not "the dreamer." Use
   "this often reflects" not "this symbolizes." Never clinical.
 - End with: Key symbols: (3-5 comma-separated, no explanations)
-- Plain text only. No titles, headers, disclaimers, markdown, or bullets.`;
+- Plain text only. No titles, headers, disclaimers, markdown, or bullets.${langInstruction}`;
+}
 
 const MAX_DREAM_TEXT_CHARS = 2000;
 const MAX_OUTPUT_TOKENS = 350;
@@ -35,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { dreamText, emotion, themes, isLucid, dreamType, vividness, isFirstPerson } = body;
+    const { dreamText, emotion, themes, isLucid, dreamType, vividness, isFirstPerson, locale } = body;
 
     if (!dreamText || typeof dreamText !== 'string') {
       return Response.json(
@@ -66,7 +83,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: MAX_OUTPUT_TOKENS,
-        system: SYSTEM_PROMPT,
+        system: buildSystemPrompt(locale),
         messages: [{ role: 'user', content: userPrompt }],
       }),
     });

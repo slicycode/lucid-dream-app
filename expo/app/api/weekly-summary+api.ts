@@ -1,12 +1,29 @@
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
 
-const SYSTEM_PROMPT = `You are writing a brief, warm weekly dream digest for a personal dream journal app.
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  fr: 'French',
+  de: 'German',
+  es: 'Spanish',
+  'pt-BR': 'Brazilian Portuguese',
+  ja: 'Japanese',
+  ko: 'Korean',
+};
+
+function buildSystemPrompt(locale?: string): string {
+  const lang = LANGUAGE_NAMES[locale ?? 'en'] ?? 'English';
+  const langInstruction = lang !== 'English'
+    ? `\n- You MUST write your ENTIRE response in ${lang}.`
+    : '';
+
+  return `You are writing a brief, warm weekly dream digest for a personal dream journal app.
 Given a list of dreams from the past week, write 2-3 sentences summarizing the week.
 - Mention how many dreams were logged
 - Note any recurring themes, emotions, or symbols if present
 - End with a single gentle insight or observation
 - Tone: warm, observational, personal. Use "you" not "the dreamer."
-- Plain text only. No titles, headers, bullets, or markdown.`;
+- Plain text only. No titles, headers, bullets, or markdown.${langInstruction}`;
+}
 
 const MAX_OUTPUT_TOKENS = 200;
 
@@ -17,7 +34,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { dreams, weekOf } = body;
+    const { dreams, weekOf, locale } = body;
 
     if (!Array.isArray(dreams) || dreams.length === 0) {
       return Response.json({ error: 'dreams array is required' }, { status: 400 });
@@ -41,7 +58,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: MAX_OUTPUT_TOKENS,
-        system: SYSTEM_PROMPT,
+        system: buildSystemPrompt(locale),
         messages: [{ role: 'user', content: userPrompt }],
       }),
     });

@@ -46,7 +46,7 @@ function highlightSymbols(text: string, symbols: string[]) {
 }
 
 export default function DreamDetailScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -148,6 +148,7 @@ export default function DreamDetailScreen() {
         dreamType: dream.dreamType,
         vividness: dream.vividness,
         isFirstPerson: dream.isFirstPerson,
+        locale: i18n.language,
       });
 
       pulseLoop.stop();
