@@ -59,7 +59,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-sharing',
     [
       '@sentry/react-native',
-      { organization: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT },
+      {
+        organization: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        autoUploadSourceMaps: !!process.env.SENTRY_AUTH_TOKEN,
+      },
     ],
     'expo-localization',
   ],
