@@ -159,6 +159,8 @@
     "noConnectionMessage": "Bitte überprüfe deine Internetverbindung und versuche es erneut.",
     "interpretFailedTitle": "Interpretation fehlgeschlagen",
     "interpretFailedMessage": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "rateLimitedTitle": "Langsam bitte",
+    "rateLimitedMessage": "Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.",
     "dailyLimitReached": "Tageslimit erreicht — komm morgen wieder",
     "freeInterpretationUsed": "Kostenlose Interpretation diese Woche verwendet",
     "analyzingDream": "Dein Traum wird analysiert...",

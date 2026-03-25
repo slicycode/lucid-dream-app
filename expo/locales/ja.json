@@ -159,6 +159,8 @@
     "noConnectionMessage": "インターネット接続を確認してもう一度お試しください。",
     "interpretFailedTitle": "解釈に失敗しました",
     "interpretFailedMessage": "問題が発生しました。もう一度お試しください。",
+    "rateLimitedTitle": "リクエスト過多",
+    "rateLimitedMessage": "リクエストが多すぎます。少し待ってからもう一度お試しください。",
     "dailyLimitReached": "1日の上限に達しました — 明日また来てください",
     "freeInterpretationUsed": "今週の無料解釈を使用しました",
     "analyzingDream": "夢を分析中...",

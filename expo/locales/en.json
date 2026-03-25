@@ -159,6 +159,8 @@
     "noConnectionMessage": "Please check your internet connection and try again.",
     "interpretFailedTitle": "Interpretation Failed",
     "interpretFailedMessage": "Something went wrong. Please try again.",
+    "rateLimitedTitle": "Slow Down",
+    "rateLimitedMessage": "You've made too many requests. Please wait a moment and try again.",
     "dailyLimitReached": "Daily limit reached — come back tomorrow",
     "freeInterpretationUsed": "Free interpretation used this week",
     "analyzingDream": "Analyzing your dream...",

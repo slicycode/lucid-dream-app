@@ -159,6 +159,8 @@
     "noConnectionMessage": "Verifique sua conexão com a internet e tente novamente.",
     "interpretFailedTitle": "Falha na interpretação",
     "interpretFailedMessage": "Algo deu errado. Tente novamente.",
+    "rateLimitedTitle": "Devagar",
+    "rateLimitedMessage": "Muitas solicitações enviadas. Aguarde um momento e tente novamente.",
     "dailyLimitReached": "Limite diário atingido — volte amanhã",
     "freeInterpretationUsed": "Interpretação gratuita usada esta semana",
     "analyzingDream": "Analisando seu sonho...",

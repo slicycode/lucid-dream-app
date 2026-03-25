@@ -159,6 +159,8 @@
     "noConnectionMessage": "Vérifiez votre connexion internet et réessayez.",
     "interpretFailedTitle": "Interprétation échouée",
     "interpretFailedMessage": "Une erreur s'est produite. Veuillez réessayer.",
+    "rateLimitedTitle": "Doucement",
+    "rateLimitedMessage": "Trop de requêtes envoyées. Patientez un instant et réessayez.",
     "dailyLimitReached": "Limite quotidienne atteinte — revenez demain",
     "freeInterpretationUsed": "Interprétation gratuite utilisée cette semaine",
     "analyzingDream": "Analyse de votre rêve...",

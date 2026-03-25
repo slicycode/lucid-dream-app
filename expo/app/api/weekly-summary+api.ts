@@ -1,3 +1,5 @@
+import { getClientIP, checkRateLimit, rateLimitResponse } from '../../utils/rateLimit';
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
 
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -27,8 +29,15 @@ Given a list of dreams from the past week, write 2-3 sentences summarizing the w
 
 const MAX_OUTPUT_TOKENS = 200;
 
+// 2 requests per hour per IP — digest is auto-generated once per week
+const RATE_LIMIT = { max: 2, windowSec: 3600, prefix: 'weekly' } as const;
+
 export async function POST(request: Request) {
   try {
+    const ip = getClientIP(request);
+    const limit = checkRateLimit(ip, RATE_LIMIT);
+    if (!limit.allowed) return rateLimitResponse(limit.resetAt);
+
     if (!ANTHROPIC_API_KEY) {
       return Response.json({ error: 'API key not configured' }, { status: 500 });
     }

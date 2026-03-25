@@ -159,6 +159,8 @@
     "noConnectionMessage": "인터넷 연결을 확인하고 다시 시도해주세요.",
     "interpretFailedTitle": "해석 실패",
     "interpretFailedMessage": "문제가 발생했어요. 다시 시도해주세요.",
+    "rateLimitedTitle": "잠시만요",
+    "rateLimitedMessage": "요청이 너무 많았어요. 잠시 후 다시 시도해주세요.",
     "dailyLimitReached": "일일 한도 도달 — 내일 다시 오세요",
     "freeInterpretationUsed": "이번 주 무료 해석을 사용했어요",
     "analyzingDream": "꿈을 분석하는 중...",

@@ -91,7 +91,10 @@ export async function interpretDream(params: InterpretParams): Promise<Interpret
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(error.error ?? `Interpretation failed (${response.status})`);
+    const message = response.status === 429
+      ? 'RATE_LIMITED'
+      : (error.error ?? `Interpretation failed (${response.status})`);
+    throw new Error(message);
   }
 
   return response.json();

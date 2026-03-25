@@ -176,9 +176,14 @@ export default function DreamDetailScreen() {
       setIsInterpreting(false);
 
       const isOffline = e?.message?.includes('Network') || e?.message?.includes('fetch');
+      const isRateLimited = e?.message === 'RATE_LIMITED';
       Alert.alert(
-        isOffline ? t('dreamDetail.noConnectionTitle') : t('dreamDetail.interpretFailedTitle'),
-        isOffline ? t('dreamDetail.noConnectionMessage') : t('dreamDetail.interpretFailedMessage'),
+        isRateLimited ? t('dreamDetail.rateLimitedTitle')
+          : isOffline ? t('dreamDetail.noConnectionTitle')
+          : t('dreamDetail.interpretFailedTitle'),
+        isRateLimited ? t('dreamDetail.rateLimitedMessage')
+          : isOffline ? t('dreamDetail.noConnectionMessage')
+          : t('dreamDetail.interpretFailedMessage'),
         [{ text: t('common.ok') }]
       );
     }

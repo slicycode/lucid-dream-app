@@ -1,3 +1,5 @@
+import { getClientIP, checkRateLimit, rateLimitResponse } from '../../utils/rateLimit';
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
 
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -42,8 +44,15 @@ Interpret the dream below:
 const MAX_DREAM_TEXT_CHARS = 2000;
 const MAX_OUTPUT_TOKENS = 350;
 
+// 10 requests per hour per IP — well above legitimate use, blocks abuse loops
+const RATE_LIMIT = { max: 10, windowSec: 3600, prefix: 'interpret' } as const;
+
 export async function POST(request: Request) {
   try {
+    const ip = getClientIP(request);
+    const limit = checkRateLimit(ip, RATE_LIMIT);
+    if (!limit.allowed) return rateLimitResponse(limit.resetAt);
+
     if (!ANTHROPIC_API_KEY) {
       return Response.json(
         { error: 'API key not configured' },
