@@ -71,11 +71,11 @@ export default function OnboardingScreen() {
     setCurrentStepInStore(step);
     const screenEvents: Record<number, string> = {
       0: 'onboarding_welcome_viewed',
-      1: 'onboarding_name_viewed',
-      2: 'onboarding_dream_frequency_viewed',
-      3: 'onboarding_dream_detail_viewed',
-      4: 'onboarding_goals_viewed',
-      5: 'onboarding_stat_viewed',
+      1: 'onboarding_stat_viewed',
+      2: 'onboarding_name_viewed',
+      3: 'onboarding_dream_frequency_viewed',
+      4: 'onboarding_dream_detail_viewed',
+      5: 'onboarding_goals_viewed',
       6: 'onboarding_journal_experience_viewed',
       7: 'onboarding_recurring_dreams_viewed',
       8: 'onboarding_features_viewed',
@@ -157,11 +157,11 @@ export default function OnboardingScreen() {
     if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     switch (step) {
       case 0: trackEvent('onboarding_welcome_started'); break;
-      case 1: trackEvent('onboarding_name_completed', { has_name: localName.trim().length > 0 }); break;
-      case 2: trackEvent('onboarding_dream_frequency_completed', { frequency: localFrequency }); break;
-      case 3: trackEvent('onboarding_dream_detail_completed', { detail_level: localDetail }); break;
-      case 4: trackEvent('onboarding_goals_completed', { goals: localGoals, goal_count: localGoals.length }); break;
-      case 5: trackEvent('onboarding_stat_continued'); break;
+      case 1: trackEvent('onboarding_stat_continued'); break;
+      case 2: trackEvent('onboarding_name_completed', { has_name: localName.trim().length > 0 }); break;
+      case 3: trackEvent('onboarding_dream_frequency_completed', { frequency: localFrequency }); break;
+      case 4: trackEvent('onboarding_dream_detail_completed', { detail_level: localDetail }); break;
+      case 5: trackEvent('onboarding_goals_completed', { goals: localGoals, goal_count: localGoals.length }); break;
       case 6: trackEvent('onboarding_journal_experience_completed', { experience: localJournalExp }); break;
       case 7: trackEvent('onboarding_recurring_dreams_completed', { recurring_type: localRecurring }); break;
       case 8: trackEvent('onboarding_features_continued'); break;
@@ -247,8 +247,9 @@ export default function OnboardingScreen() {
   const renderStep = () => {
     switch (step) {
       case 0: return <WelcomeScreen goNext={goNext} />;
-      case 1: return renderNameInput();
-      case 2: return (
+      case 1: return <PainPointScreen goNext={goNext} />;
+      case 2: return renderNameInput();
+      case 3: return (
         <QuizScreen
           key="frequency"
           progress={{ current: 1, total: 5 }}
@@ -265,7 +266,7 @@ export default function OnboardingScreen() {
           ctaFadeAnim={ctaFadeAnim}
         />
       );
-      case 3: return (
+      case 4: return (
         <QuizScreen
           key="detail"
           progress={{ current: 2, total: 5 }}
@@ -282,7 +283,7 @@ export default function OnboardingScreen() {
           ctaFadeAnim={ctaFadeAnim}
         />
       );
-      case 4: return (
+      case 5: return (
         <QuizScreen
           key="goals"
           progress={{ current: 3, total: 5 }}
@@ -301,7 +302,6 @@ export default function OnboardingScreen() {
           ctaFadeAnim={ctaFadeAnim}
         />
       );
-      case 5: return <PainPointScreen goNext={goNext} />;
       case 6: return (
         <QuizScreen
           key="journalExp"
