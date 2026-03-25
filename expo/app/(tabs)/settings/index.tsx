@@ -37,7 +37,7 @@ import {
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
-import { resetAnalytics, trackEvent, trackScreen, setUserProperty } from '@/services/analytics';
+import { resetAnalytics, trackEvent, trackScreen } from '@/services/analytics';
 import { useTranslation } from 'react-i18next';
 
 const REALITY_CHECK_OPTIONS = ['2h', '3h', '4h'] as const;
@@ -476,17 +476,10 @@ export default function SettingsScreen() {
           t('settings.helpSupport'),
           () => Linking.openURL('https://slicycode.github.io/lucid-dream-app/support/'),
         )}
-        <TouchableOpacity
-          style={styles.versionRow}
-          onLongPress={() => {
-            setUserProperty({ is_internal: true });
-            Alert.alert('Internal', 'Flagged as internal user in PostHog.');
-          }}
-          activeOpacity={1}
-        >
+        <View style={styles.versionRow}>
           <Info size={14} color={colors.textDisabled} />
           <Text style={styles.versionText}>{t('settings.version', { version: '1.0.0' })}</Text>
-        </TouchableOpacity>
+        </View>
         </Animated.View>
       </ScrollView>
 
