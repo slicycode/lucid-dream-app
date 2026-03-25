@@ -54,6 +54,8 @@ export function useRevenueCat() {
   useEffect(() => {
     if (Platform.OS === 'web') return;
 
+    configureRevenueCat();
+
     async function init() {
       try {
         const offeringsResult = await Purchases.getOfferings();

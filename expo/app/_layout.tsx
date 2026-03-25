@@ -13,7 +13,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { colors } from "@/constants/theme";
-import { configureRevenueCat } from "@/hooks/useRevenueCat";
 import "@/services/analytics";
 
 void SplashScreen.preventAutoHideAsync();
@@ -88,10 +87,10 @@ function RootLayout() {
     InstrumentSerif_400Regular_Italic,
   });
 
-  const initialized = useRef(false);
+  const sentryInitialized = useRef(false);
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    if (sentryInitialized.current) return;
+    sentryInitialized.current = true;
 
     const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
     if (sentryDsn && sentryDsn !== "YOUR_SENTRY_DSN") {
@@ -101,8 +100,6 @@ function RootLayout() {
         sendDefaultPii: false,
       });
     }
-
-    configureRevenueCat();
   }, []);
 
   const onLayoutReady = useCallback(async () => {
