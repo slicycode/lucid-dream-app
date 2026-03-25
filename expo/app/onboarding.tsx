@@ -50,7 +50,7 @@ export default function OnboardingScreen() {
   const [localRecurring, setLocalRecurring] = useState(store.recurringDreams);
   const [localDreamText, setLocalDreamText] = useState(store.firstDreamText);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
-  const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
+  const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -120,7 +120,7 @@ export default function OnboardingScreen() {
   }, [step, pulseAnim, progressAnim, fadeAnim]);
 
   useEffect(() => {
-    if ((step === 13 || step === 14) && !monthlyPackage && !annualPackage) {
+    if (step >= 8 && !monthlyPackage && !annualPackage) {
       void loadOfferings();
     }
   }, [step, monthlyPackage, annualPackage, loadOfferings]);
@@ -596,7 +596,7 @@ export default function OnboardingScreen() {
       </ScrollView>
 
       <View style={styles.bottomCta}>
-        <OnboardingButton title={rcLoading ? t('common.processing') : t('paywall.startFreeTrial')} variant="accent" onPress={handlePurchase} disabled={rcLoading} />
+        <OnboardingButton title={isLoadingOfferings ? t('common.loading') : rcLoading ? t('common.processing') : t('paywall.startFreeTrial')} variant="accent" onPress={handlePurchase} disabled={rcLoading || isLoadingOfferings} />
 
         <Text style={styles.paywallSmall}>
           {selectedPlan === 'monthly'
@@ -647,7 +647,7 @@ export default function OnboardingScreen() {
       </ScrollView>
 
       <View style={[styles.bottomCta, { position: 'relative' as const }]}>
-        <OnboardingButton title={rcLoading ? t('common.processing') : t('onboarding.discountPaywall.claimOffer')} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
+        <OnboardingButton title={isLoadingOfferings ? t('common.loading') : rcLoading ? t('common.processing') : t('onboarding.discountPaywall.claimOffer')} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading || isLoadingOfferings} />
 
         <Text style={styles.paywallSmall}>{t('onboarding.discountPaywall.terms')}</Text>
 

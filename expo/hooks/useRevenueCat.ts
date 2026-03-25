@@ -49,12 +49,13 @@ export function useRevenueCat() {
   const [offerings, setOfferings] = useState<PurchasesOffering | null>(null);
   const [discountOffering, setDiscountOffering] = useState<PurchasesOffering | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingOfferings, setIsLoadingOfferings] = useState(false);
   const isPremium = useSettingsStore((s) => s.isPremium);
 
   const loadOfferings = useCallback(async () => {
     if (Platform.OS === 'web') return;
     configureRevenueCat();
-    setIsLoading(true);
+    setIsLoadingOfferings(true);
     try {
       const offeringsResult = await Purchases.getOfferings();
       if (offeringsResult.current) {
@@ -69,7 +70,7 @@ export function useRevenueCat() {
     } catch (e) {
       console.warn('[RevenueCat] Failed to load offerings:', e);
     } finally {
-      setIsLoading(false);
+      setIsLoadingOfferings(false);
     }
   }, []);
 
@@ -154,6 +155,7 @@ export function useRevenueCat() {
     discountAnnualPackage,
     isPremium,
     isLoading,
+    isLoadingOfferings,
     purchasePackage,
     restorePurchases,
     loadOfferings,
