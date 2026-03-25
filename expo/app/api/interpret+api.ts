@@ -44,8 +44,8 @@ Interpret the dream below:
 const MAX_DREAM_TEXT_CHARS = 2000;
 const MAX_OUTPUT_TOKENS = 350;
 
-// 10 requests per hour per IP — well above legitimate use, blocks abuse loops
-const RATE_LIMIT = { max: 10, windowSec: 3600, prefix: 'interpret' } as const;
+// 5 requests per hour per IP — generous for premium (5/day), limits free-tier abuse
+const RATE_LIMIT = { max: 5, windowSec: 3600, prefix: 'interpret' } as const;
 
 export async function POST(request: Request) {
   try {
@@ -61,24 +61,33 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { dreamText, emotion, themes, isLucid, dreamType, vividness, isFirstPerson, locale } = body;
 
-    if (!dreamText || typeof dreamText !== 'string') {
+    if (!body.dreamText || typeof body.dreamText !== 'string') {
       return Response.json(
         { error: 'dreamText is required' },
         { status: 400 }
       );
     }
 
-    const trimmedDream = dreamText.slice(0, MAX_DREAM_TEXT_CHARS);
+    const trimmedDream = body.dreamText.slice(0, MAX_DREAM_TEXT_CHARS);
+    const emotion = typeof body.emotion === 'string' ? body.emotion.slice(0, 50) : undefined;
+    const dreamType = typeof body.dreamType === 'string' ? body.dreamType.slice(0, 30) : undefined;
+    const themes: string[] = Array.isArray(body.themes)
+      ? body.themes.filter((t: unknown): t is string => typeof t === 'string').slice(0, 10).map((t: string) => t.slice(0, 50))
+      : [];
+    const isLucid = body.isLucid === true;
+    const isFirstPerson = body.isFirstPerson !== false;
+    const vividness = typeof body.vividness === 'number' && body.vividness >= 1 && body.vividness <= 5
+      ? body.vividness : undefined;
+    const locale = typeof body.locale === 'string' ? body.locale : undefined;
 
     const userPrompt = [
       `Dream: ${trimmedDream}`,
       `Emotion: ${emotion ?? 'not specified'}`,
-      `Themes: ${Array.isArray(themes) && themes.length ? themes.join(', ') : 'none specified'}`,
+      `Themes: ${themes.length ? themes.join(', ') : 'none specified'}`,
       `Type: ${dreamType ?? 'dream'}`,
       `Lucid: ${isLucid ? 'yes' : 'no'}`,
-      `Perspective: ${isFirstPerson !== false ? 'first-person (I was in the dream)' : 'third-person (watching it happen)'}`,
+      `Perspective: ${isFirstPerson ? 'first-person (I was in the dream)' : 'third-person (watching it happen)'}`,
       vividness ? `Vividness: ${vividness}/5` : '',
     ].filter(Boolean).join('\n');
 

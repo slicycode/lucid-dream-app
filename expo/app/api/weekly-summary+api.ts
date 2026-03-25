@@ -43,15 +43,28 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { dreams, weekOf, locale } = body;
+    const { weekOf, locale } = body;
 
-    if (!Array.isArray(dreams) || dreams.length === 0) {
+    if (!Array.isArray(body.dreams) || body.dreams.length === 0) {
       return Response.json({ error: 'dreams array is required' }, { status: 400 });
+    }
+
+    const MAX_DREAMS = 30;
+    const dreams = body.dreams.slice(0, MAX_DREAMS).filter(
+      (d: any): d is { title: string; emotion: string; themes: string[]; dreamType: string } =>
+        typeof d?.title === 'string' &&
+        typeof d?.emotion === 'string' &&
+        Array.isArray(d?.themes) &&
+        typeof d?.dreamType === 'string'
+    );
+
+    if (dreams.length === 0) {
+      return Response.json({ error: 'no valid dreams in array' }, { status: 400 });
     }
 
     const dreamList = dreams
       .map((d: { title: string; emotion: string; themes: string[]; dreamType: string }, i: number) =>
-        `${i + 1}. "${d.title}" — ${d.emotion}${d.themes.length ? `, themes: ${d.themes.join(', ')}` : ''}${d.dreamType === 'nightmare' ? ' (nightmare)' : ''}`
+        `${i + 1}. "${d.title.slice(0, 100)}" — ${d.emotion.slice(0, 50)}${d.themes.length ? `, themes: ${d.themes.slice(0, 5).map((t: string) => t.slice(0, 50)).join(', ')}` : ''}${d.dreamType === 'nightmare' ? ' (nightmare)' : ''}`
       )
       .join('\n');
 

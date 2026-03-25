@@ -21,7 +21,7 @@ export function configureRevenueCat() {
   if (isConfigured || Platform.OS === 'web') return;
 
   try {
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     Purchases.configure({ apiKey: RC_API_KEY_IOS });
     isConfigured = true;
   } catch (e) {
