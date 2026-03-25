@@ -48,7 +48,7 @@ export default function OnboardingScreen() {
   const [localRecurring, setLocalRecurring] = useState(store.recurringDreams);
   const [localDreamText, setLocalDreamText] = useState(store.firstDreamText);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
-  const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
+  const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -121,7 +121,10 @@ export default function OnboardingScreen() {
     if (step === 12) {
       void StoreReview.requestReview();
     }
-  }, [step]);
+    if ((step === 13 || step === 14) && !monthlyPackage && !annualPackage) {
+      void loadOfferings();
+    }
+  }, [step, monthlyPackage, annualPackage, loadOfferings]);
 
   const goToStep = useCallback((nextStep: number) => {
     const isForward = nextStep > step;
@@ -192,9 +195,9 @@ export default function OnboardingScreen() {
   const handlePurchase = useCallback(async () => {
     const plan = selectedPlan;
     trackEvent('paywall_purchase_started', { plan, source: 'onboarding' });
-    const pkg = plan === 'monthly' ? monthlyPackage : annualPackage;
+    let pkg = plan === 'monthly' ? monthlyPackage : annualPackage;
     if (!pkg) {
-      finishOnboarding();
+      await loadOfferings();
       return;
     }
     const success = await purchasePackage(pkg);
@@ -203,13 +206,13 @@ export default function OnboardingScreen() {
       void scheduleTrialReminder();
       finishOnboarding();
     }
-  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding]);
+  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
 
   const handleDiscountPurchase = useCallback(async () => {
     trackEvent('paywall_purchase_started', { plan: 'yearly_discount', source: 'discount' });
     const pkg = discountAnnualPackage ?? annualPackage;
     if (!pkg) {
-      finishOnboarding();
+      await loadOfferings();
       return;
     }
     const success = await purchasePackage(pkg);
@@ -218,7 +221,7 @@ export default function OnboardingScreen() {
       void scheduleTrialReminder();
       finishOnboarding();
     }
-  }, [discountAnnualPackage, annualPackage, purchasePackage, finishOnboarding]);
+  }, [discountAnnualPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
 
   const handleRestore = useCallback(async () => {
     trackEvent('paywall_restore_tapped', { source: 'onboarding' });

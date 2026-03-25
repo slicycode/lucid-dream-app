@@ -51,29 +51,30 @@ export function useRevenueCat() {
   const [isLoading, setIsLoading] = useState(false);
   const isPremium = useSettingsStore((s) => s.isPremium);
 
-  useEffect(() => {
+  const loadOfferings = useCallback(async () => {
     if (Platform.OS === 'web') return;
-
     configureRevenueCat();
-
-    async function init() {
-      try {
-        const offeringsResult = await Purchases.getOfferings();
-        if (offeringsResult.current) {
-          setOfferings(offeringsResult.current);
-        }
-        if (offeringsResult.all['discount']) {
-          setDiscountOffering(offeringsResult.all['discount']);
-        }
-
-        const customerInfo = await Purchases.getCustomerInfo();
-        syncPremiumStatus(customerInfo);
-      } catch (e) {
-        console.warn('[RevenueCat] Failed to load offerings:', e);
+    setIsLoading(true);
+    try {
+      const offeringsResult = await Purchases.getOfferings();
+      if (offeringsResult.current) {
+        setOfferings(offeringsResult.current);
       }
-    }
+      if (offeringsResult.all['discount']) {
+        setDiscountOffering(offeringsResult.all['discount']);
+      }
 
-    init();
+      const customerInfo = await Purchases.getCustomerInfo();
+      syncPremiumStatus(customerInfo);
+    } catch (e) {
+      console.warn('[RevenueCat] Failed to load offerings:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadOfferings();
 
     const onUpdate = (info: CustomerInfo) => {
       syncPremiumStatus(info);
@@ -155,5 +156,6 @@ export function useRevenueCat() {
     isLoading,
     purchasePackage,
     restorePurchases,
+    loadOfferings,
   };
 }
