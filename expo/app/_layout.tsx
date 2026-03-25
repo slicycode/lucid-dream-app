@@ -18,15 +18,6 @@ import "@/services/analytics";
 
 void SplashScreen.preventAutoHideAsync();
 
-const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
-if (sentryDsn && sentryDsn !== "YOUR_SENTRY_DSN") {
-  Sentry.init({
-    dsn: sentryDsn,
-    tracesSampleRate: 0.2,
-    sendDefaultPii: false,
-  });
-}
-
 function RootLayoutNav() {
   const router = useRouter();
   const segments = useSegments();
@@ -97,12 +88,21 @@ function RootLayout() {
     InstrumentSerif_400Regular_Italic,
   });
 
-  const revenueCatConfigured = useRef(false);
+  const initialized = useRef(false);
   useEffect(() => {
-    if (!revenueCatConfigured.current) {
-      revenueCatConfigured.current = true;
-      configureRevenueCat();
+    if (initialized.current) return;
+    initialized.current = true;
+
+    const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
+    if (sentryDsn && sentryDsn !== "YOUR_SENTRY_DSN") {
+      Sentry.init({
+        dsn: sentryDsn,
+        tracesSampleRate: 0.2,
+        sendDefaultPii: false,
+      });
     }
+
+    configureRevenueCat();
   }, []);
 
   const onLayoutReady = useCallback(async () => {
