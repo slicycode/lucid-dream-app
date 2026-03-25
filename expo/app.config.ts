@@ -48,6 +48,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     package: 'com.slicycode.lucid',
   },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
+  updates: {
+    url: 'https://u.expo.dev/90293442-b8b8-4d05-a613-1305f2076caf',
+  },
   web: {
     favicon: './assets/images/favicon.png',
     output: 'server',
