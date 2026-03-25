@@ -9,9 +9,9 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ current, total }: ProgressBarProps) {
-  const widthAnim = useRef(new Animated.Value(0)).current;
-
   const fraction = current / total;
+  const prevFraction = Math.max(0, (current - 1) / total);
+  const widthAnim = useRef(new Animated.Value(prevFraction)).current;
 
   useEffect(() => {
     Animated.spring(widthAnim, {

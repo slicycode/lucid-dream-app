@@ -169,7 +169,8 @@
     "nightmare": "악몽",
     "lucid": "자각몽",
     "observer": "관찰자",
-    "firstPerson": "1인칭"
+    "firstPerson": "1인칭",
+    "vivid": "생생함"
   },
   "newDream": {
     "title": "새로운 꿈",
@@ -260,12 +261,107 @@
       "calendarDesc": "기분별로 색상 코딩된 전체 꿈 기록을 한눈에 확인하세요"
     },
     "notifications": {
-      "title": "더 이상 꿈을 잊지 마세요",
-      "body1": "일어난 후 5분 이내에 일기를 쓰면 꿈 기억이 3배 높아져요.",
-      "body2": "꿈이 사라지기 전에 기록할 수 있도록 부드러운 아침 알림을 보내드릴게요.",
+      "title": "꿈을 다시는 놓치지 마세요",
+      "body1": "기상 후 5분 이내에 일기를 쓰면 꿈 기억이 3배 증가합니다.",
+      "body2": "꿈이 사라지기 전에 기록할 수 있도록 부드러운 아침 알림을 보내드려요.",
       "cta": "알림 활성화",
       "skipCta": "나중에"
-    }
+    },
+    "nameInput": {
+      "heading": "어떻게 불러드릴까요?",
+      "subtext": "경험을 맞춤화하는 데 사용됩니다.",
+      "placeholder": "이름",
+      "privacy": "이름은 이 기기에만 저장됩니다"
+    },
+    "quizFrequency": {
+      "heading": "꿈을 얼마나 자주 기억하나요?",
+      "everyMorningTitle": "매일 아침",
+      "everyMorningSub": "보통 꿈이 생생한 상태로 일어나요",
+      "fewTimesWeekTitle": "일주일에 몇 번",
+      "fewTimesWeekSub": "기억나는 아침도 있고, 아닌 아침도 있어요",
+      "onceTwiceMonthTitle": "한 달에 한두 번",
+      "onceTwiceMonthSub": "꿈은 왔다 갔다 해요",
+      "rarelyTitle": "거의 없어요",
+      "rarelySub": "무슨 꿈을 꿨는지 거의 기억 못해요"
+    },
+    "quizDetail": {
+      "heading": "꿈을 기억할 때, 얼마나 자세한가요?",
+      "vagueTitle": "막연한 느낌",
+      "vagueSub": "기억보다는 기분에 가까워요",
+      "fragmentsTitle": "단편들",
+      "fragmentsSub": "장면, 얼굴, 장소의 플래시",
+      "partialTitle": "부분적인 이야기",
+      "partialSub": "대략적인 사건의 흐름을 기억해요",
+      "fullTitle": "완전한 이야기",
+      "fullSub": "자세히 설명할 수 있어요"
+    },
+    "quizGoals": {
+      "heading": "가장 관심 있는 것은 무엇인가요?",
+      "subtext": "해당하는 것을 모두 선택하세요",
+      "meaningsTitle": "꿈의 의미 이해하기",
+      "meaningsSub": "꿈의 상징과 메시지를 해독하세요",
+      "lucidTitle": "자각몽",
+      "lucidSub": "꿈속에서 의식적이 되고 통제하는 법을 배우세요",
+      "patternsTitle": "패턴 추적하기",
+      "patternsSub": "시간이 지남에 따라 반복되는 주제, 감정, 상징을 확인하세요",
+      "journalingTitle": "그냥 기록하기",
+      "journalingSub": "사라지기 전에 꿈을 기록하는 프라이빗한 공간"
+    },
+    "quizJournalExp": {
+      "heading": "꿈 일기를 써본 적이 있나요?",
+      "neverTitle": "없어요",
+      "neverSub": "처음이에요",
+      "triedTitle": "시도했지만 지속하지 못했어요",
+      "triedSub": "한두 번 시작했지만 그만뒀어요",
+      "paperTitle": "종이 일기",
+      "paperSub": "실제 노트를 사용한 적이 있어요",
+      "appTitle": "다른 앱",
+      "appSub": "다른 꿈 일기 앱을 사용해 본 적이 있어요",
+      "activeTitle": "활발한 기록자",
+      "activeSub": "현재 꿈을 정기적으로 기록하고 있어요"
+    },
+    "quizRecurring": {
+      "heading": "반복되는 꿈이나 악몽을 경험하나요?",
+      "recurringTitle": "반복되는 꿈",
+      "recurringSub": "같은 꿈이 계속 돌아와요",
+      "nightmaresTitle": "악몽",
+      "nightmaresSub": "잠에서 깨는 불안한 꿈을 꿔요",
+      "bothTitle": "둘 다",
+      "bothSub": "반복되는 주제와 악몽",
+      "neitherTitle": "둘 다 아니에요",
+      "neitherSub": "꿈은 대부분 매번 다르게 나타나요"
+    },
+    "firstDream": {
+      "heading": "지금 바로 시도해볼까요.",
+      "subtext": "어젯밤 무슨 꿈을 꿨나요?",
+      "placeholder": "알아보지 못하는 집에 있었는데, 어쩐지 익숙한 느낌이었어요. 바닥에서 물이 천천히 올라오고 있었는데...",
+      "privacy": "꿈은 비공개이며 기기 밖으로 나가지 않습니다",
+      "writeAFewWords": "몇 마디 적어보세요",
+      "interpretMyDream": "내 꿈 해석하기",
+      "freeNote": "첫 번째 해석은 무료입니다"
+    },
+    "processing": {
+      "analyzing": "꿈을 분석하는 중...",
+      "identifyingSymbols": "상징과 주제를 식별하는 중...",
+      "mappingEmotions": "감정 패턴을 매핑하는 중...",
+      "buildingInterpretation": "해석을 생성하는 중..."
+    },
+    "interpretation": {
+      "label": "당신의 꿈 해석",
+      "keySymbols": "핵심 상징",
+      "premiumUpsell": "첫 번째 해석은 무료입니다. 프리미엄으로 무제한 해석을 잠금 해제하세요."
+    },
+    "discountPaywall": {
+      "heading": "아직 고민 중인가요?",
+      "subtext": "결정을 쉽게 해줄 무언가를 준비했어요.",
+      "crossedPrice": "$39.99/년",
+      "discountPrice": "$24.99 / 년",
+      "trialIncluded": "7일 무료 체험 포함",
+      "specialOffer": "단 한 번의 혜택",
+      "claimOffer": "이 혜택 받기",
+      "terms": "7일 무료, 이후 $24.99/년 ($2.08/월). 언제든 취소 가능."
+    },
+    "continueFree": "무료로 계속하기"
   },
   "notFound": {
     "screenTitle": "앗!",

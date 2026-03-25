@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Animated } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import OnboardingButton from '@/components/OnboardingButton';
 import QuizOptionCard from '@/components/QuizOptionCard';
 import ProgressBar from '@/components/ProgressBar';
@@ -35,6 +36,7 @@ export function QuizScreen({
   goNext,
   ctaFadeAnim,
 }: QuizScreenProps) {
+  const { t } = useTranslation();
   const isSelected = (key: string) =>
     Array.isArray(selected) ? selected.includes(key) : selected === key;
 
@@ -59,7 +61,7 @@ export function QuizScreen({
         </StaggerChildren>
       </ScrollView>
       <Animated.View style={[styles.bottomCta, { opacity: ctaFadeAnim }]}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={!hasSelection} />
+        <OnboardingButton title={t('common.continue')} onPress={goNext} disabled={!hasSelection} />
       </Animated.View>
     </View>
   );

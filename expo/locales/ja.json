@@ -169,7 +169,8 @@
     "nightmare": "悪夢",
     "lucid": "明晰夢",
     "observer": "傍観者",
-    "firstPerson": "一人称"
+    "firstPerson": "一人称",
+    "vivid": "鮮明"
   },
   "newDream": {
     "title": "新しい夢",
@@ -265,7 +266,102 @@
       "body2": "夢が消える前に記録するための優しい朝のリマインダーをお送りします。",
       "cta": "リマインダーを有効にする",
       "skipCta": "後で"
-    }
+    },
+    "nameInput": {
+      "heading": "なんとお呼びすればいいですか？",
+      "subtext": "あなたの体験をパーソナライズするために使用します。",
+      "placeholder": "あなたの名前",
+      "privacy": "名前はこのデバイスに保存されます"
+    },
+    "quizFrequency": {
+      "heading": "どのくらいの頻度で夢を覚えていますか？",
+      "everyMorningTitle": "毎朝",
+      "everyMorningSub": "たいてい夢を覚えた状態で目覚めます",
+      "fewTimesWeekTitle": "週に数回",
+      "fewTimesWeekSub": "覚えている朝もあれば、覚えていない朝もあります",
+      "onceTwiceMonthTitle": "月に1〜2回",
+      "onceTwiceMonthSub": "夢は気まぐれです",
+      "rarelyTitle": "めったにない",
+      "rarelySub": "何を夢見たかほとんど覚えていません"
+    },
+    "quizDetail": {
+      "heading": "夢を覚えているとき、どのくらい詳細ですか？",
+      "vagueTitle": "漠然とした感覚",
+      "vagueSub": "記憶というより気分に近い",
+      "fragmentsTitle": "断片",
+      "fragmentsSub": "場面、顔、場所のフラッシュ",
+      "partialTitle": "部分的なストーリー",
+      "partialSub": "おおまかな出来事の流れを覚えている",
+      "fullTitle": "完全な物語",
+      "fullSub": "詳しく説明できるほど覚えている"
+    },
+    "quizGoals": {
+      "heading": "最も興味があるのは何ですか？",
+      "subtext": "当てはまるものをすべて選択してください",
+      "meaningsTitle": "夢の意味を理解する",
+      "meaningsSub": "夢のシンボルやメッセージを解読する",
+      "lucidTitle": "明晰夢",
+      "lucidSub": "夢の中で意識的になり、コントロールする方法を学ぶ",
+      "patternsTitle": "パターンを追跡する",
+      "patternsSub": "繰り返し現れるテーマ、感情、シンボルを時間とともに確認する",
+      "journalingTitle": "ただ記録する",
+      "journalingSub": "消えてしまう前に夢を記録するプライベートな場所"
+    },
+    "quizJournalExp": {
+      "heading": "夢日記をつけたことはありますか？",
+      "neverTitle": "一度もない",
+      "neverSub": "初めてです",
+      "triedTitle": "試したけど続かなかった",
+      "triedSub": "1、2回始めたけどやめてしまった",
+      "paperTitle": "紙の日記",
+      "paperSub": "実際のノートを使ったことがある",
+      "appTitle": "別のアプリ",
+      "appSub": "別の夢日記アプリを試したことがある",
+      "activeTitle": "現役の記録者",
+      "activeSub": "現在、定期的に夢を記録しています"
+    },
+    "quizRecurring": {
+      "heading": "繰り返し見る夢や悪夢はありますか？",
+      "recurringTitle": "繰り返す夢",
+      "recurringSub": "同じ夢が何度も戻ってくる",
+      "nightmaresTitle": "悪夢",
+      "nightmaresSub": "目が覚めるような不安な夢を見る",
+      "bothTitle": "両方",
+      "bothSub": "繰り返すテーマと悪夢",
+      "neitherTitle": "どちらでもない",
+      "neitherSub": "夢は毎回ほぼユニークです"
+    },
+    "firstDream": {
+      "heading": "今すぐ試してみましょう。",
+      "subtext": "昨夜、何の夢を見ましたか？",
+      "placeholder": "知らない家にいたのですが、なぜか懐かしい感じがしました。床からゆっくりと水が上がってきて...",
+      "privacy": "あなたの夢はプライベートで、デバイスから外に出ることはありません",
+      "writeAFewWords": "いくつか言葉を書いて",
+      "interpretMyDream": "夢を解釈する",
+      "freeNote": "最初の解釈は無料です"
+    },
+    "processing": {
+      "analyzing": "夢を分析中...",
+      "identifyingSymbols": "シンボルとテーマを特定中...",
+      "mappingEmotions": "感情パターンをマッピング中...",
+      "buildingInterpretation": "解釈を作成中..."
+    },
+    "interpretation": {
+      "label": "あなたの夢の解釈",
+      "keySymbols": "キーシンボル",
+      "premiumUpsell": "最初の解釈は無料です。Premiumで無制限の解釈をアンロックしましょう。"
+    },
+    "discountPaywall": {
+      "heading": "まだ迷っていますか？",
+      "subtext": "決断を簡単にするものをご用意しました。",
+      "crossedPrice": "$39.99/年",
+      "discountPrice": "$24.99 / 年",
+      "trialIncluded": "7日間の無料トライアル付き",
+      "specialOffer": "今だけの特典",
+      "claimOffer": "このオファーを利用する",
+      "terms": "7日間無料、その後$24.99/年（$2.08/月）。いつでもキャンセル可能。"
+    },
+    "continueFree": "無料で続ける"
   },
   "notFound": {
     "screenTitle": "おっと！",

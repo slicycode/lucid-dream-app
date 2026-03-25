@@ -169,7 +169,8 @@
     "nightmare": "Nightmare",
     "lucid": "Lucid",
     "observer": "Observer",
-    "firstPerson": "First person"
+    "firstPerson": "First person",
+    "vivid": "vivid"
   },
   "newDream": {
     "title": "New Dream",
@@ -265,7 +266,102 @@
       "body2": "We'll send a gentle morning reminder to help you capture your dreams before they fade.",
       "cta": "Enable Reminders",
       "skipCta": "Maybe later"
-    }
+    },
+    "nameInput": {
+      "heading": "What should we call you?",
+      "subtext": "We'll use this to personalize your experience.",
+      "placeholder": "Your name",
+      "privacy": "Your name stays on this device"
+    },
+    "quizFrequency": {
+      "heading": "How often do you remember your dreams?",
+      "everyMorningTitle": "Every morning",
+      "everyMorningSub": "I usually wake up with a dream fresh in my mind",
+      "fewTimesWeekTitle": "A few times a week",
+      "fewTimesWeekSub": "Some mornings I remember, some I don't",
+      "onceTwiceMonthTitle": "Once or twice a month",
+      "onceTwiceMonthSub": "Dreams come and go",
+      "rarelyTitle": "Rarely",
+      "rarelySub": "I almost never remember what I dreamed"
+    },
+    "quizDetail": {
+      "heading": "When you remember a dream, how detailed is it?",
+      "vagueTitle": "Vague feelings",
+      "vagueSub": "More of a mood than a memory",
+      "fragmentsTitle": "Fragments",
+      "fragmentsSub": "Flashes of scenes, faces, places",
+      "partialTitle": "Partial stories",
+      "partialSub": "I remember a rough sequence of events",
+      "fullTitle": "Full narratives",
+      "fullSub": "I could describe them in detail"
+    },
+    "quizGoals": {
+      "heading": "What interests you most?",
+      "subtext": "Select all that apply",
+      "meaningsTitle": "Understanding dream meanings",
+      "meaningsSub": "Decode the symbols and messages in your dreams",
+      "lucidTitle": "Lucid dreaming",
+      "lucidSub": "Learn to become aware and take control inside your dreams",
+      "patternsTitle": "Tracking patterns",
+      "patternsSub": "See recurring themes, emotions, and symbols over time",
+      "journalingTitle": "Just journaling",
+      "journalingSub": "A private space to record my dreams before they fade"
+    },
+    "quizJournalExp": {
+      "heading": "Have you kept a dream journal before?",
+      "neverTitle": "Never",
+      "neverSub": "This is my first time",
+      "triedTitle": "Tried but didn't stick",
+      "triedSub": "Started once or twice but fell off",
+      "paperTitle": "Paper journal",
+      "paperSub": "I've used a physical notebook",
+      "appTitle": "Another app",
+      "appSub": "I've tried a different dream journal app",
+      "activeTitle": "Active journaler",
+      "activeSub": "I currently log my dreams regularly"
+    },
+    "quizRecurring": {
+      "heading": "Do you experience recurring dreams or nightmares?",
+      "recurringTitle": "Recurring dreams",
+      "recurringSub": "The same dream keeps coming back",
+      "nightmaresTitle": "Nightmares",
+      "nightmaresSub": "I have disturbing dreams that wake me up",
+      "bothTitle": "Both",
+      "bothSub": "Recurring themes and nightmares",
+      "neitherTitle": "Neither",
+      "neitherSub": "My dreams are mostly unique each time"
+    },
+    "firstDream": {
+      "heading": "Let's try it right now.",
+      "subtext": "What did you dream about last night?",
+      "placeholder": "I was in a house I didn't recognize, but it felt familiar. There was water rising slowly from the floor...",
+      "privacy": "Your dreams are private and never leave your device",
+      "writeAFewWords": "Write a few words",
+      "interpretMyDream": "Interpret My Dream",
+      "freeNote": "Your first interpretation is free"
+    },
+    "processing": {
+      "analyzing": "Analyzing your dream...",
+      "identifyingSymbols": "Identifying symbols and themes...",
+      "mappingEmotions": "Mapping emotional patterns...",
+      "buildingInterpretation": "Building your interpretation..."
+    },
+    "interpretation": {
+      "label": "Your dream interpretation",
+      "keySymbols": "Key symbols",
+      "premiumUpsell": "Your first interpretation is free. Unlock unlimited interpretations with Premium."
+    },
+    "discountPaywall": {
+      "heading": "Still thinking?",
+      "subtext": "Here's something to make the decision easier.",
+      "crossedPrice": "$39.99/year",
+      "discountPrice": "$24.99 / year",
+      "trialIncluded": "7-day free trial included",
+      "specialOffer": "ONE-TIME OFFER",
+      "claimOffer": "Claim This Offer",
+      "terms": "7 days free, then $24.99/year ($2.08/mo). Cancel anytime."
+    },
+    "continueFree": "Continue free"
   },
   "notFound": {
     "screenTitle": "Oops!",

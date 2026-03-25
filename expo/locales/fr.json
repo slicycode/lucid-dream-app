@@ -169,7 +169,8 @@
     "nightmare": "Cauchemar",
     "lucid": "Lucide",
     "observer": "Observateur",
-    "firstPerson": "Première personne"
+    "firstPerson": "Première personne",
+    "vivid": "vivide"
   },
   "newDream": {
     "title": "Nouveau rêve",
@@ -265,7 +266,102 @@
       "body2": "Nous vous enverrons un doux rappel matinal pour capturer vos rêves avant qu'ils ne s'effacent.",
       "cta": "Activer les rappels",
       "skipCta": "Plus tard"
-    }
+    },
+    "nameInput": {
+      "heading": "Comment devons-nous vous appeler ?",
+      "subtext": "Nous l'utiliserons pour personnaliser votre expérience.",
+      "placeholder": "Votre prénom",
+      "privacy": "Votre nom reste sur cet appareil"
+    },
+    "quizFrequency": {
+      "heading": "À quelle fréquence vous souvenez-vous de vos rêves ?",
+      "everyMorningTitle": "Chaque matin",
+      "everyMorningSub": "Je me réveille généralement avec un rêve frais en tête",
+      "fewTimesWeekTitle": "Quelques fois par semaine",
+      "fewTimesWeekSub": "Certains matins je me souviens, d'autres non",
+      "onceTwiceMonthTitle": "Une ou deux fois par mois",
+      "onceTwiceMonthSub": "Les rêves vont et viennent",
+      "rarelyTitle": "Rarement",
+      "rarelySub": "Je ne me souviens presque jamais de ce que j'ai rêvé"
+    },
+    "quizDetail": {
+      "heading": "Quand vous vous souvenez d'un rêve, à quel point est-il détaillé ?",
+      "vagueTitle": "Impressions vagues",
+      "vagueSub": "Plus une humeur qu'un souvenir",
+      "fragmentsTitle": "Fragments",
+      "fragmentsSub": "Des flashs de scènes, de visages, de lieux",
+      "partialTitle": "Histoires partielles",
+      "partialSub": "Je me souviens d'une séquence approximative",
+      "fullTitle": "Récits complets",
+      "fullSub": "Je pourrais les décrire en détail"
+    },
+    "quizGoals": {
+      "heading": "Qu'est-ce qui vous intéresse le plus ?",
+      "subtext": "Sélectionnez tout ce qui s'applique",
+      "meaningsTitle": "Comprendre les significations des rêves",
+      "meaningsSub": "Décoder les symboles et messages de vos rêves",
+      "lucidTitle": "Rêve lucide",
+      "lucidSub": "Apprendre à devenir conscient et prendre le contrôle dans vos rêves",
+      "patternsTitle": "Suivre les schémas",
+      "patternsSub": "Voir les thèmes, émotions et symboles récurrents au fil du temps",
+      "journalingTitle": "Juste tenir un journal",
+      "journalingSub": "Un espace privé pour noter mes rêves avant qu'ils ne s'effacent"
+    },
+    "quizJournalExp": {
+      "heading": "Avez-vous déjà tenu un journal de rêves ?",
+      "neverTitle": "Jamais",
+      "neverSub": "C'est ma première fois",
+      "triedTitle": "Essayé mais pas persisté",
+      "triedSub": "Commencé une ou deux fois mais abandonné",
+      "paperTitle": "Journal papier",
+      "paperSub": "J'ai utilisé un carnet physique",
+      "appTitle": "Une autre application",
+      "appSub": "J'ai essayé une autre application de journal de rêves",
+      "activeTitle": "Journaliste actif",
+      "activeSub": "Je note actuellement mes rêves régulièrement"
+    },
+    "quizRecurring": {
+      "heading": "Avez-vous des rêves récurrents ou des cauchemars ?",
+      "recurringTitle": "Rêves récurrents",
+      "recurringSub": "Le même rêve revient sans cesse",
+      "nightmaresTitle": "Cauchemars",
+      "nightmaresSub": "J'ai des rêves perturbants qui me réveillent",
+      "bothTitle": "Les deux",
+      "bothSub": "Thèmes récurrents et cauchemars",
+      "neitherTitle": "Aucun des deux",
+      "neitherSub": "Mes rêves sont généralement uniques à chaque fois"
+    },
+    "firstDream": {
+      "heading": "Essayons tout de suite.",
+      "subtext": "De quoi avez-vous rêvé la nuit dernière ?",
+      "placeholder": "J'étais dans une maison que je ne reconnaissais pas, mais qui me semblait familière. Il y avait de l'eau qui montait lentement du sol...",
+      "privacy": "Vos rêves sont privés et ne quittent jamais votre appareil",
+      "writeAFewWords": "Écrivez quelques mots",
+      "interpretMyDream": "Interpréter mon rêve",
+      "freeNote": "Votre première interprétation est gratuite"
+    },
+    "processing": {
+      "analyzing": "Analyse de votre rêve...",
+      "identifyingSymbols": "Identification des symboles et thèmes...",
+      "mappingEmotions": "Cartographie des schémas émotionnels...",
+      "buildingInterpretation": "Construction de votre interprétation..."
+    },
+    "interpretation": {
+      "label": "Votre interprétation de rêve",
+      "keySymbols": "Symboles clés",
+      "premiumUpsell": "Votre première interprétation est gratuite. Débloquez des interprétations illimitées avec Premium."
+    },
+    "discountPaywall": {
+      "heading": "Vous hésitez encore ?",
+      "subtext": "Voici quelque chose pour faciliter la décision.",
+      "crossedPrice": "39,99 $/an",
+      "discountPrice": "24,99 $ / an",
+      "trialIncluded": "Essai gratuit de 7 jours inclus",
+      "specialOffer": "OFFRE UNIQUE",
+      "claimOffer": "Profiter de cette offre",
+      "terms": "7 jours gratuits, puis 24,99 $/an (2,08 $/mois). Annulez à tout moment."
+    },
+    "continueFree": "Continuer gratuitement"
   },
   "notFound": {
     "screenTitle": "Oups !",

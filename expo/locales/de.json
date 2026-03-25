@@ -169,7 +169,8 @@
     "nightmare": "Albtraum",
     "lucid": "Luzide",
     "observer": "Beobachter",
-    "firstPerson": "Erste Person"
+    "firstPerson": "Erste Person",
+    "vivid": "lebhaft"
   },
   "newDream": {
     "title": "Neuer Traum",
@@ -265,7 +266,102 @@
       "body2": "Wir senden dir eine sanfte Morgenerinnerung, um deine Träume festzuhalten, bevor sie verblassen.",
       "cta": "Erinnerungen aktivieren",
       "skipCta": "Vielleicht später"
-    }
+    },
+    "nameInput": {
+      "heading": "Wie sollen wir dich nennen?",
+      "subtext": "Wir verwenden das, um dein Erlebnis zu personalisieren.",
+      "placeholder": "Dein Name",
+      "privacy": "Dein Name bleibt auf diesem Gerät"
+    },
+    "quizFrequency": {
+      "heading": "Wie oft erinnerst du dich an deine Träume?",
+      "everyMorningTitle": "Jeden Morgen",
+      "everyMorningSub": "Ich wache normalerweise mit einem frischen Traum im Kopf auf",
+      "fewTimesWeekTitle": "Ein paar Mal pro Woche",
+      "fewTimesWeekSub": "An manchen Morgen erinnere ich mich, an anderen nicht",
+      "onceTwiceMonthTitle": "Ein- oder zweimal im Monat",
+      "onceTwiceMonthSub": "Träume kommen und gehen",
+      "rarelyTitle": "Selten",
+      "rarelySub": "Ich erinnere mich fast nie an meine Träume"
+    },
+    "quizDetail": {
+      "heading": "Wenn du dich an einen Traum erinnerst, wie detailliert ist er?",
+      "vagueTitle": "Vage Gefühle",
+      "vagueSub": "Eher eine Stimmung als eine Erinnerung",
+      "fragmentsTitle": "Fragmente",
+      "fragmentsSub": "Blitze von Szenen, Gesichtern, Orten",
+      "partialTitle": "Teilweise Geschichten",
+      "partialSub": "Ich erinnere mich an eine ungefähre Abfolge von Ereignissen",
+      "fullTitle": "Vollständige Erzählungen",
+      "fullSub": "Ich könnte sie detailliert beschreiben"
+    },
+    "quizGoals": {
+      "heading": "Was interessiert dich am meisten?",
+      "subtext": "Wähle alles Zutreffende aus",
+      "meaningsTitle": "Traumbedeutungen verstehen",
+      "meaningsSub": "Entschlüssle die Symbole und Botschaften deiner Träume",
+      "lucidTitle": "Luzides Träumen",
+      "lucidSub": "Lerne, im Traum bewusst zu werden und die Kontrolle zu übernehmen",
+      "patternsTitle": "Muster verfolgen",
+      "patternsSub": "Erkenne wiederkehrende Themen, Emotionen und Symbole im Laufe der Zeit",
+      "journalingTitle": "Einfach Tagebuch führen",
+      "journalingSub": "Ein privater Raum, um meine Träume festzuhalten, bevor sie verblassen"
+    },
+    "quizJournalExp": {
+      "heading": "Hast du schon mal ein Traumtagebuch geführt?",
+      "neverTitle": "Nie",
+      "neverSub": "Das ist mein erstes Mal",
+      "triedTitle": "Versucht, aber nicht durchgehalten",
+      "triedSub": "Ein- oder zweimal angefangen, aber aufgehört",
+      "paperTitle": "Papiertagebuch",
+      "paperSub": "Ich habe ein physisches Notizbuch verwendet",
+      "appTitle": "Eine andere App",
+      "appSub": "Ich habe eine andere Traumtagebuch-App ausprobiert",
+      "activeTitle": "Aktiver Tagebuchschreiber",
+      "activeSub": "Ich notiere meine Träume derzeit regelmäßig"
+    },
+    "quizRecurring": {
+      "heading": "Hast du wiederkehrende Träume oder Albträume?",
+      "recurringTitle": "Wiederkehrende Träume",
+      "recurringSub": "Der gleiche Traum kommt immer wieder",
+      "nightmaresTitle": "Albträume",
+      "nightmaresSub": "Ich habe verstörende Träume, die mich aufwecken",
+      "bothTitle": "Beides",
+      "bothSub": "Wiederkehrende Themen und Albträume",
+      "neitherTitle": "Keines von beiden",
+      "neitherSub": "Meine Träume sind meistens einzigartig"
+    },
+    "firstDream": {
+      "heading": "Probieren wir es gleich aus.",
+      "subtext": "Wovon hast du letzte Nacht geträumt?",
+      "placeholder": "Ich war in einem Haus, das ich nicht erkannte, aber es fühlte sich vertraut an. Wasser stieg langsam vom Boden auf...",
+      "privacy": "Deine Träume sind privat und verlassen nie dein Gerät",
+      "writeAFewWords": "Schreibe ein paar Worte",
+      "interpretMyDream": "Meinen Traum deuten",
+      "freeNote": "Deine erste Deutung ist kostenlos"
+    },
+    "processing": {
+      "analyzing": "Dein Traum wird analysiert...",
+      "identifyingSymbols": "Symbole und Themen werden identifiziert...",
+      "mappingEmotions": "Emotionale Muster werden erfasst...",
+      "buildingInterpretation": "Deine Deutung wird erstellt..."
+    },
+    "interpretation": {
+      "label": "Deine Traumdeutung",
+      "keySymbols": "Schlüsselsymbole",
+      "premiumUpsell": "Deine erste Deutung ist kostenlos. Schalte unbegrenzte Deutungen mit Premium frei."
+    },
+    "discountPaywall": {
+      "heading": "Noch am Überlegen?",
+      "subtext": "Hier ist etwas, das die Entscheidung erleichtert.",
+      "crossedPrice": "39,99 $/Jahr",
+      "discountPrice": "24,99 $ / Jahr",
+      "trialIncluded": "7 Tage kostenlos testen inklusive",
+      "specialOffer": "EINMALIGES ANGEBOT",
+      "claimOffer": "Angebot sichern",
+      "terms": "7 Tage kostenlos, dann 24,99 $/Jahr (2,08 $/Monat). Jederzeit kündbar."
+    },
+    "continueFree": "Kostenlos fortfahren"
   },
   "notFound": {
     "screenTitle": "Ups!",

@@ -169,7 +169,8 @@
     "nightmare": "Pesadelo",
     "lucid": "Lúcido",
     "observer": "Observador",
-    "firstPerson": "Primeira pessoa"
+    "firstPerson": "Primeira pessoa",
+    "vivid": "vívido"
   },
   "newDream": {
     "title": "Novo sonho",
@@ -262,10 +263,105 @@
     "notifications": {
       "title": "Nunca mais perca um sonho",
       "body1": "Escrever no diário em 5 minutos após acordar triplica a lembrança dos sonhos.",
-      "body2": "Enviaremos um lembrete matinal suave para ajudá-lo a capturar seus sonhos antes que desapareçam.",
+      "body2": "Enviaremos um lembrete matinal gentil para ajudá-lo a capturar seus sonhos antes que desapareçam.",
       "cta": "Ativar lembretes",
       "skipCta": "Talvez depois"
-    }
+    },
+    "nameInput": {
+      "heading": "Como devemos te chamar?",
+      "subtext": "Usaremos isso para personalizar sua experiência.",
+      "placeholder": "Seu nome",
+      "privacy": "Seu nome fica neste dispositivo"
+    },
+    "quizFrequency": {
+      "heading": "Com que frequência você se lembra dos seus sonhos?",
+      "everyMorningTitle": "Toda manhã",
+      "everyMorningSub": "Geralmente acordo com um sonho fresco na mente",
+      "fewTimesWeekTitle": "Algumas vezes por semana",
+      "fewTimesWeekSub": "Algumas manhãs eu lembro, outras não",
+      "onceTwiceMonthTitle": "Uma ou duas vezes por mês",
+      "onceTwiceMonthSub": "Os sonhos vêm e vão",
+      "rarelyTitle": "Raramente",
+      "rarelySub": "Quase nunca me lembro do que sonhei"
+    },
+    "quizDetail": {
+      "heading": "Quando você se lembra de um sonho, quão detalhado ele é?",
+      "vagueTitle": "Sensações vagas",
+      "vagueSub": "Mais um humor do que uma memória",
+      "fragmentsTitle": "Fragmentos",
+      "fragmentsSub": "Flashes de cenas, rostos, lugares",
+      "partialTitle": "Histórias parciais",
+      "partialSub": "Lembro de uma sequência aproximada de eventos",
+      "fullTitle": "Narrativas completas",
+      "fullSub": "Poderia descrevê-los em detalhes"
+    },
+    "quizGoals": {
+      "heading": "O que mais te interessa?",
+      "subtext": "Selecione tudo que se aplica",
+      "meaningsTitle": "Entender os significados dos sonhos",
+      "meaningsSub": "Decodifique os símbolos e mensagens dos seus sonhos",
+      "lucidTitle": "Sonho lúcido",
+      "lucidSub": "Aprenda a se tornar consciente e assumir o controle dentro dos seus sonhos",
+      "patternsTitle": "Acompanhar padrões",
+      "patternsSub": "Veja temas, emoções e símbolos recorrentes ao longo do tempo",
+      "journalingTitle": "Apenas registrar",
+      "journalingSub": "Um espaço privado para registrar meus sonhos antes que desapareçam"
+    },
+    "quizJournalExp": {
+      "heading": "Você já manteve um diário de sonhos?",
+      "neverTitle": "Nunca",
+      "neverSub": "Esta é minha primeira vez",
+      "triedTitle": "Tentei mas não durou",
+      "triedSub": "Comecei uma ou duas vezes mas desisti",
+      "paperTitle": "Diário de papel",
+      "paperSub": "Usei um caderno físico",
+      "appTitle": "Outro aplicativo",
+      "appSub": "Experimentei outro app de diário de sonhos",
+      "activeTitle": "Praticante ativo",
+      "activeSub": "Atualmente registro meus sonhos regularmente"
+    },
+    "quizRecurring": {
+      "heading": "Você tem sonhos recorrentes ou pesadelos?",
+      "recurringTitle": "Sonhos recorrentes",
+      "recurringSub": "O mesmo sonho continua voltando",
+      "nightmaresTitle": "Pesadelos",
+      "nightmaresSub": "Tenho sonhos perturbadores que me acordam",
+      "bothTitle": "Ambos",
+      "bothSub": "Temas recorrentes e pesadelos",
+      "neitherTitle": "Nenhum",
+      "neitherSub": "Meus sonhos são geralmente únicos a cada vez"
+    },
+    "firstDream": {
+      "heading": "Vamos tentar agora mesmo.",
+      "subtext": "Com o que você sonhou ontem à noite?",
+      "placeholder": "Eu estava em uma casa que não reconhecia, mas parecia familiar. Havia água subindo lentamente do chão...",
+      "privacy": "Seus sonhos são privados e nunca saem do seu dispositivo",
+      "writeAFewWords": "Escreva algumas palavras",
+      "interpretMyDream": "Interpretar meu sonho",
+      "freeNote": "Sua primeira interpretação é gratuita"
+    },
+    "processing": {
+      "analyzing": "Analisando seu sonho...",
+      "identifyingSymbols": "Identificando símbolos e temas...",
+      "mappingEmotions": "Mapeando padrões emocionais...",
+      "buildingInterpretation": "Construindo sua interpretação..."
+    },
+    "interpretation": {
+      "label": "Sua interpretação de sonho",
+      "keySymbols": "Símbolos principais",
+      "premiumUpsell": "Sua primeira interpretação é gratuita. Desbloqueie interpretações ilimitadas com Premium."
+    },
+    "discountPaywall": {
+      "heading": "Ainda pensando?",
+      "subtext": "Aqui está algo para facilitar a decisão.",
+      "crossedPrice": "$39,99/ano",
+      "discountPrice": "$24,99 / ano",
+      "trialIncluded": "Teste gratuito de 7 dias incluído",
+      "specialOffer": "OFERTA ÚNICA",
+      "claimOffer": "Aproveitar esta oferta",
+      "terms": "7 dias grátis, depois $24,99/ano ($2,08/mês). Cancele quando quiser."
+    },
+    "continueFree": "Continuar grátis"
   },
   "notFound": {
     "screenTitle": "Ops!",

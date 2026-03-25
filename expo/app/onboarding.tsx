@@ -20,6 +20,7 @@ import * as StoreReview from 'expo-store-review';
 import { useRouter } from 'expo-router';
 import { Bell, ChevronLeft, Lock, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Animated,
   KeyboardAvoidingView,
@@ -34,6 +35,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OnboardingScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const store = useOnboardingStore();
@@ -118,9 +120,6 @@ export default function OnboardingScreen() {
   }, [step, pulseAnim, progressAnim, fadeAnim]);
 
   useEffect(() => {
-    if (step === 12) {
-      void StoreReview.requestReview();
-    }
     if ((step === 13 || step === 14) && !monthlyPackage && !annualPackage) {
       void loadOfferings();
     }
@@ -251,13 +250,14 @@ export default function OnboardingScreen() {
       case 1: return renderNameInput();
       case 2: return (
         <QuizScreen
+          key="frequency"
           progress={{ current: 1, total: 5 }}
-          heading="How often do you remember your dreams?"
+          heading={t('onboarding.quizFrequency.heading')}
           options={[
-            { key: 'every_morning', title: 'Every morning', sub: 'I usually wake up with a dream fresh in my mind' },
-            { key: 'few_times_week', title: 'A few times a week', sub: "Some mornings I remember, some I don't" },
-            { key: 'once_twice_month', title: 'Once or twice a month', sub: 'Dreams come and go' },
-            { key: 'rarely', title: 'Rarely', sub: 'I almost never remember what I dreamed' },
+            { key: 'every_morning', title: t('onboarding.quizFrequency.everyMorningTitle'), sub: t('onboarding.quizFrequency.everyMorningSub') },
+            { key: 'few_times_week', title: t('onboarding.quizFrequency.fewTimesWeekTitle'), sub: t('onboarding.quizFrequency.fewTimesWeekSub') },
+            { key: 'once_twice_month', title: t('onboarding.quizFrequency.onceTwiceMonthTitle'), sub: t('onboarding.quizFrequency.onceTwiceMonthSub') },
+            { key: 'rarely', title: t('onboarding.quizFrequency.rarelyTitle'), sub: t('onboarding.quizFrequency.rarelySub') },
           ]}
           selected={localFrequency}
           onSelect={setLocalFrequency}
@@ -267,13 +267,14 @@ export default function OnboardingScreen() {
       );
       case 3: return (
         <QuizScreen
+          key="detail"
           progress={{ current: 2, total: 5 }}
-          heading="When you remember a dream, how detailed is it?"
+          heading={t('onboarding.quizDetail.heading')}
           options={[
-            { key: 'vague', title: 'Vague feelings', sub: 'More of a mood than a memory' },
-            { key: 'fragments', title: 'Fragments', sub: 'Flashes of scenes, faces, places' },
-            { key: 'partial', title: 'Partial stories', sub: 'I remember a rough sequence of events' },
-            { key: 'full', title: 'Full narratives', sub: 'I could describe them in detail' },
+            { key: 'vague', title: t('onboarding.quizDetail.vagueTitle'), sub: t('onboarding.quizDetail.vagueSub') },
+            { key: 'fragments', title: t('onboarding.quizDetail.fragmentsTitle'), sub: t('onboarding.quizDetail.fragmentsSub') },
+            { key: 'partial', title: t('onboarding.quizDetail.partialTitle'), sub: t('onboarding.quizDetail.partialSub') },
+            { key: 'full', title: t('onboarding.quizDetail.fullTitle'), sub: t('onboarding.quizDetail.fullSub') },
           ]}
           selected={localDetail}
           onSelect={setLocalDetail}
@@ -283,14 +284,15 @@ export default function OnboardingScreen() {
       );
       case 4: return (
         <QuizScreen
+          key="goals"
           progress={{ current: 3, total: 5 }}
-          heading="What interests you most?"
-          subtext="Select all that apply"
+          heading={t('onboarding.quizGoals.heading')}
+          subtext={t('onboarding.quizGoals.subtext')}
           options={[
-            { key: 'meanings', title: 'Understanding dream meanings', sub: 'Decode the symbols and messages in your dreams' },
-            { key: 'lucid', title: 'Lucid dreaming', sub: 'Learn to become aware and take control inside your dreams' },
-            { key: 'patterns', title: 'Tracking patterns', sub: 'See recurring themes, emotions, and symbols over time' },
-            { key: 'journaling', title: 'Just journaling', sub: 'A private space to record my dreams before they fade' },
+            { key: 'meanings', title: t('onboarding.quizGoals.meaningsTitle'), sub: t('onboarding.quizGoals.meaningsSub') },
+            { key: 'lucid', title: t('onboarding.quizGoals.lucidTitle'), sub: t('onboarding.quizGoals.lucidSub') },
+            { key: 'patterns', title: t('onboarding.quizGoals.patternsTitle'), sub: t('onboarding.quizGoals.patternsSub') },
+            { key: 'journaling', title: t('onboarding.quizGoals.journalingTitle'), sub: t('onboarding.quizGoals.journalingSub') },
           ]}
           selected={localGoals}
           onSelect={(key) => toggleGoal(key)}
@@ -302,14 +304,15 @@ export default function OnboardingScreen() {
       case 5: return <PainPointScreen goNext={goNext} />;
       case 6: return (
         <QuizScreen
+          key="journalExp"
           progress={{ current: 4, total: 5 }}
-          heading="Have you kept a dream journal before?"
+          heading={t('onboarding.quizJournalExp.heading')}
           options={[
-            { key: 'never', title: 'Never', sub: 'This is my first time' },
-            { key: 'tried', title: "Tried but didn't stick", sub: 'Started once or twice but fell off' },
-            { key: 'paper', title: 'Paper journal', sub: "I've used a physical notebook" },
-            { key: 'app', title: 'Another app', sub: "I've tried a different dream journal app" },
-            { key: 'active', title: 'Active journaler', sub: 'I currently log my dreams regularly' },
+            { key: 'never', title: t('onboarding.quizJournalExp.neverTitle'), sub: t('onboarding.quizJournalExp.neverSub') },
+            { key: 'tried', title: t('onboarding.quizJournalExp.triedTitle'), sub: t('onboarding.quizJournalExp.triedSub') },
+            { key: 'paper', title: t('onboarding.quizJournalExp.paperTitle'), sub: t('onboarding.quizJournalExp.paperSub') },
+            { key: 'app', title: t('onboarding.quizJournalExp.appTitle'), sub: t('onboarding.quizJournalExp.appSub') },
+            { key: 'active', title: t('onboarding.quizJournalExp.activeTitle'), sub: t('onboarding.quizJournalExp.activeSub') },
           ]}
           selected={localJournalExp}
           onSelect={setLocalJournalExp}
@@ -319,13 +322,14 @@ export default function OnboardingScreen() {
       );
       case 7: return (
         <QuizScreen
+          key="recurring"
           progress={{ current: 5, total: 5 }}
-          heading="Do you experience recurring dreams or nightmares?"
+          heading={t('onboarding.quizRecurring.heading')}
           options={[
-            { key: 'recurring', title: 'Recurring dreams', sub: 'The same dream keeps coming back' },
-            { key: 'nightmares', title: 'Nightmares', sub: 'I have disturbing dreams that wake me up' },
-            { key: 'both', title: 'Both', sub: 'Recurring themes and nightmares' },
-            { key: 'neither', title: 'Neither', sub: 'My dreams are mostly unique each time' },
+            { key: 'recurring', title: t('onboarding.quizRecurring.recurringTitle'), sub: t('onboarding.quizRecurring.recurringSub') },
+            { key: 'nightmares', title: t('onboarding.quizRecurring.nightmaresTitle'), sub: t('onboarding.quizRecurring.nightmaresSub') },
+            { key: 'both', title: t('onboarding.quizRecurring.bothTitle'), sub: t('onboarding.quizRecurring.bothSub') },
+            { key: 'neither', title: t('onboarding.quizRecurring.neitherTitle'), sub: t('onboarding.quizRecurring.neitherSub') },
           ]}
           selected={localRecurring}
           onSelect={setLocalRecurring}
@@ -347,14 +351,14 @@ export default function OnboardingScreen() {
   const renderNameInput = () => (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top + 44}>
       <View style={styles.stepContent}>
-        <Text style={styles.stepHeading}>What should we call you?</Text>
-        <Text style={styles.stepSubtext}>We'll use this to personalize your experience.</Text>
+        <Text style={styles.stepHeading}>{t('onboarding.nameInput.heading')}</Text>
+        <Text style={styles.stepSubtext}>{t('onboarding.nameInput.subtext')}</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.textInput}
             value={localName}
-            onChangeText={(t) => setLocalName(t.slice(0, 20))}
-            placeholder="Your name"
+            onChangeText={(v) => setLocalName(v.slice(0, 20))}
+            placeholder={t('onboarding.nameInput.placeholder')}
             placeholderTextColor={colors.textMuted}
             autoFocus
             testID="name-input"
@@ -363,11 +367,11 @@ export default function OnboardingScreen() {
         </View>
         <View style={styles.privacyRow}>
           <Lock size={12} color={colors.textMuted} />
-          <Text style={styles.privacySmall}>Your name stays on this device</Text>
+          <Text style={styles.privacySmall}>{t('onboarding.nameInput.privacy')}</Text>
         </View>
       </View>
       <View style={styles.bottomCta}>
-        <OnboardingButton title="Continue" onPress={goNext} disabled={localName.trim().length === 0} />
+        <OnboardingButton title={t('common.continue')} onPress={goNext} disabled={localName.trim().length === 0} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -376,13 +380,13 @@ export default function OnboardingScreen() {
   const renderFirstDream = () => (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top + 44}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <Text style={styles.stepHeading}>Let's try it right now.</Text>
-        <Text style={styles.stepSubtext}>What did you dream about last night?</Text>
+        <Text style={styles.stepHeading}>{t('onboarding.firstDream.heading')}</Text>
+        <Text style={styles.stepSubtext}>{t('onboarding.firstDream.subtext')}</Text>
         <TextInput
           style={styles.dreamInput}
           value={localDreamText}
           onChangeText={setLocalDreamText}
-          placeholder="I was in a house I didn't recognize, but it felt familiar. There was water rising slowly from the floor..."
+          placeholder={t('onboarding.firstDream.placeholder')}
           placeholderTextColor={colors.textMuted}
           multiline
           textAlignVertical="top"
@@ -391,17 +395,17 @@ export default function OnboardingScreen() {
         />
         <View style={styles.privacyRow}>
           <Lock size={12} color={colors.textMuted} />
-          <Text style={styles.privacySmall}>Your dreams are private and never leave your device</Text>
+          <Text style={styles.privacySmall}>{t('onboarding.firstDream.privacy')}</Text>
         </View>
       </ScrollView>
       <View style={styles.bottomCta}>
         <OnboardingButton
-          title={localDreamText.length < 20 ? "Write a few words" : "Interpret My Dream"}
+          title={localDreamText.length < 20 ? t('onboarding.firstDream.writeAFewWords') : t('onboarding.firstDream.interpretMyDream')}
           variant="accent"
           onPress={goNext}
           disabled={localDreamText.length < 20}
         />
-        <Text style={styles.freeTrialNote}>Your first interpretation is free</Text>
+        <Text style={styles.freeTrialNote}>{t('onboarding.firstDream.freeNote')}</Text>
       </View>
     </KeyboardAvoidingView>
   );
@@ -415,7 +419,7 @@ export default function OnboardingScreen() {
           <GlassAsset source={glassAssets.eye} size={120} />
         </Animated.View>
         <FlowingText
-          text="Analyzing your dream..."
+          text={t('onboarding.processing.analyzing')}
           style={styles.processingTitle}
           wordDelay={80}
           initialDelay={100}
@@ -423,19 +427,19 @@ export default function OnboardingScreen() {
         />
         <View style={styles.processingSteps}>
           {processingTexts >= 1 ? (
-            <FlowingText text="Identifying symbols and themes..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+            <FlowingText text={t('onboarding.processing.identifyingSymbols')} style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
           ) : (
-            <Text style={[styles.processingStep, { opacity: 0 }]}>Identifying symbols and themes...</Text>
+            <Text style={[styles.processingStep, { opacity: 0 }]}>{t('onboarding.processing.identifyingSymbols')}</Text>
           )}
           {processingTexts >= 2 ? (
-            <FlowingText text="Mapping emotional patterns..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+            <FlowingText text={t('onboarding.processing.mappingEmotions')} style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
           ) : (
-            <Text style={[styles.processingStep, { opacity: 0 }]}>Mapping emotional patterns...</Text>
+            <Text style={[styles.processingStep, { opacity: 0 }]}>{t('onboarding.processing.mappingEmotions')}</Text>
           )}
           {processingTexts >= 3 ? (
-            <FlowingText text="Building your interpretation..." style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
+            <FlowingText text={t('onboarding.processing.buildingInterpretation')} style={styles.processingStep} wordDelay={60} initialDelay={0} haptic />
           ) : (
-            <Text style={[styles.processingStep, { opacity: 0 }]}>Building your interpretation...</Text>
+            <Text style={[styles.processingStep, { opacity: 0 }]}>{t('onboarding.processing.buildingInterpretation')}</Text>
           )}
         </View>
         <View style={styles.progressBarContainer}>
@@ -456,6 +460,9 @@ export default function OnboardingScreen() {
       spring(interpPremiumAnim, 0),
       spring(interpCtaAnim, 0),
     ]).start();
+
+    // Request review after premium upsell is visible but before CTA is tappable
+    setTimeout(() => void StoreReview.requestReview(), stagger * 3);
   }, [interpDividerAnim, interpSymbolsAnim, interpPremiumAnim, interpCtaAnim]);
 
   const interpFadeSlide = (anim: Animated.Value) => ({
@@ -466,7 +473,7 @@ export default function OnboardingScreen() {
   const renderInterpretation = () => (
     <View style={styles.flex}>
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.interpretationLabel}>Your dream interpretation</Text>
+        <Text style={styles.interpretationLabel}>{t('onboarding.interpretation.label')}</Text>
         <FlowingText
           text={matchedInterpretation.interpretation}
           style={styles.interpretationText}
@@ -478,7 +485,7 @@ export default function OnboardingScreen() {
           <View style={styles.divider} />
         </Animated.View>
         <Animated.View style={interpFadeSlide(interpSymbolsAnim)}>
-          <Text style={styles.symbolsLabel}>Key symbols</Text>
+          <Text style={styles.symbolsLabel}>{t('onboarding.interpretation.keySymbols')}</Text>
           <StaggerChildren stagger={120} initialDelay={200} style={styles.tagsRow} triggerKey={step}>
             {matchedInterpretation.symbols.map((s) => (
               <View key={s} style={styles.symbolTag}>
@@ -491,13 +498,13 @@ export default function OnboardingScreen() {
           <View style={styles.premiumCard}>
             <Lock size={14} color={colors.accent} />
             <Text style={styles.premiumCardText}>
-              Your first interpretation is free. Unlock unlimited interpretations with Premium.
+              {t('onboarding.interpretation.premiumUpsell')}
             </Text>
           </View>
         </Animated.View>
       </ScrollView>
       <Animated.View style={[styles.bottomCta, interpFadeSlide(interpCtaAnim)]}>
-        <OnboardingButton title="Continue" onPress={goNext} />
+        <OnboardingButton title={t('common.continue')} onPress={goNext} />
       </Animated.View>
     </View>
   );
@@ -505,18 +512,18 @@ export default function OnboardingScreen() {
   const trialTimelineSteps = [
     {
       icon: <Sparkles size={15} color={colors.accent} />,
-      label: 'Today',
-      desc: 'Unlock everything — unlimited interpretations, patterns, lucid dreaming tools & more.',
+      label: t('paywall.timelineToday'),
+      desc: t('paywall.timelineTodayDesc'),
     },
     {
       icon: <Bell size={15} color={colors.accent} />,
-      label: 'Day 5',
-      desc: "We'll remind you before your trial ends.",
+      label: t('paywall.timelineDay5'),
+      desc: t('paywall.timelineDay5Desc'),
     },
     {
       icon: <ShieldCheck size={15} color={colors.accent} />,
-      label: 'Day 7',
-      desc: 'Subscription begins — cancel anytime in a few taps.',
+      label: t('paywall.timelineDay7'),
+      desc: t('paywall.timelineDay7Desc'),
     },
   ];
 
@@ -536,9 +543,9 @@ export default function OnboardingScreen() {
         <GlassAsset source={glassAssets.diamond} glowIntensity={2} size={120} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
         <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginBottom: spacing.xs }]}>
-          How does your free trial work?
+          {t('paywall.genericHeading')}
         </Text>
-        <Text style={[styles.stepSubtext, { textAlign: 'center' as const, marginBottom: spacing.sm }]}>No surprises. No pressure.</Text>
+        <Text style={[styles.stepSubtext, { textAlign: 'center' as const, marginBottom: spacing.sm }]}>{t('paywall.genericSubtext')}</Text>
 
         {/* Timeline with fading accent line */}
         <View style={styles.pwTimeline}>
@@ -572,38 +579,38 @@ export default function OnboardingScreen() {
             onPress={() => { setSelectedPlan('monthly'); trackEvent('paywall_plan_selected', { plan: 'monthly', source: 'onboarding' }); }}
             activeOpacity={0.7}
           >
-            <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>POPULAR</Text></View>
-            <Text style={styles.pricingPrice}>$9.99 / mo</Text>
-            <Text style={[styles.pricingTrial, selectedPlan === 'monthly' ? { color: colors.accent } : { color: colors.textSecondary }]}>7-day free trial</Text>
+            <View style={styles.popularBadge}><Text style={styles.popularBadgeText}>{t('paywall.popular')}</Text></View>
+            <Text style={styles.pricingPrice}>{t('paywall.monthlyPrice')}</Text>
+            <Text style={[styles.pricingTrial, selectedPlan === 'monthly' ? { color: colors.accent } : { color: colors.textSecondary }]}>{t('paywall.freeTrial')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.pricingCard, selectedPlan === 'yearly' && styles.pricingCardSelected]}
             onPress={() => { setSelectedPlan('yearly'); trackEvent('paywall_plan_selected', { plan: 'yearly', source: 'onboarding' }); }}
             activeOpacity={0.7}
           >
-            <Text style={styles.pricingPrice}>$39.99 / yr</Text>
-            <Text style={styles.pricingTrial}>7-day free trial</Text>
-            <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>Save 67%</Text></View>
+            <Text style={styles.pricingPrice}>{t('paywall.yearlyPrice')}</Text>
+            <Text style={styles.pricingTrial}>{t('paywall.freeTrial')}</Text>
+            <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>{t('paywall.save67')}</Text></View>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
       <View style={styles.bottomCta}>
-        <OnboardingButton title={rcLoading ? 'Processing...' : 'Start Free Trial'} variant="accent" onPress={handlePurchase} disabled={rcLoading} />
+        <OnboardingButton title={rcLoading ? t('common.processing') : t('paywall.startFreeTrial')} variant="accent" onPress={handlePurchase} disabled={rcLoading} />
 
         <Text style={styles.paywallSmall}>
           {selectedPlan === 'monthly'
-            ? '7 days free, then $9.99/month. Cancel anytime.'
-            : '7 days free, then $39.99/year ($3.33/mo). Cancel anytime.'}
+            ? t('paywall.monthlyTerms')
+            : t('paywall.yearlyTerms')}
         </Text>
 
         <View style={styles.pwBottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
-            <Text style={styles.restoreText}>Restore Purchases</Text>
+            <Text style={styles.restoreText}>{t('paywall.restorePurchases')}</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
           <TouchableOpacity onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); goToStep(14); }}>
-            <Text style={styles.continueFreeTxt}>Continue free</Text>
+            <Text style={styles.continueFreeTxt}>{t('onboarding.continueFree')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -622,31 +629,31 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         </View>
 
-        <GlassAsset source={glassAssets.gift}  size={200} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
+        <GlassAsset source={glassAssets.gift}  size={170} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
 
-        <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginTop: spacing.sm }]}>Still thinking?</Text>
-        <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>Here's something to make the decision easier.</Text>
+        <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginTop: spacing.sm }]}>{t('onboarding.discountPaywall.heading')}</Text>
+        <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>{t('onboarding.discountPaywall.subtext')}</Text>
 
         <View style={styles.discountPriceCard}>
-          <Text style={styles.crossedPrice}>$39.99/year</Text>
-          <Text style={styles.discountPrice}>$24.99 / year</Text>
-          <Text style={styles.discountTrial}>7-day free trial included</Text>
+          <Text style={styles.crossedPrice}>{t('onboarding.discountPaywall.crossedPrice')}</Text>
+          <Text style={styles.discountPrice}>{t('onboarding.discountPaywall.discountPrice')}</Text>
+          <Text style={styles.discountTrial}>{t('onboarding.discountPaywall.trialIncluded')}</Text>
           <View style={styles.floatingBadge}>
             <View style={[styles.premiumBadge, { backgroundColor: colors.background }]}>
-              <Text style={styles.premiumBadgeText}>SPECIAL OFFER</Text>
+              <Text style={styles.premiumBadgeText}>{t('onboarding.discountPaywall.specialOffer')}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
 
       <View style={[styles.bottomCta, { position: 'relative' as const }]}>
-        <OnboardingButton title={rcLoading ? 'Processing...' : 'Claim This Offer'} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
+        <OnboardingButton title={rcLoading ? t('common.processing') : t('onboarding.discountPaywall.claimOffer')} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading} />
 
-        <Text style={styles.paywallSmall}>7 days free, then $24.99/year ($2.08/mo). Cancel anytime.</Text>
+        <Text style={styles.paywallSmall}>{t('onboarding.discountPaywall.terms')}</Text>
 
         <View style={styles.pwBottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
-            <Text style={styles.restoreText}>Restore Purchases</Text>
+            <Text style={styles.restoreText}>{t('paywall.restorePurchases')}</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
         </View>

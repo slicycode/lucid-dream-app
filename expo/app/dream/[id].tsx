@@ -301,7 +301,7 @@ export default function DreamDetailScreen() {
             {dream.vividness !== null && (
               <View style={styles.metaBadge}>
                 <Eye size={12} color={colors.textSecondary} />
-                <Text style={styles.metaText}>{dream.vividness}/5 vivid</Text>
+                <Text style={styles.metaText}>{dream.vividness}/5 {t('dreamDetail.vivid')}</Text>
               </View>
             )}
           </View>
