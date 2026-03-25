@@ -20,9 +20,13 @@ let isConfigured = false;
 export function configureRevenueCat() {
   if (isConfigured || Platform.OS === 'web') return;
 
-  Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-  Purchases.configure({ apiKey: RC_API_KEY_IOS });
-  isConfigured = true;
+  try {
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.configure({ apiKey: RC_API_KEY_IOS });
+    isConfigured = true;
+  } catch (e) {
+    console.warn('[RevenueCat] Failed to configure:', e);
+  }
 }
 
 function checkPremium(customerInfo: CustomerInfo): boolean {

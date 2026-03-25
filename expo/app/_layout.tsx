@@ -8,7 +8,7 @@ import {
   InstrumentSerif_400Regular,
   InstrumentSerif_400Regular_Italic,
 } from "@expo-google-fonts/instrument-serif";
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { useOnboardingStore } from "@/store/onboardingStore";
@@ -17,7 +17,6 @@ import { configureRevenueCat } from "@/hooks/useRevenueCat";
 import "@/services/analytics";
 
 void SplashScreen.preventAutoHideAsync();
-configureRevenueCat();
 
 const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
 if (sentryDsn && sentryDsn !== "YOUR_SENTRY_DSN") {
@@ -97,6 +96,14 @@ function RootLayout() {
     InstrumentSerif_400Regular,
     InstrumentSerif_400Regular_Italic,
   });
+
+  const revenueCatConfigured = useRef(false);
+  useEffect(() => {
+    if (!revenueCatConfigured.current) {
+      revenueCatConfigured.current = true;
+      configureRevenueCat();
+    }
+  }, []);
 
   const onLayoutReady = useCallback(async () => {
     if (fontsLoaded || fontError) {
