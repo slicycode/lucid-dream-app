@@ -662,7 +662,7 @@ export default function OnboardingScreen() {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: step === 0 ? 0 : insets.top, paddingBottom: insets.bottom }]}>
       {step !== 0 && step !== 11 && (
         <View style={styles.header}>
           {renderBackButton()}
