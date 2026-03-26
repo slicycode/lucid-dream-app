@@ -219,7 +219,9 @@
     "yearlyTerms": "7 días gratis, luego $39.99/año ($3.33/mes). Cancela en cualquier momento.",
     "restorePurchases": "Restaurar compras",
     "maybeLater": "Quizás después",
-    "processing": "Procesando..."
+    "processing": "Procesando...",
+    "termsOfUse": "Términos de uso",
+    "privacyPolicy": "Política de privacidad"
   },
   "dreamDictionary": {
     "title": "Diccionario de sueños",
@@ -365,6 +367,13 @@
       "terms": "7 días gratis, luego $24.99/año ($2.08/mes). Cancela cuando quieras."
     },
     "continueFree": "Continuar gratis"
+  },
+  "aiConsent": {
+    "title": "Interpretación de sueños con IA",
+    "body": "Para interpretar tu sueño, Lucid envía el texto de tu sueño, etiquetas de emociones y temas a Anthropic (Claude), un servicio de IA de terceros. Tus datos se procesan para generar tu interpretación pero no se almacenan permanentemente. Al continuar, consientes el envío de estos datos.",
+    "privacyLink": "Ver política de privacidad",
+    "allow": "Permitir",
+    "notNow": "Ahora no"
   },
   "notFound": {
     "screenTitle": "¡Vaya!",

@@ -219,7 +219,9 @@
     "yearlyTerms": "7日間無料、その後$39.99/年（$3.33/月）。いつでもキャンセル可能。",
     "restorePurchases": "購入を復元",
     "maybeLater": "後で",
-    "processing": "処理中..."
+    "processing": "処理中...",
+    "termsOfUse": "利用規約",
+    "privacyPolicy": "プライバシーポリシー"
   },
   "dreamDictionary": {
     "title": "夢辞典",
@@ -365,6 +367,13 @@
       "terms": "7日間無料、その後$24.99/年（$2.08/月）。いつでもキャンセル可能。"
     },
     "continueFree": "無料で続ける"
+  },
+  "aiConsent": {
+    "title": "AI夢解釈",
+    "body": "夢を解釈するために、Lucidはあなたの夢のテキスト、感情タグ、テーマをAnthropic（Claude）というサードパーティAIサービスに送信します。夢のデータは解釈を生成するために処理されますが、永久に保存されることはありません。続けることで、このデータの送信に同意したことになります。",
+    "privacyLink": "プライバシーポリシーを見る",
+    "allow": "許可する",
+    "notNow": "今はしない"
   },
   "notFound": {
     "screenTitle": "おっと！",

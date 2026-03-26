@@ -58,6 +58,15 @@ export function useRevenueCat() {
     setIsLoadingOfferings(true);
     try {
       const offeringsResult = await Purchases.getOfferings();
+
+      // Debug: log all offerings and their packages
+      console.log('[RevenueCat] All offering identifiers:', Object.keys(offeringsResult.all));
+      for (const [key, offering] of Object.entries(offeringsResult.all)) {
+        console.log(`[RevenueCat] Offering "${key}" packages:`,
+          offering.availablePackages.map((p) => `${p.identifier} (${p.packageType}) -> ${p.product.identifier}`)
+        );
+      }
+
       if (offeringsResult.current) {
         setOfferings(offeringsResult.current);
       }

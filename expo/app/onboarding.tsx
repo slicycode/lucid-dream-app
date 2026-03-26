@@ -1,5 +1,6 @@
 import { FlowingText } from '@/components/FlowingText';
 import { GlassAsset } from '@/components/GlassAsset';
+import { AIConsentModal } from '@/components/AIConsentModal';
 import { FeaturePreviewScreen } from '@/components/onboarding/FeaturePreviewScreen';
 import { NotificationScreen } from '@/components/onboarding/NotificationScreen';
 import { PainPointScreen } from '@/components/onboarding/PainPointScreen';
@@ -14,6 +15,7 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { scheduleTrialReminder } from '@/services/notifications';
 import { trackEvent, setUserProperty } from '@/services/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as StoreReview from 'expo-store-review';
@@ -24,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Animated,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -51,6 +54,8 @@ export default function OnboardingScreen() {
   const [localDreamText, setLocalDreamText] = useState(store.firstDreamText);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
   const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
+  const aiDataConsentGiven = useSettingsStore((s) => s.aiDataConsentGiven);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -402,7 +407,13 @@ export default function OnboardingScreen() {
         <OnboardingButton
           title={localDreamText.length < 20 ? t('onboarding.firstDream.writeAFewWords') : t('onboarding.firstDream.interpretMyDream')}
           variant="accent"
-          onPress={goNext}
+          onPress={() => {
+            if (!aiDataConsentGiven) {
+              setShowConsentModal(true);
+            } else {
+              goNext();
+            }
+          }}
           disabled={localDreamText.length < 20}
         />
         <Text style={styles.freeTrialNote}>{t('onboarding.firstDream.freeNote')}</Text>
@@ -613,6 +624,15 @@ export default function OnboardingScreen() {
             <Text style={styles.continueFreeTxt}>{t('onboarding.continueFree')}</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.pwBottomLinks}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.termsOfUse')}</Text>
+          </TouchableOpacity>
+          <Text style={styles.pwLinkDot}>·</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.privacyPolicy')}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -655,7 +675,15 @@ export default function OnboardingScreen() {
           <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
             <Text style={styles.restoreText}>{t('paywall.restorePurchases')}</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.pwBottomLinks}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.termsOfUse')}</Text>
+          </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.privacyPolicy')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -671,6 +699,12 @@ export default function OnboardingScreen() {
       <Animated.View style={[styles.flex, { opacity: fadeAnim, transform: [{ translateX: slideAnim }] }]}>
         {renderStep()}
       </Animated.View>
+
+      <AIConsentModal
+        visible={showConsentModal}
+        onAllow={() => { setShowConsentModal(false); goNext(); }}
+        onDecline={() => setShowConsentModal(false)}
+      />
     </View>
   );
 }
@@ -1253,5 +1287,10 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.accent,
+  },
+  legalLinkText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textDisabled,
   },
 });

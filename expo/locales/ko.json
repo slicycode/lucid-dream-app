@@ -219,7 +219,9 @@
     "yearlyTerms": "7일 무료, 이후 $39.99/년 ($3.33/월). 언제든 취소 가능.",
     "restorePurchases": "구매 복원",
     "maybeLater": "나중에",
-    "processing": "처리 중..."
+    "processing": "처리 중...",
+    "termsOfUse": "이용약관",
+    "privacyPolicy": "개인정보 처리방침"
   },
   "dreamDictionary": {
     "title": "꿈 사전",
@@ -365,6 +367,13 @@
       "terms": "7일 무료, 이후 $24.99/년 ($2.08/월). 언제든 취소 가능."
     },
     "continueFree": "무료로 계속하기"
+  },
+  "aiConsent": {
+    "title": "AI 꿈 해석",
+    "body": "꿈을 해석하기 위해 Lucid는 꿈 텍스트, 감정 태그, 주제를 제3자 AI 서비스인 Anthropic(Claude)에 전송합니다. 꿈 데이터는 해석을 생성하기 위해 처리되지만 영구적으로 저장되지 않습니다. 계속하면 이 데이터 전송에 동의하는 것입니다.",
+    "privacyLink": "개인정보 처리방침 보기",
+    "allow": "허용",
+    "notNow": "나중에"
   },
   "notFound": {
     "screenTitle": "앗!",

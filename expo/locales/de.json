@@ -219,7 +219,9 @@
     "yearlyTerms": "7 Tage kostenlos, dann 39,99 $/Jahr (3,33 $/Monat). Jederzeit kündbar.",
     "restorePurchases": "Käufe wiederherstellen",
     "maybeLater": "Vielleicht später",
-    "processing": "Verarbeitung..."
+    "processing": "Verarbeitung...",
+    "termsOfUse": "Nutzungsbedingungen",
+    "privacyPolicy": "Datenschutzerklärung"
   },
   "dreamDictionary": {
     "title": "Traumwörterbuch",
@@ -365,6 +367,13 @@
       "terms": "7 Tage kostenlos, dann 24,99 $/Jahr (2,08 $/Monat). Jederzeit kündbar."
     },
     "continueFree": "Kostenlos fortfahren"
+  },
+  "aiConsent": {
+    "title": "KI-Traumdeutung",
+    "body": "Um deinen Traum zu interpretieren, sendet Lucid deinen Traumtext, Emotions-Tags und Themen an Anthropic (Claude), einen KI-Drittanbieter. Deine Traumdaten werden verarbeitet, um deine Deutung zu erstellen, aber nicht dauerhaft gespeichert. Durch Fortfahren stimmst du dem Senden dieser Daten zu.",
+    "privacyLink": "Datenschutzerklärung anzeigen",
+    "allow": "Erlauben",
+    "notNow": "Nicht jetzt"
   },
   "notFound": {
     "screenTitle": "Ups!",

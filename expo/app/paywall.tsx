@@ -10,6 +10,7 @@ import { trackEvent } from '@/services/analytics';
 import { Bell, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -172,6 +173,15 @@ export default function PaywallScreen() {
           <Text style={styles.pwLinkDot}>·</Text>
           <TouchableOpacity onPress={dismiss}>
             <Text style={styles.linkText}>{t('paywall.maybeLater')}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.pwBottomLinks}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.termsOfUse')}</Text>
+          </TouchableOpacity>
+          <Text style={styles.pwLinkDot}>·</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.privacyPolicy')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -353,5 +363,10 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
+  },
+  legalLinkText: {
+    fontFamily: fonts.sans,
+    fontSize: typography.caption.fontSize,
+    color: colors.textDisabled,
   },
 });
