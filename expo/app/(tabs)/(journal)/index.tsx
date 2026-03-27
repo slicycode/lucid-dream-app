@@ -1,3 +1,4 @@
+import DailyInsightCard from '@/components/DailyInsightCard';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
@@ -317,6 +318,8 @@ export default function JournalScreen() {
             <Text style={styles.weekStat}>{t('journal.dreamsThisWeek', { count: weekCount })}</Text>
           )}
         </Animated.View>
+
+        <DailyInsightCard />
 
         {isDigestDay && (
           isPremium ? (
