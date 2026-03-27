@@ -16,7 +16,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen } from 'lucide-react-native';
+import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen, MessageSquare } from 'lucide-react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { useSettingsStore } from '@/store/settingsStore';
 import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import { useDreamsStore } from '@/store/dreamsStore';
@@ -467,6 +468,11 @@ export default function SettingsScreen() {
           t('settings.dreamDictionary'),
           () => router.push('/dream-dictionary' as any),
           { badge: isPremium ? undefined : t('settings.sectionPremiumBadge') }
+        )}
+        {renderNavRow(
+          <MessageSquare size={18} color={colors.textSecondary} />,
+          t('settings.giveFeedback'),
+          () => WebBrowser.openBrowserAsync('https://lucid-dream.userjot.com'),
         )}
         {renderNavRow(
           <Shield size={18} color={colors.textSecondary} />,
