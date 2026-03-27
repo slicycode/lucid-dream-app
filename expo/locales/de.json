@@ -356,16 +356,6 @@
       "keySymbols": "Schlüsselsymbole",
       "premiumUpsell": "Deine erste Deutung ist kostenlos. Schalte unbegrenzte Deutungen mit Premium frei."
     },
-    "discountPaywall": {
-      "heading": "Noch am Überlegen?",
-      "subtext": "Hier ist etwas, das die Entscheidung erleichtert.",
-      "crossedPrice": "39,99 $/Jahr",
-      "discountPrice": "24,99 $ / Jahr",
-      "trialIncluded": "7 Tage kostenlos testen inklusive",
-      "specialOffer": "EINMALIGES ANGEBOT",
-      "claimOffer": "Angebot sichern",
-      "terms": "7 Tage kostenlos, dann 24,99 $/Jahr (2,08 $/Monat). Jederzeit kündbar."
-    },
     "continueFree": "Kostenlos fortfahren"
   },
   "aiConsent": {

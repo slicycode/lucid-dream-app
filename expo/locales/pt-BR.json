@@ -356,16 +356,6 @@
       "keySymbols": "Símbolos principais",
       "premiumUpsell": "Sua primeira interpretação é gratuita. Desbloqueie interpretações ilimitadas com Premium."
     },
-    "discountPaywall": {
-      "heading": "Ainda pensando?",
-      "subtext": "Aqui está algo para facilitar a decisão.",
-      "crossedPrice": "$39,99/ano",
-      "discountPrice": "$24,99 / ano",
-      "trialIncluded": "Teste gratuito de 7 dias incluído",
-      "specialOffer": "OFERTA ÚNICA",
-      "claimOffer": "Aproveitar esta oferta",
-      "terms": "7 dias grátis, depois $24,99/ano ($2,08/mês). Cancele quando quiser."
-    },
     "continueFree": "Continuar grátis"
   },
   "aiConsent": {

@@ -356,16 +356,6 @@
       "keySymbols": "Key symbols",
       "premiumUpsell": "Your first interpretation is free. Unlock unlimited interpretations with Premium."
     },
-    "discountPaywall": {
-      "heading": "Still thinking?",
-      "subtext": "Here's something to make the decision easier.",
-      "crossedPrice": "$39.99/year",
-      "discountPrice": "$24.99 / year",
-      "trialIncluded": "7-day free trial included",
-      "specialOffer": "ONE-TIME OFFER",
-      "claimOffer": "Claim This Offer",
-      "terms": "7 days free, then $24.99/year ($2.08/mo). Cancel anytime."
-    },
     "continueFree": "Continue free"
   },
   "aiConsent": {
