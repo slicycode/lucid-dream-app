@@ -358,6 +358,16 @@
     },
     "continueFree": "無料で続ける"
   },
+  "premiumSuccess": {
+    "heading": "プレミアムへようこそ",
+    "subtext": "すべての機能が解放されました。",
+    "benefitInterpretations": "AI夢解釈が無制限",
+    "benefitPatterns": "夢のパターン検出",
+    "benefitDictionary": "夢シンボル辞典の全機能",
+    "benefitLucid": "週間AI夢ダイジェスト",
+    "ctaOnboarding": "探索を始める",
+    "ctaPaywall": "さあ始めよう"
+  },
   "aiConsent": {
     "title": "AI夢解釈",
     "body": "夢を解釈するために、Lucidはあなたの夢のテキスト、感情タグ、テーマをAnthropic（Claude）というサードパーティAIサービスに送信します。夢のデータは解釈を生成するために処理されますが、永久に保存されることはありません。続けることで、このデータの送信に同意したことになります。",

@@ -358,6 +358,16 @@
     },
     "continueFree": "Kostenlos fortfahren"
   },
+  "premiumSuccess": {
+    "heading": "Willkommen bei Premium",
+    "subtext": "Du hast das volle Traumerlebnis freigeschaltet.",
+    "benefitInterpretations": "Unbegrenzte KI-Interpretationen",
+    "benefitPatterns": "Mustererkennung in deinen Träumen",
+    "benefitDictionary": "Vollständiges Traumsymbol-Lexikon",
+    "benefitLucid": "Wöchentliche KI-Traumzusammenfassung",
+    "ctaOnboarding": "Jetzt entdecken",
+    "ctaPaywall": "Los geht's"
+  },
   "aiConsent": {
     "title": "KI-Traumdeutung",
     "body": "Um deinen Traum zu interpretieren, sendet Lucid deinen Traumtext, Emotions-Tags und Themen an Anthropic (Claude), einen KI-Drittanbieter. Deine Traumdaten werden verarbeitet, um deine Deutung zu erstellen, aber nicht dauerhaft gespeichert. Durch Fortfahren stimmst du dem Senden dieser Daten zu.",

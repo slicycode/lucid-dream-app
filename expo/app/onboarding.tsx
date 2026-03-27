@@ -1,6 +1,7 @@
 import { FlowingText } from '@/components/FlowingText';
 import { GlassAsset } from '@/components/GlassAsset';
 import { AIConsentModal } from '@/components/AIConsentModal';
+import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import { FeaturePreviewScreen } from '@/components/onboarding/FeaturePreviewScreen';
 import { NotificationScreen } from '@/components/onboarding/NotificationScreen';
 import { PainPointScreen } from '@/components/onboarding/PainPointScreen';
@@ -56,6 +57,7 @@ export default function OnboardingScreen() {
   const { monthlyPackage, annualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
   const aiDataConsentGiven = useSettingsStore((s) => s.aiDataConsentGiven);
   const [showConsentModal, setShowConsentModal] = useState(false);
+  const [showPremiumSuccess, setShowPremiumSuccess] = useState(false);
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -207,9 +209,9 @@ export default function OnboardingScreen() {
     if (success) {
       trackEvent('paywall_purchase_completed', { plan, source: 'onboarding', has_trial: true });
       void scheduleTrialReminder();
-      finishOnboarding();
+      setShowPremiumSuccess(true);
     }
-  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
+  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, loadOfferings]);
 
   const handleRestore = useCallback(async () => {
     trackEvent('paywall_restore_tapped', { source: 'onboarding' });
@@ -635,6 +637,12 @@ export default function OnboardingScreen() {
         visible={showConsentModal}
         onAllow={() => { setShowConsentModal(false); goNext(); }}
         onDecline={() => setShowConsentModal(false)}
+      />
+
+      <PremiumSuccessModal
+        visible={showPremiumSuccess}
+        onDismiss={() => { setShowPremiumSuccess(false); finishOnboarding(); }}
+        source="onboarding"
       />
     </View>
   );

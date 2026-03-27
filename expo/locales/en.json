@@ -358,6 +358,16 @@
     },
     "continueFree": "Continue free"
   },
+  "premiumSuccess": {
+    "heading": "Welcome to Premium",
+    "subtext": "You've unlocked the full dream experience.",
+    "benefitInterpretations": "Unlimited AI interpretations",
+    "benefitPatterns": "Pattern detection across your dreams",
+    "benefitDictionary": "Full dream symbol dictionary",
+    "benefitLucid": "Weekly AI dream digest",
+    "ctaOnboarding": "Start Exploring",
+    "ctaPaywall": "Let's Go"
+  },
   "aiConsent": {
     "title": "AI Dream Interpretation",
     "body": "To interpret your dream, Lucid sends your dream text, emotion tags, and themes to Anthropic (Claude), a third-party AI service. Your dream data is processed to generate your interpretation but is not permanently stored. By continuing, you consent to this data being sent.",

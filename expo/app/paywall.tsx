@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { trackEvent } from '@/services/analytics';
 import { Bell, ShieldCheck, Sparkles, X } from 'lucide-react-native';
+import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import React, { useState } from 'react';
 import {
   Linking,
@@ -25,6 +26,7 @@ export default function PaywallScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const [showSuccess, setShowSuccess] = useState(false);
   const paywallViewTracked = React.useRef(false);
   const { monthlyPackage, annualPackage, isLoading: rcLoading, purchasePackage, restorePurchases } = useRevenueCat();
   const { dreamTitle, source } = useLocalSearchParams<{ dreamTitle?: string; source?: string }>();
@@ -52,7 +54,7 @@ export default function PaywallScreen() {
     if (success) {
       trackEvent('paywall_purchase_completed', { plan, source: paywallSource, has_trial: true });
       void scheduleTrialReminder();
-      router.back();
+      setShowSuccess(true);
     }
   };
 
@@ -185,6 +187,12 @@ export default function PaywallScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      <PremiumSuccessModal
+        visible={showSuccess}
+        onDismiss={() => { setShowSuccess(false); router.back(); }}
+        source="paywall"
+      />
     </View>
   );
 }

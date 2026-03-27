@@ -18,6 +18,7 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
+import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
@@ -73,6 +74,7 @@ export default function SettingsScreen() {
   useFocusEffect(useCallback(() => { trackScreen('Settings'); }, []));
 
   const [activePicker, setActivePicker] = useState<PickerTarget>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const sheetAnim = useRef(new Animated.Value(0)).current;
 
   // Entrance animation
@@ -394,6 +396,11 @@ export default function SettingsScreen() {
               isPremium,
               settings.setIsPremium,
             )}
+            {renderNavRow(
+              <Crown size={18} color={colors.accent} />,
+              'Test Premium Success Modal',
+              () => setShowSuccessModal(true),
+            )}
           </View>
         )}
 
@@ -547,6 +554,14 @@ export default function SettingsScreen() {
           </Animated.View>
         </Pressable>
       </Modal>
+
+      {__DEV__ && (
+        <PremiumSuccessModal
+          visible={showSuccessModal}
+          onDismiss={() => setShowSuccessModal(false)}
+          source="paywall"
+        />
+      )}
     </View>
   );
 }

@@ -358,6 +358,16 @@
     },
     "continueFree": "Continuar grátis"
   },
+  "premiumSuccess": {
+    "heading": "Bem-vindo ao Premium",
+    "subtext": "Você desbloqueou a experiência completa.",
+    "benefitInterpretations": "Interpretações IA ilimitadas",
+    "benefitPatterns": "Detecção de padrões nos seus sonhos",
+    "benefitDictionary": "Dicionário completo de símbolos",
+    "benefitLucid": "Resumo semanal de sonhos com IA",
+    "ctaOnboarding": "Começar a explorar",
+    "ctaPaywall": "Vamos lá"
+  },
   "aiConsent": {
     "title": "Interpretação de sonhos com IA",
     "body": "Para interpretar seu sonho, o Lucid envia o texto do seu sonho, tags de emoções e temas para a Anthropic (Claude), um serviço de IA de terceiros. Seus dados são processados para gerar sua interpretação, mas não são armazenados permanentemente. Ao continuar, você consente com o envio desses dados.",

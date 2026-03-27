@@ -358,6 +358,16 @@
     },
     "continueFree": "Continuer gratuitement"
   },
+  "premiumSuccess": {
+    "heading": "Bienvenue dans Premium",
+    "subtext": "Vous avez débloqué l'expérience complète.",
+    "benefitInterpretations": "Interprétations IA illimitées",
+    "benefitPatterns": "Détection de motifs dans vos rêves",
+    "benefitDictionary": "Dictionnaire complet des symboles",
+    "benefitLucid": "Résumé hebdomadaire IA de vos rêves",
+    "ctaOnboarding": "Commencer à explorer",
+    "ctaPaywall": "C'est parti"
+  },
   "aiConsent": {
     "title": "Interprétation IA des rêves",
     "body": "Pour interpréter votre rêve, Lucid envoie le texte de votre rêve, vos émotions et vos thèmes à Anthropic (Claude), un service d'IA tiers. Vos données sont traitées pour générer votre interprétation mais ne sont pas stockées de manière permanente. En continuant, vous consentez à l'envoi de ces données.",
