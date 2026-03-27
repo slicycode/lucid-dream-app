@@ -31,6 +31,7 @@ interface SettingsState {
   premiumInterpretationsUsedToday: number;
   lastPremiumInterpretationDate: string;
   customEmotionTags: string[];
+  aiDataConsentGiven: boolean;
 
   setMorningReminder: (enabled: boolean) => void;
   setMorningReminderTime: (time: string) => void;
@@ -40,6 +41,7 @@ interface SettingsState {
   setWbtbTime: (time: string) => void;
   setIsPremium: (val: boolean) => void;
   setCustomEmotionTags: (tags: string[]) => void;
+  setAiDataConsentGiven: (val: boolean) => void;
   useInterpretation: () => boolean;
   refundInterpretation: () => void;
   canInterpret: () => boolean;
@@ -60,6 +62,7 @@ export const useSettingsStore = create<SettingsState>()(
       premiumInterpretationsUsedToday: 0,
       lastPremiumInterpretationDate: '',
       customEmotionTags: DEFAULT_EMOTION_TAGS,
+      aiDataConsentGiven: false,
 
       setMorningReminder: (morningReminderEnabled) => set({ morningReminderEnabled }),
       setMorningReminderTime: (morningReminderTime) => set({ morningReminderTime }),
@@ -69,6 +72,7 @@ export const useSettingsStore = create<SettingsState>()(
       setWbtbTime: (wbtbTime) => set({ wbtbTime }),
       setIsPremium: (isPremium) => set({ isPremium }),
       setCustomEmotionTags: (customEmotionTags) => set({ customEmotionTags }),
+      setAiDataConsentGiven: (aiDataConsentGiven) => set({ aiDataConsentGiven }),
 
       canInterpret: () => {
         const state = get();

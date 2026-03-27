@@ -21,6 +21,7 @@ import { colors, fonts, typography, spacing, radii, sizes } from '@/constants/th
 import { trackEvent } from '@/services/analytics';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
+import { AIConsentModal } from '@/components/AIConsentModal';
 import { useTranslation } from 'react-i18next';
 
 function highlightSymbols(text: string, symbols: string[]) {
@@ -58,6 +59,9 @@ export default function DreamDetailScreen() {
   const refundInterpretation = useSettingsStore((s) => s.refundInterpretation);
 
   const dream = useMemo(() => dreams.find((d) => d.id === id), [dreams, id]);
+
+  const aiDataConsentGiven = useSettingsStore((s) => s.aiDataConsentGiven);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const [isInterpreting, setIsInterpreting] = useState(false);
   const [interpretationVisible, setInterpretationVisible] = useState(false);
@@ -189,7 +193,7 @@ export default function DreamDetailScreen() {
     }
   }, [dream, updateDream, pulseAnim, canInterpret, useInterpretation, refundInterpretation, handleUpgrade]);
 
-  const handleInterpret = useCallback(() => {
+  const proceedWithInterpret = useCallback(() => {
     if (dream?.interpretation) {
       Alert.alert(
         t('dreamDetail.reinterpretTitle'),
@@ -203,6 +207,14 @@ export default function DreamDetailScreen() {
       void doInterpret();
     }
   }, [dream, isPremium, doInterpret]);
+
+  const handleInterpret = useCallback(() => {
+    if (!aiDataConsentGiven) {
+      setShowConsentModal(true);
+      return;
+    }
+    proceedWithInterpret();
+  }, [aiDataConsentGiven, proceedWithInterpret]);
 
   const handleMenu = useCallback(() => {
     Alert.alert(
@@ -402,6 +414,12 @@ export default function DreamDetailScreen() {
         )}
         </Animated.View>
       </ScrollView>
+
+      <AIConsentModal
+        visible={showConsentModal}
+        onAllow={() => { setShowConsentModal(false); proceedWithInterpret(); }}
+        onDecline={() => setShowConsentModal(false)}
+      />
     </View>
   );
 }

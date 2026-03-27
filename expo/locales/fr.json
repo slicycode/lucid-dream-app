@@ -219,7 +219,9 @@
     "yearlyTerms": "7 jours gratuits, puis 39,99 $/an (3,33 $/mois). Annulez à tout moment.",
     "restorePurchases": "Restaurer les achats",
     "maybeLater": "Plus tard",
-    "processing": "En cours..."
+    "processing": "En cours...",
+    "termsOfUse": "Conditions d'utilisation",
+    "privacyPolicy": "Politique de confidentialité"
   },
   "dreamDictionary": {
     "title": "Dictionnaire des rêves",
@@ -354,17 +356,14 @@
       "keySymbols": "Symboles clés",
       "premiumUpsell": "Votre première interprétation est gratuite. Débloquez des interprétations illimitées avec Premium."
     },
-    "discountPaywall": {
-      "heading": "Vous hésitez encore ?",
-      "subtext": "Voici quelque chose pour faciliter la décision.",
-      "crossedPrice": "39,99 $/an",
-      "discountPrice": "24,99 $ / an",
-      "trialIncluded": "Essai gratuit de 7 jours inclus",
-      "specialOffer": "OFFRE UNIQUE",
-      "claimOffer": "Profiter de cette offre",
-      "terms": "7 jours gratuits, puis 24,99 $/an (2,08 $/mois). Annulez à tout moment."
-    },
     "continueFree": "Continuer gratuitement"
+  },
+  "aiConsent": {
+    "title": "Interprétation IA des rêves",
+    "body": "Pour interpréter votre rêve, Lucid envoie le texte de votre rêve, vos émotions et vos thèmes à Anthropic (Claude), un service d'IA tiers. Vos données sont traitées pour générer votre interprétation mais ne sont pas stockées de manière permanente. En continuant, vous consentez à l'envoi de ces données.",
+    "privacyLink": "Voir la politique de confidentialité",
+    "allow": "Autoriser",
+    "notNow": "Pas maintenant"
   },
   "notFound": {
     "screenTitle": "Oups !",

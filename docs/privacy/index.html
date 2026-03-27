@@ -41,7 +41,7 @@
   </nav>
 
   <h1>Privacy Policy</h1>
-  <p class="last-updated">Last updated: March 23, 2026</p>
+  <p class="last-updated">Last updated: March 26, 2026</p>
 
   <h2>What Lucid Does</h2>
   <p><span class="app-name">Lucid</span> is a dream journal app with AI-powered dream interpretation. It is designed with privacy as a core principle.</p>
@@ -68,11 +68,18 @@
   <p>We collect anonymous crash reports to identify and fix technical issues. Crash data includes device type, operating system version, and technical error information. It does not include dream content or any personally identifiable information.</p>
 
   <h3>Anthropic API (AI Dream Interpretation)</h3>
-  <p>When you tap "Interpret" on a dream, the text of that dream is sent to Anthropic's API (Claude) for analysis. This is the only time dream content leaves your device. Anthropic processes the request and returns an interpretation. We do not store your dream content on any server — the API call is stateless. Refer to Anthropic's privacy policy for details on how they handle API inputs.</p>
+  <p>When you request a dream interpretation, the following data is sent to Anthropic's Claude API:</p>
+  <ul>
+    <li><strong>Dream text</strong> — the content of the dream you wrote</li>
+    <li><strong>Emotion tags</strong> — the emotion you selected for the dream</li>
+    <li><strong>Dream themes</strong> — any themes you tagged (e.g., Flying, Water)</li>
+  </ul>
+  <p>This data is sent <strong>only when you explicitly request an interpretation</strong> by tapping the "Interpret" button. Before any data is sent for the first time, the app asks for your explicit consent via an in-app prompt.</p>
+  <p>Anthropic processes this data solely to generate your dream interpretation. We do not store your dream content on any external server — the API call is stateless. Anthropic's data handling is governed by their <a href="https://www.anthropic.com/privacy" target="_blank">privacy policy</a> and <a href="https://www.anthropic.com/policies/terms" target="_blank">terms of service</a>.</p>
 
   <h2>Data NOT Collected</h2>
   <ul>
-    <li>We do not collect your name, email, or contact information</li>
+    <li>We do not collect or transmit your name, email, or contact information to any server</li>
     <li>We do not collect location data</li>
     <li>We do not use advertising SDKs or display ads</li>
     <li>We do not sell, share, or transfer personal data to third parties for advertising purposes</li>
@@ -81,9 +88,7 @@
 
   <h2>Your Controls</h2>
   <ul>
-    <li><strong>Delete all data:</strong> Use "Reset All Data" in Settings to permanently erase everything</li>
-    <li><strong>Disable analytics:</strong> You can disable usage analytics in your device's Settings (App Tracking Transparency)</li>
-    <li><strong>Uninstall:</strong> Removing the app deletes all locally stored data</li>
+    <li><strong>Delete all data:</strong> Removing the app from your device permanently deletes all locally stored data, including your dreams, settings, and preferences</li>
   </ul>
 
   <h2>Children's Privacy</h2>

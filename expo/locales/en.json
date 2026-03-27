@@ -219,7 +219,9 @@
     "yearlyTerms": "7 days free, then $39.99/year ($3.33/mo). Cancel anytime.",
     "restorePurchases": "Restore Purchases",
     "maybeLater": "Maybe Later",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "termsOfUse": "Terms of Use",
+    "privacyPolicy": "Privacy Policy"
   },
   "dreamDictionary": {
     "title": "Dream Dictionary",
@@ -354,17 +356,14 @@
       "keySymbols": "Key symbols",
       "premiumUpsell": "Your first interpretation is free. Unlock unlimited interpretations with Premium."
     },
-    "discountPaywall": {
-      "heading": "Still thinking?",
-      "subtext": "Here's something to make the decision easier.",
-      "crossedPrice": "$39.99/year",
-      "discountPrice": "$24.99 / year",
-      "trialIncluded": "7-day free trial included",
-      "specialOffer": "ONE-TIME OFFER",
-      "claimOffer": "Claim This Offer",
-      "terms": "7 days free, then $24.99/year ($2.08/mo). Cancel anytime."
-    },
     "continueFree": "Continue free"
+  },
+  "aiConsent": {
+    "title": "AI Dream Interpretation",
+    "body": "To interpret your dream, Lucid sends your dream text, emotion tags, and themes to Anthropic (Claude), a third-party AI service. Your dream data is processed to generate your interpretation but is not permanently stored. By continuing, you consent to this data being sent.",
+    "privacyLink": "View Privacy Policy",
+    "allow": "Allow",
+    "notNow": "Not Now"
   },
   "notFound": {
     "screenTitle": "Oops!",
