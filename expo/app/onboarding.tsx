@@ -1,5 +1,6 @@
 import { FlowingText } from '@/components/FlowingText';
 import { GlassAsset } from '@/components/GlassAsset';
+import { AIConsentModal } from '@/components/AIConsentModal';
 import { FeaturePreviewScreen } from '@/components/onboarding/FeaturePreviewScreen';
 import { NotificationScreen } from '@/components/onboarding/NotificationScreen';
 import { PainPointScreen } from '@/components/onboarding/PainPointScreen';
@@ -14,6 +15,7 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { scheduleTrialReminder } from '@/services/notifications';
 import { trackEvent, setUserProperty } from '@/services/analytics';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as StoreReview from 'expo-store-review';
@@ -24,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Animated,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -50,7 +53,9 @@ export default function OnboardingScreen() {
   const [localRecurring, setLocalRecurring] = useState(store.recurringDreams);
   const [localDreamText, setLocalDreamText] = useState(store.firstDreamText);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
-  const { monthlyPackage, annualPackage, discountAnnualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
+  const { monthlyPackage, annualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
+  const aiDataConsentGiven = useSettingsStore((s) => s.aiDataConsentGiven);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -84,7 +89,6 @@ export default function OnboardingScreen() {
       11: 'onboarding_processing_viewed',
       12: 'onboarding_interpretation_viewed',
       13: 'onboarding_paywall_viewed',
-      14: 'onboarding_discount_paywall_viewed',
     };
     const eventName = screenEvents[step];
     if (eventName) trackEvent(eventName);
@@ -207,21 +211,6 @@ export default function OnboardingScreen() {
     }
   }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
 
-  const handleDiscountPurchase = useCallback(async () => {
-    trackEvent('paywall_purchase_started', { plan: 'yearly_discount', source: 'discount' });
-    const pkg = discountAnnualPackage ?? annualPackage;
-    if (!pkg) {
-      await loadOfferings();
-      return;
-    }
-    const success = await purchasePackage(pkg);
-    if (success) {
-      trackEvent('paywall_purchase_completed', { plan: 'yearly_discount', source: 'discount', has_trial: true });
-      void scheduleTrialReminder();
-      finishOnboarding();
-    }
-  }, [discountAnnualPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
-
   const handleRestore = useCallback(async () => {
     trackEvent('paywall_restore_tapped', { source: 'onboarding' });
     const restored = await restorePurchases();
@@ -343,7 +332,6 @@ export default function OnboardingScreen() {
       case 11: return renderProcessing();
       case 12: return renderInterpretation();
       case 13: return renderPaywall();
-      case 14: return renderDiscountedPaywall();
       default: return null;
     }
   };
@@ -402,7 +390,13 @@ export default function OnboardingScreen() {
         <OnboardingButton
           title={localDreamText.length < 20 ? t('onboarding.firstDream.writeAFewWords') : t('onboarding.firstDream.interpretMyDream')}
           variant="accent"
-          onPress={goNext}
+          onPress={() => {
+            if (!aiDataConsentGiven) {
+              setShowConsentModal(true);
+            } else {
+              goNext();
+            }
+          }}
           disabled={localDreamText.length < 20}
         />
         <Text style={styles.freeTrialNote}>{t('onboarding.firstDream.freeNote')}</Text>
@@ -532,7 +526,7 @@ export default function OnboardingScreen() {
       <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.paywallHeader}>
           <TouchableOpacity
-            onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); goToStep(14); }}
+            onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); finishOnboarding(); }}
             style={styles.dismissButton}
             testID="paywall-dismiss"
           >
@@ -609,53 +603,18 @@ export default function OnboardingScreen() {
             <Text style={styles.restoreText}>{t('paywall.restorePurchases')}</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
-          <TouchableOpacity onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); goToStep(14); }}>
+          <TouchableOpacity onPress={() => { trackEvent('paywall_dismissed', { source: 'onboarding' }); finishOnboarding(); }}>
             <Text style={styles.continueFreeTxt}>{t('onboarding.continueFree')}</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
-  );
-
-  const renderDiscountedPaywall = () => (
-    <View style={styles.flex}>
-      <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.paywallHeader}>
-          <TouchableOpacity
-            onPress={() => { trackEvent('paywall_dismissed', { source: 'discount' }); finishOnboarding(); }}
-            style={styles.dismissButton}
-          >
-            <X size={20} color={colors.textMuted} />
-          </TouchableOpacity>
-        </View>
-
-        <GlassAsset source={glassAssets.gift}  size={170} style={{ alignSelf: 'center', marginBottom: spacing.sm }} />
-
-        <Text style={[styles.stepHeading, { textAlign: 'center' as const, marginTop: spacing.sm }]}>{t('onboarding.discountPaywall.heading')}</Text>
-        <Text style={[styles.stepSubtext, { textAlign: 'center' as const }]}>{t('onboarding.discountPaywall.subtext')}</Text>
-
-        <View style={styles.discountPriceCard}>
-          <Text style={styles.crossedPrice}>{t('onboarding.discountPaywall.crossedPrice')}</Text>
-          <Text style={styles.discountPrice}>{t('onboarding.discountPaywall.discountPrice')}</Text>
-          <Text style={styles.discountTrial}>{t('onboarding.discountPaywall.trialIncluded')}</Text>
-          <View style={styles.floatingBadge}>
-            <View style={[styles.premiumBadge, { backgroundColor: colors.background }]}>
-              <Text style={styles.premiumBadgeText}>{t('onboarding.discountPaywall.specialOffer')}</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={[styles.bottomCta, { position: 'relative' as const }]}>
-        <OnboardingButton title={isLoadingOfferings ? t('common.loading') : rcLoading ? t('common.processing') : t('onboarding.discountPaywall.claimOffer')} variant="accent" onPress={handleDiscountPurchase} disabled={rcLoading || isLoadingOfferings} />
-
-        <Text style={styles.paywallSmall}>{t('onboarding.discountPaywall.terms')}</Text>
-
         <View style={styles.pwBottomLinks}>
-          <TouchableOpacity onPress={handleRestore} disabled={rcLoading}>
-            <Text style={styles.restoreText}>{t('paywall.restorePurchases')}</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/terms/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.termsOfUse')}</Text>
           </TouchableOpacity>
           <Text style={styles.pwLinkDot}>·</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://slicycode.github.io/lucid-dream-app/privacy/')}>
+            <Text style={styles.legalLinkText}>{t('paywall.privacyPolicy')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -671,6 +630,12 @@ export default function OnboardingScreen() {
       <Animated.View style={[styles.flex, { opacity: fadeAnim, transform: [{ translateX: slideAnim }] }]}>
         {renderStep()}
       </Animated.View>
+
+      <AIConsentModal
+        visible={showConsentModal}
+        onAllow={() => { setShowConsentModal(false); goNext(); }}
+        onDecline={() => setShowConsentModal(false)}
+      />
     </View>
   );
 }
@@ -1224,34 +1189,9 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     color: colors.textMuted,
   },
-  discountPriceCard: {
-    backgroundColor: colors.accentMuted,
-    borderWidth: 1,
-    borderColor: colors.accentBorder,
-    borderRadius: radii.md,
-    padding: spacing.cardPadding,
-    alignItems: 'center',
-    width: '100%',
-    marginTop: spacing.lg,
-    marginBottom: spacing.lg,
-  },
-  crossedPrice: {
+  legalLinkText: {
     fontFamily: fonts.sans,
     fontSize: typography.caption.fontSize,
-    color: colors.textMuted,
-    textDecorationLine: 'line-through',
-    marginBottom: spacing.xs,
-  },
-  discountPrice: {
-    fontFamily: fonts.sans,
-    fontSize: typography.heading.fontSize,
-    fontWeight: '700' as const,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  discountTrial: {
-    fontFamily: fonts.sans,
-    fontSize: typography.caption.fontSize,
-    color: colors.accent,
+    color: colors.textDisabled,
   },
 });
