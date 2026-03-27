@@ -102,5 +102,6 @@ const styles = StyleSheet.create({
     fontSize: typography.tiny.fontSize,
     color: colors.textDisabled,
     marginTop: spacing.xs,
+    marginLeft: "auto"
   },
 });

@@ -13,7 +13,7 @@ import { X, Search } from 'lucide-react-native';
 import { useSettingsStore } from '@/store/settingsStore';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
-import { DREAM_DICTIONARY, DictionaryEntry } from '@/constants/dreamDictionary';
+import { getDreamDictionary, type DictionaryEntry } from '@/constants/dreamDictionary';
 import { colors, fonts, typography, spacing, radii } from '@/constants/theme';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +42,7 @@ function buildFlatList(entries: DictionaryEntry[]): { items: ListItem[]; stickyI
 }
 
 export default function DreamDictionaryScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const isPremium = useSettingsStore((s) => s.isPremium);
@@ -50,13 +50,15 @@ export default function DreamDictionaryScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const headerPositions = useRef<Map<string, number>>(new Map());
 
+  const dictionary = useMemo(() => getDreamDictionary(), [i18n.language]);
+
   const { items, stickyIndices } = useMemo(() => {
     headerPositions.current.clear();
     const source = query.trim()
-      ? DREAM_DICTIONARY.filter((e) => e.symbol.toLowerCase().includes(query.toLowerCase()))
-      : DREAM_DICTIONARY;
+      ? dictionary.filter((e) => e.symbol.toLowerCase().includes(query.toLowerCase()))
+      : dictionary;
     return buildFlatList(source);
-  }, [query]);
+  }, [query, dictionary]);
 
   const sectionLetters = useMemo(() => {
     const letters: string[] = [];
