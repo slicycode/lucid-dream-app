@@ -9,9 +9,13 @@ import {
   InstrumentSerif_400Regular_Italic,
 } from "@expo-google-fonts/instrument-serif";
 import React, { useEffect, useCallback, useRef } from "react";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import Purchases from "react-native-purchases";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { configureRevenueCat } from "@/hooks/useRevenueCat";
+import { identifyUser } from "@/services/analytics";
 import { colors } from "@/constants/theme";
 import "@/services/analytics";
 
@@ -100,6 +104,23 @@ function RootLayout() {
         sendDefaultPii: false,
       });
     }
+  }, []);
+
+  // Identify PostHog user with RevenueCat's stable appUserID
+  const analyticsIdentified = useRef(false);
+  useEffect(() => {
+    if (analyticsIdentified.current || Platform.OS === "web") return;
+    analyticsIdentified.current = true;
+
+    (async () => {
+      try {
+        configureRevenueCat();
+        const { originalAppUserId } = await Purchases.getCustomerInfo();
+        identifyUser(originalAppUserId);
+      } catch (e) {
+        console.warn("[Analytics] Failed to identify user:", e);
+      }
+    })();
   }, []);
 
   const onLayoutReady = useCallback(async () => {
