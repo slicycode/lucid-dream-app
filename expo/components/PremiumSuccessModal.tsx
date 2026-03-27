@@ -93,7 +93,7 @@ export default function PremiumSuccessModal({ visible, onDismiss, source }: Prem
     ]).start();
 
     // 4. Gentle glow pulse loop
-    Animated.loop(
+    const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(glowPulse, {
           toValue: 1.08,
@@ -108,9 +108,11 @@ export default function PremiumSuccessModal({ visible, onDismiss, source }: Prem
           useNativeDriver: true,
         }),
       ]),
-    ).start();
+    );
+    loop.start();
 
     // 5. Benefits stagger in
+    const hapticTimers: ReturnType<typeof setTimeout>[] = [];
     benefitAnims.forEach((anim, i) => {
       Animated.sequence([
         Animated.delay(400 + i * 100),
@@ -124,9 +126,9 @@ export default function PremiumSuccessModal({ visible, onDismiss, source }: Prem
 
       // Light haptic per benefit row
       if (Platform.OS !== 'web') {
-        setTimeout(() => {
+        hapticTimers.push(setTimeout(() => {
           void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }, 400 + i * 100);
+        }, 400 + i * 100));
       }
     });
 
@@ -147,6 +149,11 @@ export default function PremiumSuccessModal({ visible, onDismiss, source }: Prem
         }),
       ]),
     ]).start();
+
+    return () => {
+      loop.stop();
+      hapticTimers.forEach(clearTimeout);
+    };
   }, [visible, source]);
 
   const benefits = [

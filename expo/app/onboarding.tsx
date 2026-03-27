@@ -98,12 +98,13 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     if (step === 11) {
-      Animated.loop(
+      const loop = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, { toValue: 1.15, duration: 1200, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
         ])
-      ).start();
+      );
+      loop.start();
 
       Animated.timing(progressAnim, { toValue: 1, duration: 4000, useNativeDriver: false }).start();
 
@@ -121,7 +122,7 @@ export default function OnboardingScreen() {
         });
       }, 4200);
 
-      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+      return () => { loop.stop(); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
     }
   }, [step, pulseAnim, progressAnim, fadeAnim]);
 
