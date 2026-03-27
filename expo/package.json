@@ -10,6 +10,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@expo-google-fonts/instrument-serif": "^0.4.1",
     "@expo/ngrok": "^4.1.3",
     "@expo/vector-icons": "^15.0.3",
@@ -41,6 +42,7 @@
     "expo-web-browser": "~55.0.0",
     "i18next": "^25.10.5",
     "lucide-react-native": "^0.475.0",
+    "posthog-node": "^5.28.7",
     "posthog-react-native": "^4.37.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",

@@ -1,6 +1,5 @@
 import { getClientIP, checkRateLimit, rateLimitResponse } from '../../utils/rateLimit';
-
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
+import { createMessage } from '../../utils/anthropicClient';
 
 const LANGUAGE_NAMES: Record<string, string> = {
   en: 'English',
@@ -38,10 +37,6 @@ export async function POST(request: Request) {
     const limit = checkRateLimit(ip, RATE_LIMIT);
     if (!limit.allowed) return rateLimitResponse(limit.resetAt);
 
-    if (!ANTHROPIC_API_KEY) {
-      return Response.json({ error: 'API key not configured' }, { status: 500 });
-    }
-
     const body = await request.json();
     const { weekOf, locale } = body;
 
@@ -70,30 +65,22 @@ export async function POST(request: Request) {
 
     const userPrompt = `Week of ${weekOf}. Dreams logged this week:\n${dreamList}`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
+    const data = await createMessage(
+      {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: MAX_OUTPUT_TOKENS,
         system: buildSystemPrompt(locale),
         messages: [{ role: 'user', content: userPrompt }],
-      }),
-    });
+      },
+      { feature: 'weekly_digest' },
+    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Anthropic API error:', response.status, errorText);
-      return Response.json({ error: 'Summary service unavailable' }, { status: 502 });
+    if (!data) {
+      return Response.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    const data = await response.json();
-    const textBlock = data.content?.find((b: any) => b.type === 'text');
-    const summary: string = textBlock?.text?.trim() ?? '';
+    const textBlock = data.content.find((b) => b.type === 'text');
+    const summary = textBlock?.type === 'text' ? textBlock.text.trim() : '';
 
     return Response.json({ summary });
   } catch (error) {
