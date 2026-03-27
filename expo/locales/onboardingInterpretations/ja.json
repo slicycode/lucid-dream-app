@@ -1,57 +1,57 @@
 {
   "water": {
-    "keywords": ["water", "ocean", "sea", "swim", "drown", "flood", "rain", "river", "lake", "wave"],
-    "interpretation": "Water in your dream often reflects the emotional currents running beneath your waking life — the feelings you carry but don't always name. The way it moved, whether rising slowly or crashing around you, mirrors how those emotions are building. There's something you've been holding back or haven't fully processed yet.\n\nConsider what felt most urgent in the dream. Your subconscious is drawing your attention to something that needs space — not solving, just acknowledging. Sometimes the flood isn't a warning. It's an invitation to stop holding the dam.",
-    "symbols": ["Water", "Emotional depth", "Hidden currents"]
+    "keywords": ["水", "海", "大海原", "泳ぐ", "溺れる", "洪水", "雨", "川", "湖", "波"],
+    "interpretation": "夢の中の水は、日常の意識の下を流れる感情の流れを映し出していることが多い——いつも抱えているのに、なかなか名前をつけられない感情たち。水がどのように動いていたか、ゆっくりと満ちてきたのか、それとも激しく押し寄せてきたのか、その様子はまさに感情が積み重なっていくさまと重なる。まだ手放せていないもの、十分に消化しきれていないものが、そこにある。\n\n夢の中で最も切迫していた感覚は何だったかを考えてみて。潜在意識は、解決を急ぐのではなく、ただ向き合うことを求めている何かに、あなたの注意を引き寄せようとしている。洪水は必ずしも警告じゃない。それは、ダムを手放してみようという招待なのかもしれない。",
+    "symbols": ["水", "感情の深さ", "隠れた流れ"]
   },
   "falling": {
-    "keywords": ["fall", "falling", "cliff", "drop", "height", "ledge", "jump"],
-    "interpretation": "Falling in a dream rarely means what people think. It's not about fear of failure — it's about the moment right before you let go of control. Something in your life is shifting, and part of you is resisting the free fall. The ground isn't the threat. The loss of grip is.\n\nAsk yourself where you've been white-knuckling lately. The dream isn't telling you you'll crash. It's showing you what it feels like to hold on too tight to something that's already moving.",
-    "symbols": ["Falling", "Loss of control", "Letting go"]
+    "keywords": ["落ちる", "落下", "崖", "墜落", "高さ", "崖っぷち", "飛び降りる"],
+    "interpretation": "夢の中での落下は、多くの人が思うような意味ではほとんどない。失敗への恐れではなく——コントロールを手放す、その直前の瞬間のことだ。人生の何かが変わりつつあって、その自由落下に抵抗している自分がいる。怖いのは地面じゃない。握りしめていたものが、するりと離れていく感覚だ。\n\n最近、どこで必死にしがみついていたか、自分に問いかけてみて。この夢は「墜落する」と言っているんじゃない。すでに動き出しているものを、あまりに強く握りすぎるとどんな感じがするかを、見せてくれているんだ。",
+    "symbols": ["落下", "制御を失う感覚", "手放すこと"]
   },
   "flying": {
-    "keywords": ["fly", "flying", "float", "air", "soar", "wing", "sky", "above"],
-    "interpretation": "Flying dreams tend to surface when something in your life is expanding — a new perspective, a sense of freedom you haven't fully claimed yet. The ease or struggle of the flight reflects how comfortable you are with this new territory. If it felt effortless, you're closer to trusting it than you think.\n\nWhat's shifted recently that gave you a wider view? Your subconscious is letting you rehearse what it feels like to rise above the noise. That lightness isn't fantasy — it's a feeling you're ready to carry into waking life.",
-    "symbols": ["Flight", "Freedom", "New perspective"]
+    "keywords": ["飛ぶ", "飛行", "浮かぶ", "空気", "舞い上がる", "翼", "空", "上空"],
+    "interpretation": "飛ぶ夢は、人生の何かが広がりを見せているとき——まだ完全には受け取れていない新しい視野や、自由の感覚があるとき——に現れやすい。飛びやすさと飛びにくさは、この新しい領域にどれだけ馴染めているかを反映している。もし軽やかに感じたなら、自分が思う以上に、それを信頼する準備ができているはずだ。\n\n最近、より広い視野をもたらしてくれた変化は何だろう？潜在意識は、喧騒の上へと舞い上がる感覚を、あなたにリハーサルさせてくれている。その軽さは幻想じゃない——目覚めた後の日常へと持ち帰れる、本物の感覚だ。",
+    "symbols": ["飛翔", "自由", "新しい視野"]
   },
   "house": {
-    "keywords": ["house", "room", "door", "building", "home", "apartment", "hallway", "stair", "window"],
-    "interpretation": "The house in your dream is almost always a map of yourself — rooms you know well, rooms you've forgotten, and doors you haven't opened yet. The parts that felt familiar reflect what you already understand about who you are. The unfamiliar spaces are the parts still waiting to be explored.\n\nPay attention to which room drew you in most. That's where the growth is right now. Your subconscious builds these spaces when it's ready for you to walk through them — not when it's warning you away.",
-    "symbols": ["House", "Self-exploration", "Hidden rooms"]
+    "keywords": ["家", "部屋", "ドア", "建物", "住まい", "アパート", "廊下", "階段", "窓"],
+    "interpretation": "夢の中の家は、ほとんどいつもあなた自身の地図だ——よく知っている部屋、忘れかけていた部屋、まだ開けていないドア。見慣れた場所は、自分自身についてすでに理解していることを映している。知らない空間は、これから探索されるのを待っている部分だ。\n\nどの部屋が最も引き寄せたかに気を配って。そこに今の成長がある。潜在意識がこうした空間を作り出すのは、あなたが踏み込む準備ができたときだ——遠ざけようとしているのではなく。",
+    "symbols": ["家", "自己探求", "隠された部屋"]
   },
   "chase": {
-    "keywords": ["chase", "chasing", "run", "running", "escape", "hide", "follow", "pursue", "caught"],
-    "interpretation": "Being chased is one of the most common dream patterns, and it's almost never about the thing behind you. It's about what you're avoiding while awake — a conversation, a decision, a feeling you've been outrunning. The pursuer often represents the part of yourself you're not ready to face yet.\n\nInstead of asking what was chasing you, ask what you've been running from lately. The dream stops recurring when you turn around. Not to fight — just to look.",
-    "symbols": ["Pursuit", "Avoidance", "Confrontation"]
+    "keywords": ["追いかける", "追われる", "走る", "逃げる", "隠れる", "ついてくる", "追跡", "捕まる"],
+    "interpretation": "追われる夢は最もよくある夢のパターンのひとつで、背後にあるものがほぼ問題になることはない。それは、目覚めている間に避けていること——ある会話、ある決断、ずっと逃げ続けてきた感情——についてだ。追ってくるものは多くの場合、まだ向き合う準備ができていない自分自身の一部を表している。\n\n何に追われていたかを問うより、最近何から逃げていたかを問いかけてみて。振り返ったとき、夢は繰り返されなくなる。戦いに行くんじゃない——ただ、見るために。",
+    "symbols": ["追跡", "回避", "向き合うこと"]
   },
   "teeth": {
-    "keywords": ["teeth", "tooth", "mouth", "bite", "jaw", "smile"],
-    "interpretation": "Teeth dreams often surface during moments of vulnerability — times when you're worried about how you're perceived or whether you're holding things together. Losing teeth in a dream reflects a quiet fear of losing your grip on something that feels essential to your identity or confidence.\n\nThink about what's felt fragile lately — not broken, just uncertain. Your subconscious uses teeth because they're tied to how you present yourself to the world. The dream isn't predicting loss. It's reflecting a fear that's worth naming.",
-    "symbols": ["Teeth", "Vulnerability", "Self-image"]
+    "keywords": ["歯", "口", "噛む", "顎", "笑顔", "歯が抜ける"],
+    "interpretation": "歯の夢は、脆さを感じる瞬間——自分がどう見られているか、ちゃんとやっていけるかどうかを心配しているとき——によく現れる。夢の中で歯が抜けることは、アイデンティティや自信にとって不可欠だと感じているものを失う、静かな恐れを映し出している。\n\n最近、壊れてはいないけれど、揺らいでいると感じるものは何か考えてみて。潜在意識が歯を使うのは、それが世界への自分の見せ方と結びついているからだ。この夢は喪失を予告しているんじゃない。名前をつける価値のある恐れを、映し出しているんだ。",
+    "symbols": ["歯", "脆弱性", "自己イメージ"]
   },
   "school": {
-    "keywords": ["school", "exam", "test", "class", "teacher", "late", "unprepared", "homework", "study"],
-    "interpretation": "School dreams almost always surface when you feel like you're being evaluated — even if there's no literal test in your life right now. The anxiety of being unprepared or arriving late mirrors a deeper feeling that you're not measuring up to something, or that you've missed a step others haven't.\n\nAsk yourself where you've been grading yourself lately. The dream isn't saying you're failing. It's showing you that the standards you're holding yourself to might not even be yours.",
-    "symbols": ["Examination", "Self-judgment", "Pressure"]
+    "keywords": ["学校", "試験", "テスト", "授業", "先生", "遅刻", "準備不足", "宿題", "勉強"],
+    "interpretation": "学校の夢は、評価されているように感じるとき——たとえ現実に試験がなくても——ほぼ必ず現れる。準備不足で遅刻してしまう不安は、何かに追いついていない、あるいは他の人が踏まないステップを踏み外してしまったという、より深い感覚を映し出している。\n\n最近、自分を採点していた場面はどこだろう。この夢は「失敗している」と言っているんじゃない。自分に課しているその基準が、本当に自分自身のものかどうかを、問いかけてくれているんだ。",
+    "symbols": ["試験", "自己評価", "プレッシャー"]
   },
   "animals": {
-    "keywords": ["animal", "dog", "cat", "snake", "bird", "spider", "wolf", "bear", "fish", "insect"],
-    "interpretation": "Animals in dreams tend to represent instincts — the parts of you that act before thinking. The specific animal and how it behaved reflects which instinct is trying to get your attention right now. Something wild, something you can't fully control, is stirring beneath the surface of your daily routine.\n\nConsider how you felt toward the animal — fear, curiosity, protectiveness. That reaction tells you more than the animal itself. Your subconscious speaks in creatures when words aren't enough for what it's trying to say.",
-    "symbols": ["Animal instinct", "Intuition", "Wildness"]
+    "keywords": ["動物", "犬", "猫", "蛇", "鳥", "クモ", "狼", "熊", "魚", "虫"],
+    "interpretation": "夢の中の動物は本能を表すことが多い——考えるより先に動く、あなたの中の部分。どの動物でどんな行動をとっていたかは、今あなたの注意を引こうとしている本能がどれかを映している。制御しきれない野性的な何かが、日常の表面の下でうごめいている。\n\nその動物に対してどう感じたか——恐れ、好奇心、守りたい気持ち——を考えてみて。その反応が、動物そのもの以上のことを教えてくれる。潜在意識が言葉では足りないとき、生き物で語りかけてくる。",
+    "symbols": ["動物的本能", "直感", "野生"]
   },
   "death": {
-    "keywords": ["death", "die", "dead", "funeral", "grave", "kill", "ghost", "spirit"],
-    "interpretation": "Death in dreams is almost never literal — it's one of the most misunderstood symbols. It usually marks the end of a chapter, a role, or a version of yourself that's being outgrown. Something in your life is transforming, and your subconscious is processing the grief of letting the old form go, even when the new one is better.\n\nWhat's ending or changing right now, even quietly? The dream isn't a warning. It's your mind's way of making space for what comes next. Endings and beginnings share the same doorway.",
-    "symbols": ["Transformation", "Endings", "Renewal"]
+    "keywords": ["死", "亡くなる", "死んでいる", "葬式", "墓", "殺す", "幽霊", "霊"],
+    "interpretation": "夢の中の死が文字どおりであることはほとんどない——最もよく誤解されるシンボルのひとつだ。それは多くの場合、あなたが卒業しつつある一つの章、役割、あるいは自分の一形態の終わりを示している。人生の何かが変容しつつあって、より良い姿になるとしても、古い形を手放すことへの悲しみを、潜在意識が処理しているのだ。\n\n今、静かに終わりを迎えているもの、変わりつつあるものは何だろう？この夢は警告じゃない。次に来るものへの場所を作る、心の作業だ。終わりと始まりは、同じ扉を共有している。",
+    "symbols": ["変容", "終わり", "再生"]
   },
   "people": {
-    "keywords": ["person", "people", "friend", "stranger", "family", "mother", "father", "ex", "child", "baby", "someone", "face"],
-    "interpretation": "The people in your dream rarely represent themselves — they're often standing in for parts of you. A familiar face reflects a quality you associate with that person, showing up because it's relevant to something you're navigating right now. A stranger usually represents an aspect of yourself you haven't met yet.\n\nThink about what that person means to you in one word. That word is the real subject of the dream. Your subconscious casts characters the way a director would — not randomly, but because they carry exactly the energy the scene needs.",
-    "symbols": ["Projection", "Relationships", "Self-reflection"]
+    "keywords": ["人", "人々", "友人", "見知らぬ人", "家族", "母", "父", "元恋人", "子ども", "赤ちゃん", "誰か", "顔"],
+    "interpretation": "夢の中の人たちは、滅多にその人自身を表していない——多くの場合、あなたの中の何かの代わりに立っている。見知った顔は、その人に結びつけている何らかの資質を映し出していて、今あなたが向き合っていることに関係しているから現れる。見知らぬ人は、まだ出会っていない自分自身の一面を表すことが多い。\n\nその人があなたにとって何を意味するか、一言で考えてみて。その言葉こそが夢の本当のテーマだ。潜在意識は映画監督のようにキャストを選ぶ——ランダムじゃなく、そのシーンにちょうど必要なエネルギーを持っているから。",
+    "symbols": ["投影", "人間関係", "自己省察"]
   },
   "fallback": {
     "keywords": [],
-    "interpretation": "Your dream carries a quiet complexity — the kind that doesn't reveal itself all at once. The images and feelings that stayed with you after waking are the ones worth paying attention to. They're not random. They're the parts your subconscious wanted you to remember.\n\nSit with what felt most vivid. Not the plot, but the emotion underneath it. Dreams speak in feeling first, story second. The fact that this one lingered means something in your waking life is asking for your attention — gently, not urgently.",
-    "symbols": ["Subconscious", "Emotional residue", "Inner attention"]
+    "interpretation": "あなたの夢には、静かな奥行きがある——一度に全てを明かすことのない種類の。目覚めた後も残っていたイメージや感情こそ、注意を向ける価値があるもの。それらは偶然じゃない。潜在意識があなたに覚えておいてほしかった部分だ。\n\n最も鮮やかに感じたものと、ともにいてみて。ストーリーじゃなく、その根底にある感情を。夢は感情を先に語り、物語はその後に来る。この夢が心に残ったという事実は、目覚めた日常の中の何かが、あなたの注意をそっと求めているということ——急かすのではなく、穏やかに。",
+    "symbols": ["潜在意識", "感情の残像", "内なる意識"]
   }
 }

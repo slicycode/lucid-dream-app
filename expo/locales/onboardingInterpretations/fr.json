@@ -1,57 +1,57 @@
 {
   "water": {
-    "keywords": ["water", "ocean", "sea", "swim", "drown", "flood", "rain", "river", "lake", "wave"],
-    "interpretation": "Water in your dream often reflects the emotional currents running beneath your waking life — the feelings you carry but don't always name. The way it moved, whether rising slowly or crashing around you, mirrors how those emotions are building. There's something you've been holding back or haven't fully processed yet.\n\nConsider what felt most urgent in the dream. Your subconscious is drawing your attention to something that needs space — not solving, just acknowledging. Sometimes the flood isn't a warning. It's an invitation to stop holding the dam.",
-    "symbols": ["Water", "Emotional depth", "Hidden currents"]
+    "keywords": ["eau", "océan", "mer", "nager", "noyer", "inondation", "pluie", "rivière", "lac", "vague"],
+    "interpretation": "L'eau dans votre rêve reflète souvent les courants émotionnels qui circulent sous votre vie éveillée — les sentiments que vous portez mais que vous ne nommez pas toujours. La façon dont elle se mouvait, qu'elle montait lentement ou déferlait autour de vous, est le miroir de la manière dont ces émotions s'accumulent. Il y a quelque chose que vous retenez ou n'avez pas encore pleinement traité.\n\nConsidérez ce qui semblait le plus urgent dans le rêve. Votre subconscient attire votre attention vers quelque chose qui a besoin d'espace — non pas d'être résolu, simplement reconnu. Parfois l'inondation n'est pas un avertissement. C'est une invitation à cesser de retenir le barrage.",
+    "symbols": ["Eau", "Profondeur émotionnelle", "Courants cachés"]
   },
   "falling": {
-    "keywords": ["fall", "falling", "cliff", "drop", "height", "ledge", "jump"],
-    "interpretation": "Falling in a dream rarely means what people think. It's not about fear of failure — it's about the moment right before you let go of control. Something in your life is shifting, and part of you is resisting the free fall. The ground isn't the threat. The loss of grip is.\n\nAsk yourself where you've been white-knuckling lately. The dream isn't telling you you'll crash. It's showing you what it feels like to hold on too tight to something that's already moving.",
-    "symbols": ["Falling", "Loss of control", "Letting go"]
+    "keywords": ["tomber", "chute", "falaise", "précipice", "hauteur", "rebord", "sauter"],
+    "interpretation": "Tomber dans un rêve signifie rarement ce que les gens pensent. Ce n'est pas une question de peur de l'échec — c'est la question de l'instant juste avant de lâcher le contrôle. Quelque chose dans votre vie est en train de changer, et une partie de vous résiste à la chute libre. Le sol n'est pas la menace. C'est la perte de prise.\n\nDemandez-vous où vous vous êtes cramponné dernièrement. Le rêve ne vous dit pas que vous allez vous écraser. Il vous montre ce que l'on ressent à tenir trop fort quelque chose qui est déjà en mouvement.",
+    "symbols": ["Chute", "Perte de contrôle", "Lâcher prise"]
   },
   "flying": {
-    "keywords": ["fly", "flying", "float", "air", "soar", "wing", "sky", "above"],
-    "interpretation": "Flying dreams tend to surface when something in your life is expanding — a new perspective, a sense of freedom you haven't fully claimed yet. The ease or struggle of the flight reflects how comfortable you are with this new territory. If it felt effortless, you're closer to trusting it than you think.\n\nWhat's shifted recently that gave you a wider view? Your subconscious is letting you rehearse what it feels like to rise above the noise. That lightness isn't fantasy — it's a feeling you're ready to carry into waking life.",
-    "symbols": ["Flight", "Freedom", "New perspective"]
+    "keywords": ["voler", "vol", "flotter", "air", "planer", "aile", "ciel", "au-dessus"],
+    "interpretation": "Les rêves de vol tendent à surgir quand quelque chose dans votre vie s'élargit — une nouvelle perspective, un sentiment de liberté que vous n'avez pas encore pleinement revendiqué. La facilité ou la difficulté du vol reflète le confort avec lequel vous habitez ce nouveau territoire. Si cela semblait sans effort, vous êtes plus proche de lui faire confiance que vous ne le pensez.\n\nQu'est-ce qui a changé récemment et vous a offert un point de vue plus large ? Votre subconscient vous laisse répéter ce que l'on ressent à s'élever au-dessus du bruit. Cette légèreté n'est pas une fantaisie — c'est un sentiment que vous êtes prêt à porter dans votre vie éveillée.",
+    "symbols": ["Vol", "Liberté", "Nouvelle perspective"]
   },
   "house": {
-    "keywords": ["house", "room", "door", "building", "home", "apartment", "hallway", "stair", "window"],
-    "interpretation": "The house in your dream is almost always a map of yourself — rooms you know well, rooms you've forgotten, and doors you haven't opened yet. The parts that felt familiar reflect what you already understand about who you are. The unfamiliar spaces are the parts still waiting to be explored.\n\nPay attention to which room drew you in most. That's where the growth is right now. Your subconscious builds these spaces when it's ready for you to walk through them — not when it's warning you away.",
-    "symbols": ["House", "Self-exploration", "Hidden rooms"]
+    "keywords": ["maison", "pièce", "porte", "bâtiment", "chez soi", "appartement", "couloir", "escalier", "fenêtre"],
+    "interpretation": "La maison dans votre rêve est presque toujours une carte de vous-même — des pièces que vous connaissez bien, des pièces que vous avez oubliées, et des portes que vous n'avez pas encore ouvertes. Les parties qui semblaient familières reflètent ce que vous comprenez déjà de qui vous êtes. Les espaces inconnus sont les parties qui attendent encore d'être explorées.\n\nFaites attention à la pièce qui vous a le plus attiré. C'est là que se trouve la croissance en ce moment. Votre subconscient construit ces espaces quand il est prêt à ce que vous les traversiez — non pas pour vous en avertir.",
+    "symbols": ["Maison", "Exploration de soi", "Pièces cachées"]
   },
   "chase": {
-    "keywords": ["chase", "chasing", "run", "running", "escape", "hide", "follow", "pursue", "caught"],
-    "interpretation": "Being chased is one of the most common dream patterns, and it's almost never about the thing behind you. It's about what you're avoiding while awake — a conversation, a decision, a feeling you've been outrunning. The pursuer often represents the part of yourself you're not ready to face yet.\n\nInstead of asking what was chasing you, ask what you've been running from lately. The dream stops recurring when you turn around. Not to fight — just to look.",
-    "symbols": ["Pursuit", "Avoidance", "Confrontation"]
+    "keywords": ["pourchasser", "poursuite", "courir", "course", "fuir", "se cacher", "suivre", "poursuivre", "rattrapé"],
+    "interpretation": "Être poursuivi est l'un des schémas oniriques les plus courants, et il s'agit presque jamais de ce qui se trouve derrière vous. Il s'agit de ce que vous évitez lorsque vous êtes éveillé — une conversation, une décision, un sentiment que vous avez pris la fuite. Le poursuivant représente souvent la partie de vous-même que vous n'êtes pas encore prêt à affronter.\n\nAu lieu de vous demander ce qui vous poursuivait, demandez-vous de quoi vous fuyez en ce moment. Le rêve cesse de revenir quand vous vous retournez. Non pas pour vous battre — juste pour regarder.",
+    "symbols": ["Poursuite", "Évitement", "Confrontation"]
   },
   "teeth": {
-    "keywords": ["teeth", "tooth", "mouth", "bite", "jaw", "smile"],
-    "interpretation": "Teeth dreams often surface during moments of vulnerability — times when you're worried about how you're perceived or whether you're holding things together. Losing teeth in a dream reflects a quiet fear of losing your grip on something that feels essential to your identity or confidence.\n\nThink about what's felt fragile lately — not broken, just uncertain. Your subconscious uses teeth because they're tied to how you present yourself to the world. The dream isn't predicting loss. It's reflecting a fear that's worth naming.",
-    "symbols": ["Teeth", "Vulnerability", "Self-image"]
+    "keywords": ["dents", "dent", "bouche", "mordre", "mâchoire", "sourire"],
+    "interpretation": "Les rêves de dents surgissent souvent lors de moments de vulnérabilité — des moments où vous vous inquiétez de la façon dont vous êtes perçu ou si vous tenez les choses ensemble. Perdre des dents dans un rêve reflète une peur silencieuse de perdre votre emprise sur quelque chose qui semble essentiel à votre identité ou à votre confiance.\n\nPensez à ce qui s'est senti fragile dernièrement — non pas brisé, simplement incertain. Votre subconscient utilise les dents parce qu'elles sont liées à la façon dont vous vous présentez au monde. Le rêve ne prédit pas une perte. Il reflète une peur qui mérite d'être nommée.",
+    "symbols": ["Dents", "Vulnérabilité", "Image de soi"]
   },
   "school": {
-    "keywords": ["school", "exam", "test", "class", "teacher", "late", "unprepared", "homework", "study"],
-    "interpretation": "School dreams almost always surface when you feel like you're being evaluated — even if there's no literal test in your life right now. The anxiety of being unprepared or arriving late mirrors a deeper feeling that you're not measuring up to something, or that you've missed a step others haven't.\n\nAsk yourself where you've been grading yourself lately. The dream isn't saying you're failing. It's showing you that the standards you're holding yourself to might not even be yours.",
-    "symbols": ["Examination", "Self-judgment", "Pressure"]
+    "keywords": ["école", "examen", "test", "cours", "professeur", "en retard", "non préparé", "devoir", "étudier"],
+    "interpretation": "Les rêves d'école surgissent presque toujours quand vous avez le sentiment d'être évalué — même s'il n'y a pas de vrai test dans votre vie en ce moment. L'anxiété d'être non préparé ou d'arriver en retard reflète un sentiment plus profond que vous n'êtes pas à la hauteur de quelque chose, ou que vous avez manqué une étape que d'autres n'ont pas manquée.\n\nDemandez-vous où vous vous êtes noté dernièrement. Le rêve ne dit pas que vous échouez. Il vous montre que les standards auxquels vous vous tenez ne sont peut-être même pas les vôtres.",
+    "symbols": ["Examen", "Jugement de soi", "Pression"]
   },
   "animals": {
-    "keywords": ["animal", "dog", "cat", "snake", "bird", "spider", "wolf", "bear", "fish", "insect"],
-    "interpretation": "Animals in dreams tend to represent instincts — the parts of you that act before thinking. The specific animal and how it behaved reflects which instinct is trying to get your attention right now. Something wild, something you can't fully control, is stirring beneath the surface of your daily routine.\n\nConsider how you felt toward the animal — fear, curiosity, protectiveness. That reaction tells you more than the animal itself. Your subconscious speaks in creatures when words aren't enough for what it's trying to say.",
-    "symbols": ["Animal instinct", "Intuition", "Wildness"]
+    "keywords": ["animal", "chien", "chat", "serpent", "oiseau", "araignée", "loup", "ours", "poisson", "insecte"],
+    "interpretation": "Les animaux dans les rêves tendent à représenter les instincts — les parties de vous qui agissent avant de penser. L'animal en particulier et la façon dont il s'est comporté reflète quel instinct tente d'attirer votre attention en ce moment. Quelque chose de sauvage, quelque chose que vous ne pouvez pas entièrement contrôler, s'agite sous la surface de votre quotidien.\n\nConsidérez ce que vous avez ressenti envers l'animal — peur, curiosité, protection. Cette réaction en dit plus que l'animal lui-même. Votre subconscient parle en créatures quand les mots ne suffisent pas pour ce qu'il essaie de dire.",
+    "symbols": ["Instinct animal", "Intuition", "Sauvagerie"]
   },
   "death": {
-    "keywords": ["death", "die", "dead", "funeral", "grave", "kill", "ghost", "spirit"],
-    "interpretation": "Death in dreams is almost never literal — it's one of the most misunderstood symbols. It usually marks the end of a chapter, a role, or a version of yourself that's being outgrown. Something in your life is transforming, and your subconscious is processing the grief of letting the old form go, even when the new one is better.\n\nWhat's ending or changing right now, even quietly? The dream isn't a warning. It's your mind's way of making space for what comes next. Endings and beginnings share the same doorway.",
-    "symbols": ["Transformation", "Endings", "Renewal"]
+    "keywords": ["mort", "mourir", "décédé", "funérailles", "tombe", "tuer", "fantôme", "esprit"],
+    "interpretation": "La mort dans les rêves est presque jamais littérale — c'est l'un des symboles les plus mal compris. Elle marque généralement la fin d'un chapitre, d'un rôle, ou d'une version de vous-même qui est en train d'être dépassée. Quelque chose dans votre vie se transforme, et votre subconscient traite le deuil de laisser partir l'ancienne forme, même quand la nouvelle est meilleure.\n\nQu'est-ce qui se termine ou change en ce moment, même silencieusement ? Le rêve n'est pas un avertissement. C'est la façon qu'a votre esprit de faire de la place pour ce qui vient ensuite. Les fins et les débuts partagent la même porte.",
+    "symbols": ["Transformation", "Fins", "Renouveau"]
   },
   "people": {
-    "keywords": ["person", "people", "friend", "stranger", "family", "mother", "father", "ex", "child", "baby", "someone", "face"],
-    "interpretation": "The people in your dream rarely represent themselves — they're often standing in for parts of you. A familiar face reflects a quality you associate with that person, showing up because it's relevant to something you're navigating right now. A stranger usually represents an aspect of yourself you haven't met yet.\n\nThink about what that person means to you in one word. That word is the real subject of the dream. Your subconscious casts characters the way a director would — not randomly, but because they carry exactly the energy the scene needs.",
-    "symbols": ["Projection", "Relationships", "Self-reflection"]
+    "keywords": ["personne", "gens", "ami", "inconnu", "famille", "mère", "père", "ex", "enfant", "bébé", "quelqu'un", "visage"],
+    "interpretation": "Les personnes dans votre rêve se représentent rarement elles-mêmes — elles incarnent souvent des parties de vous. Un visage familier reflète une qualité que vous associez à cette personne, qui apparaît parce qu'elle est pertinente pour quelque chose que vous naviguez en ce moment. Un inconnu représente généralement un aspect de vous-même que vous n'avez pas encore rencontré.\n\nPensez à ce que cette personne signifie pour vous en un seul mot. Ce mot est le vrai sujet du rêve. Votre subconscient distribue les rôles comme un metteur en scène — non pas au hasard, mais parce qu'ils portent exactement l'énergie dont la scène a besoin.",
+    "symbols": ["Projection", "Relations", "Introspection"]
   },
   "fallback": {
     "keywords": [],
-    "interpretation": "Your dream carries a quiet complexity — the kind that doesn't reveal itself all at once. The images and feelings that stayed with you after waking are the ones worth paying attention to. They're not random. They're the parts your subconscious wanted you to remember.\n\nSit with what felt most vivid. Not the plot, but the emotion underneath it. Dreams speak in feeling first, story second. The fact that this one lingered means something in your waking life is asking for your attention — gently, not urgently.",
-    "symbols": ["Subconscious", "Emotional residue", "Inner attention"]
+    "interpretation": "Votre rêve porte une complexité silencieuse — le genre qui ne se révèle pas d'un seul coup. Les images et les sentiments qui sont restés avec vous après le réveil sont ceux qui méritent attention. Ils ne sont pas aléatoires. Ce sont les parties que votre subconscient voulait que vous reteniez.\n\nRestez avec ce qui semblait le plus vivace. Non pas l'intrigue, mais l'émotion en dessous. Les rêves parlent d'abord en ressentis, ensuite en histoire. Le fait que celui-ci ait persisté signifie que quelque chose dans votre vie éveillée demande votre attention — doucement, sans urgence.",
+    "symbols": ["Subconscient", "Résidu émotionnel", "Attention intérieure"]
   }
 }
