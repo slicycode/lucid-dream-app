@@ -57,7 +57,11 @@ export async function scheduleMorningReminder(time: string) {
 }
 
 export async function cancelMorningReminder() {
-  await Notifications.cancelScheduledNotificationAsync(MORNING_REMINDER_ID);
+  try {
+    await Notifications.cancelScheduledNotificationAsync(MORNING_REMINDER_ID);
+  } catch {
+    // Notification may not exist yet
+  }
 }
 
 // --- Reality Check Reminders (Premium) ---
@@ -158,7 +162,11 @@ export async function scheduleWbtbAlarm(time: string) {
 }
 
 export async function cancelWbtbAlarm() {
-  await Notifications.cancelScheduledNotificationAsync(WBTB_ALARM_ID);
+  try {
+    await Notifications.cancelScheduledNotificationAsync(WBTB_ALARM_ID);
+  } catch {
+    // Notification may not exist yet
+  }
 }
 
 // --- Trial Reminder ---
