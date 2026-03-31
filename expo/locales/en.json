@@ -42,6 +42,11 @@
     "digestLogMore": "Log at least one dream this week to get your digest.",
     "digestStale": "New dreams logged since this digest",
     "digestPremiumLock": "Unlock your weekly AI dream digest with Premium.",
+    "insightSymbol": "Symbol of the Day",
+    "insightFact": "Dream Fact",
+    "insightTechnique": "Lucid Tip",
+    "insightCulture": "Dream History",
+    "insightTapToRead": "Tap to read more",
     "quickEntryTitle": "What did you dream about?",
     "quickEntrySubtext": "Dreams fade fast — capture yours now",
     "emptyTitle": "Your dream journal is empty",
@@ -123,6 +128,7 @@
     "resetAllData": "Reset All Data",
     "seed10Dreams": "Seed 10 Dreams",
     "removeSeedDreams": "Remove Seed Dreams",
+    "giveFeedback": "Give Feedback",
     "dreamDictionary": "Dream Dictionary",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
@@ -357,6 +363,16 @@
       "premiumUpsell": "Your first interpretation is free. Unlock unlimited interpretations with Premium."
     },
     "continueFree": "Continue free"
+  },
+  "premiumSuccess": {
+    "heading": "Welcome to Premium",
+    "subtext": "You've unlocked the full dream experience.",
+    "benefitInterpretations": "Unlimited AI interpretations",
+    "benefitPatterns": "Pattern detection across your dreams",
+    "benefitDictionary": "Full dream symbol dictionary",
+    "benefitLucid": "Weekly AI dream digest",
+    "ctaOnboarding": "Start Exploring",
+    "ctaPaywall": "Let's Go"
   },
   "aiConsent": {
     "title": "AI Dream Interpretation",

@@ -21,7 +21,7 @@ export function configureRevenueCat() {
   if (isConfigured || Platform.OS === 'web') return;
 
   try {
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     Purchases.configure({ apiKey: RC_API_KEY_IOS });
     isConfigured = true;
   } catch (e) {
@@ -59,12 +59,13 @@ export function useRevenueCat() {
     try {
       const offeringsResult = await Purchases.getOfferings();
 
-      // Debug: log all offerings and their packages
-      console.log('[RevenueCat] All offering identifiers:', Object.keys(offeringsResult.all));
-      for (const [key, offering] of Object.entries(offeringsResult.all)) {
-        console.log(`[RevenueCat] Offering "${key}" packages:`,
-          offering.availablePackages.map((p) => `${p.identifier} (${p.packageType}) -> ${p.product.identifier}`)
-        );
+      if (__DEV__) {
+        console.log('[RevenueCat] All offering identifiers:', Object.keys(offeringsResult.all));
+        for (const [key, offering] of Object.entries(offeringsResult.all)) {
+          console.log(`[RevenueCat] Offering "${key}" packages:`,
+            offering.availablePackages.map((p) => `${p.identifier} (${p.packageType}) -> ${p.product.identifier}`)
+          );
+        }
       }
 
       if (offeringsResult.current) {

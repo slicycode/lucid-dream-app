@@ -33,18 +33,23 @@ export function FeaturePreviewScreen({ goNext, ctaFadeAnim }: FeaturePreviewScre
     );
 
     // Fire haptic at the start of each card reveal
-    anims.forEach((_, i) => {
+    const hapticTimers = anims.map((_, i) =>
       setTimeout(() => {
         if (Platform.OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }, 200 + i * 750);
-    });
+      }, 200 + i * 750)
+    );
 
     Animated.stagger(750, springs).start();
 
     // Fade in CTA as the last card starts revealing, not after it finishes
-    setTimeout(() => {
+    const ctaTimer = setTimeout(() => {
       Animated.timing(ctaFadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
     }, 200 + 3 * 750);
+
+    return () => {
+      hapticTimers.forEach(clearTimeout);
+      clearTimeout(ctaTimer);
+    };
   }, []);
 
   const features = [

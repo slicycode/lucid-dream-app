@@ -42,6 +42,11 @@
     "digestLogMore": "Registre pelo menos um sonho esta semana para obter seu resumo.",
     "digestStale": "Novos sonhos registrados desde este resumo",
     "digestPremiumLock": "Desbloqueie seu resumo semanal de sonhos com IA com o Premium.",
+    "insightSymbol": "Símbolo do dia",
+    "insightFact": "Fato sobre sonhos",
+    "insightTechnique": "Dica de sonho lúcido",
+    "insightCulture": "História dos sonhos",
+    "insightTapToRead": "Toque para ler mais",
     "quickEntryTitle": "Com o que você sonhou?",
     "quickEntrySubtext": "Os sonhos desaparecem rápido — capture o seu agora",
     "emptyTitle": "Seu diário de sonhos está vazio",
@@ -123,6 +128,7 @@
     "resetAllData": "Redefinir todos os dados",
     "seed10Dreams": "Gerar 10 sonhos",
     "removeSeedDreams": "Remover sonhos gerados",
+    "giveFeedback": "Dar feedback",
     "dreamDictionary": "Dicionário de sonhos",
     "privacyPolicy": "Política de privacidade",
     "termsOfService": "Termos de serviço",
@@ -357,6 +363,16 @@
       "premiumUpsell": "Sua primeira interpretação é gratuita. Desbloqueie interpretações ilimitadas com Premium."
     },
     "continueFree": "Continuar grátis"
+  },
+  "premiumSuccess": {
+    "heading": "Bem-vindo ao Premium",
+    "subtext": "Você desbloqueou a experiência completa.",
+    "benefitInterpretations": "Interpretações IA ilimitadas",
+    "benefitPatterns": "Detecção de padrões nos seus sonhos",
+    "benefitDictionary": "Dicionário completo de símbolos",
+    "benefitLucid": "Resumo semanal de sonhos com IA",
+    "ctaOnboarding": "Começar a explorar",
+    "ctaPaywall": "Vamos lá"
   },
   "aiConsent": {
     "title": "Interpretação de sonhos com IA",

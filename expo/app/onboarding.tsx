@@ -1,6 +1,7 @@
 import { FlowingText } from '@/components/FlowingText';
 import { GlassAsset } from '@/components/GlassAsset';
 import { AIConsentModal } from '@/components/AIConsentModal';
+import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import { FeaturePreviewScreen } from '@/components/onboarding/FeaturePreviewScreen';
 import { NotificationScreen } from '@/components/onboarding/NotificationScreen';
 import { PainPointScreen } from '@/components/onboarding/PainPointScreen';
@@ -56,6 +57,7 @@ export default function OnboardingScreen() {
   const { monthlyPackage, annualPackage, isLoading: rcLoading, isLoadingOfferings, purchasePackage, restorePurchases, loadOfferings } = useRevenueCat();
   const aiDataConsentGiven = useSettingsStore((s) => s.aiDataConsentGiven);
   const [showConsentModal, setShowConsentModal] = useState(false);
+  const [showPremiumSuccess, setShowPremiumSuccess] = useState(false);
 
   const matchedInterpretation = React.useMemo(
     () => matchOnboardingInterpretation(localDreamText),
@@ -96,12 +98,13 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     if (step === 11) {
-      Animated.loop(
+      const loop = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, { toValue: 1.15, duration: 1200, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
         ])
-      ).start();
+      );
+      loop.start();
 
       Animated.timing(progressAnim, { toValue: 1, duration: 4000, useNativeDriver: false }).start();
 
@@ -119,7 +122,7 @@ export default function OnboardingScreen() {
         });
       }, 4200);
 
-      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+      return () => { loop.stop(); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
     }
   }, [step, pulseAnim, progressAnim, fadeAnim]);
 
@@ -207,9 +210,9 @@ export default function OnboardingScreen() {
     if (success) {
       trackEvent('paywall_purchase_completed', { plan, source: 'onboarding', has_trial: true });
       void scheduleTrialReminder();
-      finishOnboarding();
+      setShowPremiumSuccess(true);
     }
-  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, finishOnboarding, loadOfferings]);
+  }, [selectedPlan, monthlyPackage, annualPackage, purchasePackage, loadOfferings]);
 
   const handleRestore = useCallback(async () => {
     trackEvent('paywall_restore_tapped', { source: 'onboarding' });
@@ -621,7 +624,7 @@ export default function OnboardingScreen() {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: step === 0 ? 0 : insets.top, paddingBottom: insets.bottom }]}>
       {step !== 0 && step !== 11 && (
         <View style={styles.header}>
           {renderBackButton()}
@@ -635,6 +638,12 @@ export default function OnboardingScreen() {
         visible={showConsentModal}
         onAllow={() => { setShowConsentModal(false); goNext(); }}
         onDecline={() => setShowConsentModal(false)}
+      />
+
+      <PremiumSuccessModal
+        visible={showPremiumSuccess}
+        onDismiss={() => { setShowPremiumSuccess(false); finishOnboarding(); }}
+        source="onboarding"
       />
     </View>
   );

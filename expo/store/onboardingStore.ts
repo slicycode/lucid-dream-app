@@ -50,6 +50,10 @@ export const useOnboardingStore = create<OnboardingState>()(
     {
       name: 'onboarding-store',
       storage: createJSONStorage(() => mmkvStorage),
+      version: 1,
+      migrate: (persisted: any, _version: number) => {
+        return persisted;
+      },
     }
   )
 );

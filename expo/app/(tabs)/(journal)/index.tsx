@@ -1,3 +1,4 @@
+import DailyInsightCard from '@/components/DailyInsightCard';
 import { GlassAsset } from '@/components/GlassAsset';
 import { glassAssets } from '@/constants/glassAssets';
 import { colors, fonts, radii, sizes, spacing, typography } from '@/constants/theme';
@@ -318,6 +319,8 @@ export default function JournalScreen() {
           )}
         </Animated.View>
 
+        <DailyInsightCard />
+
         {isDigestDay && (
           isPremium ? (
             <View style={styles.digestCard}>
@@ -387,11 +390,6 @@ export default function JournalScreen() {
             activeOpacity={0.7}
             testID="quick-entry"
           >
-            <GlassAsset
-              source={glassAssets.feather}
-              size={64}
-              style={styles.quickEntryGlassAsset}
-            />
             <Text style={styles.quickEntryTitle}>{t('journal.quickEntryTitle')}</Text>
             <Text style={styles.quickEntrySubtext}>{t('journal.quickEntrySubtext')}</Text>
           </TouchableOpacity>
@@ -581,11 +579,6 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     padding: spacing.cardPadding,
     marginBottom: spacing.sectionGap,
-  },
-  quickEntryGlassAsset: {
-    position: 'absolute',
-    top: -24,
-    right: -12,
   },
   quickEntryTitle: {
     fontFamily: fonts.serif,

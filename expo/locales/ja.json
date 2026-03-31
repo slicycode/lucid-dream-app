@@ -42,6 +42,11 @@
     "digestLogMore": "ダイジェストを取得するには今週少なくとも1件の夢を記録してください。",
     "digestStale": "このダイジスト以降に新しい夢が記録されました",
     "digestPremiumLock": "プレミアムで週間AIドリームダイジェストをアンロック。",
+    "insightSymbol": "今日のシンボル",
+    "insightFact": "夢の豆知識",
+    "insightTechnique": "明晰夢のコツ",
+    "insightCulture": "夢の歴史",
+    "insightTapToRead": "タップして読む",
     "quickEntryTitle": "どんな夢を見ましたか？",
     "quickEntrySubtext": "夢はすぐに消えます — 今すぐ記録しましょう",
     "emptyTitle": "夢の日記が空です",
@@ -123,6 +128,7 @@
     "resetAllData": "すべてのデータをリセット",
     "seed10Dreams": "10件の夢を生成",
     "removeSeedDreams": "生成した夢を削除",
+    "giveFeedback": "フィードバックを送る",
     "dreamDictionary": "夢辞典",
     "privacyPolicy": "プライバシーポリシー",
     "termsOfService": "利用規約",
@@ -357,6 +363,16 @@
       "premiumUpsell": "最初の解釈は無料です。Premiumで無制限の解釈をアンロックしましょう。"
     },
     "continueFree": "無料で続ける"
+  },
+  "premiumSuccess": {
+    "heading": "プレミアムへようこそ",
+    "subtext": "すべての機能が解放されました。",
+    "benefitInterpretations": "AI夢解釈が無制限",
+    "benefitPatterns": "夢のパターン検出",
+    "benefitDictionary": "夢シンボル辞典の全機能",
+    "benefitLucid": "週間AI夢ダイジェスト",
+    "ctaOnboarding": "探索を始める",
+    "ctaPaywall": "さあ始めよう"
   },
   "aiConsent": {
     "title": "AI夢解釈",

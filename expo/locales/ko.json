@@ -42,6 +42,11 @@
     "digestLogMore": "다이제스트를 받으려면 이번 주에 꿈을 최소 1개 이상 기록하세요.",
     "digestStale": "이 다이제스트 이후 새로운 꿈이 기록되었습니다",
     "digestPremiumLock": "프리미엄으로 주간 AI 꿈 다이제스트를 잠금 해제하세요.",
+    "insightSymbol": "오늘의 상징",
+    "insightFact": "꿈 상식",
+    "insightTechnique": "자각몽 팁",
+    "insightCulture": "꿈의 역사",
+    "insightTapToRead": "탭하여 더 읽기",
     "quickEntryTitle": "어떤 꿈을 꿨나요?",
     "quickEntrySubtext": "꿈은 금방 사라져요 — 지금 바로 기록하세요",
     "emptyTitle": "꿈 일기가 비어 있어요",
@@ -123,6 +128,7 @@
     "resetAllData": "모든 데이터 초기화",
     "seed10Dreams": "꿈 10개 생성",
     "removeSeedDreams": "생성된 꿈 삭제",
+    "giveFeedback": "피드백 보내기",
     "dreamDictionary": "꿈 사전",
     "privacyPolicy": "개인정보 처리방침",
     "termsOfService": "서비스 이용약관",
@@ -357,6 +363,16 @@
       "premiumUpsell": "첫 번째 해석은 무료입니다. 프리미엄으로 무제한 해석을 잠금 해제하세요."
     },
     "continueFree": "무료로 계속하기"
+  },
+  "premiumSuccess": {
+    "heading": "프리미엄에 오신 것을 환영합니다",
+    "subtext": "꿈의 모든 기능이 잠금 해제되었습니다.",
+    "benefitInterpretations": "무제한 AI 꿈 해석",
+    "benefitPatterns": "꿈 패턴 감지",
+    "benefitDictionary": "꿈 상징 사전 전체 이용",
+    "benefitLucid": "주간 AI 꿈 요약",
+    "ctaOnboarding": "탐색 시작",
+    "ctaPaywall": "시작하기"
   },
   "aiConsent": {
     "title": "AI 꿈 해석",

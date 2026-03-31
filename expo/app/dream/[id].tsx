@@ -67,6 +67,12 @@ export default function DreamDetailScreen() {
   const [interpretationVisible, setInterpretationVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const activePulseLoop = useRef<Animated.CompositeAnimation | null>(null);
+
+  // Stop any running pulse loop on unmount
+  useEffect(() => {
+    return () => { activePulseLoop.current?.stop(); };
+  }, []);
 
   // Content entrance animation
   const contentFade = useRef(new Animated.Value(0)).current;
@@ -141,6 +147,7 @@ export default function DreamDetailScreen() {
         Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
       ])
     );
+    activePulseLoop.current = pulseLoop;
     pulseLoop.start();
 
     try {

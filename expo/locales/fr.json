@@ -42,6 +42,11 @@
     "digestLogMore": "Enregistrez au moins un rêve cette semaine pour obtenir votre résumé.",
     "digestStale": "Nouveaux rêves enregistrés depuis ce résumé",
     "digestPremiumLock": "Débloquez votre résumé hebdomadaire IA avec Premium.",
+    "insightSymbol": "Symbole du jour",
+    "insightFact": "Le saviez-vous",
+    "insightTechnique": "Astuce lucide",
+    "insightCulture": "Histoire des rêves",
+    "insightTapToRead": "Touchez pour en savoir plus",
     "quickEntryTitle": "De quoi avez-vous rêvé ?",
     "quickEntrySubtext": "Les rêves s'effacent vite — capturez le vôtre maintenant",
     "emptyTitle": "Votre journal de rêves est vide",
@@ -123,6 +128,7 @@
     "resetAllData": "Réinitialiser toutes les données",
     "seed10Dreams": "Générer 10 rêves",
     "removeSeedDreams": "Supprimer les rêves générés",
+    "giveFeedback": "Donner un avis",
     "dreamDictionary": "Dictionnaire des rêves",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
@@ -357,6 +363,16 @@
       "premiumUpsell": "Votre première interprétation est gratuite. Débloquez des interprétations illimitées avec Premium."
     },
     "continueFree": "Continuer gratuitement"
+  },
+  "premiumSuccess": {
+    "heading": "Bienvenue dans Premium",
+    "subtext": "Vous avez débloqué l'expérience complète.",
+    "benefitInterpretations": "Interprétations IA illimitées",
+    "benefitPatterns": "Détection de motifs dans vos rêves",
+    "benefitDictionary": "Dictionnaire complet des symboles",
+    "benefitLucid": "Résumé hebdomadaire IA de vos rêves",
+    "ctaOnboarding": "Commencer à explorer",
+    "ctaPaywall": "C'est parti"
   },
   "aiConsent": {
     "title": "Interprétation IA des rêves",

@@ -16,8 +16,10 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen } from 'lucide-react-native';
+import { FileText, Crown, RefreshCw, Download, Trash2, Shield, FileQuestion, HelpCircle, Info, Clock, Scan, AlarmClock, BookOpen, MessageSquare } from 'lucide-react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { useSettingsStore } from '@/store/settingsStore';
+import PremiumSuccessModal from '@/components/PremiumSuccessModal';
 import { useDreamsStore } from '@/store/dreamsStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { resetAllData } from '@/store/mmkv';
@@ -73,6 +75,7 @@ export default function SettingsScreen() {
   useFocusEffect(useCallback(() => { trackScreen('Settings'); }, []));
 
   const [activePicker, setActivePicker] = useState<PickerTarget>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const sheetAnim = useRef(new Animated.Value(0)).current;
 
   // Entrance animation
@@ -394,6 +397,11 @@ export default function SettingsScreen() {
               isPremium,
               settings.setIsPremium,
             )}
+            {renderNavRow(
+              <Crown size={18} color={colors.accent} />,
+              'Test Premium Success Modal',
+              () => setShowSuccessModal(true),
+            )}
           </View>
         )}
 
@@ -460,6 +468,11 @@ export default function SettingsScreen() {
           t('settings.dreamDictionary'),
           () => router.push('/dream-dictionary' as any),
           { badge: isPremium ? undefined : t('settings.sectionPremiumBadge') }
+        )}
+        {renderNavRow(
+          <MessageSquare size={18} color={colors.textSecondary} />,
+          t('settings.giveFeedback'),
+          () => WebBrowser.openBrowserAsync('https://lucid-dream.userjot.com'),
         )}
         {renderNavRow(
           <Shield size={18} color={colors.textSecondary} />,
@@ -547,6 +560,14 @@ export default function SettingsScreen() {
           </Animated.View>
         </Pressable>
       </Modal>
+
+      {__DEV__ && (
+        <PremiumSuccessModal
+          visible={showSuccessModal}
+          onDismiss={() => setShowSuccessModal(false)}
+          source="paywall"
+        />
+      )}
     </View>
   );
 }
